@@ -78,7 +78,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
       <div style={{ padding: "10px 12px", borderBottom: `1px solid ${UI.border}` }}>
         <div
           style={{
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
             color: UI.textFaint,
             letterSpacing: 1,
@@ -87,7 +87,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
         >
           ON THE MAP
         </div>
-        <div style={{ display: "flex", gap: 6, fontFamily: UI.fontMono, fontSize: 10 }}>
+        <div style={{ display: "flex", gap: 6, fontFamily: UI.fontSans, fontSize: 10 }}>
           <span
             style={{
               color: forceColor("BLUE"),
@@ -123,7 +123,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
             padding: "10px 12px",
             borderBottom: `1px solid ${UI.border}`,
             background: UI.bg2,
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
           }}
         >
@@ -174,7 +174,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
             background: UI.bg0,
             border: `1px solid ${UI.border}`,
             color: UI.text,
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 11,
             padding: "5px 7px",
             outline: "none",
@@ -198,7 +198,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
                 border: "none",
                 borderLeft: `3px solid ${forceColor(entity.force)}`,
                 color: isSelected ? UI.accent : UI.textDim,
-                fontFamily: UI.fontMono,
+                fontFamily: UI.fontSans,
                 fontSize: 10,
                 padding: "4px 8px",
                 cursor: "pointer",
@@ -215,7 +215,7 @@ const SidePanel: FC<Props> = ({ entities, selectedId, onSelect }) => {
         {visible.length === 0 && entities.length > 0 && (
           <div
             style={{
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 10,
               color: UI.textFaint,
               padding: "8px 10px",

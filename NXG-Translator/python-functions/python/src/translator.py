@@ -26,7 +26,7 @@ from src.builders import (
     build_simworks_human,
     build_simworks_aircraft,
 )
-from src.utils import generate_scenario_id, reset_ids, normalise_datetime
+from src.utils import generate_scenario_id, normalise_datetime
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -132,6 +132,7 @@ def build_tree(
     config = configs.get_config(unit.primary_key)
     if not config:
         _record_dropped(unit, "no simulator config")
+        _record_descendants_dropped(unit, ontology)
         return None
 
     child_units = ontology.get_children(unit.primary_key)
@@ -163,11 +164,19 @@ def build_tree(
                     unit,
                     f"entityType '{config.entity_type}' is not one the translator builds",
                 )
+                _record_descendants_dropped(unit, ontology)
                 return None
 
     except ValueError as exc:
         _record_dropped(unit, str(exc))
-        return None
+    except Exception as exc:  # noqa: BLE001 — one bad unit must not sink the translation
+        # Anything else is a bug in a builder or unexpected data, not a known
+        # gap. Still a drop rather than an abort: the rest of the ORBAT is
+        # worth having, and preflight reports this one as UNIT_DROPPED.
+        log.exception(f"Unexpected error building {unit.primary_key}")
+        _record_dropped(unit, f"unexpected {type(exc).__name__}: {exc}")
+    _record_descendants_dropped(unit, ontology)
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -185,14 +194,25 @@ def build_tree(
 # ORBAT, where preflight can report them like any other finding.
 #
 # Module-level because build_tree recurses and threading an accumulator
-# through it would touch every call site; translate() resets it at the start
-# of each run, which is also what makes repeated runs independent.
+# through it would touch every call site. It is reset once per WHOLE
+# translation — translate() does it by default, and the multi-pass caller
+# (_translate_all: VBS4 pass, then SimWorks pass) resets it itself and passes
+# reset_dropped=False, so a later pass cannot wipe the drops of an earlier one.
+# A unit is recorded once, with the first reason given for it: the passes
+# build the same tree, so they report the same units.
 
 _DROPPED: list[dict] = []
 
 
+def reset_dropped() -> None:
+    """Forget recorded drops. Call once at the start of a whole translation."""
+    _DROPPED.clear()
+
+
 def _record_dropped(unit, reason: str) -> None:
     """Note a unit that will not appear in the ORBAT, and why."""
+    if any(d["primaryKey"] == unit.primary_key for d in _DROPPED):
+        return
     log.error(
         f"Dropped {unit.primary_key} ({unit.unit_identifier}) from the ORBAT: {reason}"
     )
@@ -203,6 +223,27 @@ def _record_dropped(unit, reason: str) -> None:
             "reason": reason,
         }
     )
+
+
+def _record_descendants_dropped(unit, ontology: OntologyStore) -> None:
+    """
+    Record every unit beneath a dropped one.
+
+    When a parent fails, its already-built children are thrown away with it,
+    so they are not in the ORBAT either. Reporting only the parent understated
+    the loss: preflight said one unit was missing when a whole sub-tree was.
+    A descendant that failed in its own right keeps its own reason.
+    """
+    parent_name = unit.unit_identifier or unit.primary_key
+    seen = {unit.primary_key}
+    stack = list(ontology.get_children(unit.primary_key))
+    while stack:
+        child = stack.pop(0)
+        if child.primary_key in seen:
+            continue  # guards against a cycle in the edges
+        seen.add(child.primary_key)
+        _record_dropped(child, f"parent {parent_name} dropped")
+        stack.extend(ontology.get_children(child.primary_key))
 
 
 def dropped_units() -> list[dict]:
@@ -218,18 +259,23 @@ def dropped_units() -> list[dict]:
 def translate(
     ontology: OntologyStore,
     configs: SimulatorConfigStore,
+    reset_dropped: bool = True,
 ) -> dict:
     """
     Translate ontology objects + simulator configs into a VBS4 ORBAT.
 
     Args:
-        ontology: Populated OntologyStore
-        configs:  Populated SimulatorConfigStore
+        ontology:      Populated OntologyStore
+        configs:       Populated SimulatorConfigStore
+        reset_dropped: Clear previously recorded drops first. A caller running
+                       several passes as one translation passes False and
+                       resets once itself (see _DROPPED).
 
     Returns:
         VBS4-compatible ORBAT dict ready for JSON serialisation
     """
-    _DROPPED.clear()
+    if reset_dropped:
+        _DROPPED.clear()
 
     log.info("=" * 60)
     log.info("TRANSLATION STARTED")

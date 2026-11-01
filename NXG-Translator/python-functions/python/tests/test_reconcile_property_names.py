@@ -71,3 +71,12 @@ def test_every_property_reconcile_writes_exists_on_nxg_unit(prop):
 
 def test_the_misspelling_that_caused_this_is_still_gone():
     assert "dis_6_code" not in _nxg_unit_properties()
+
+
+def test_reconcile_can_stamp_the_phase_on_a_hierarchy():
+    """reconcile_scenario_orbat writes phase_key for per-phase ORBATs."""
+    from ontology_sdk.ontology.objects import NxgUnitHierarchy
+
+    props = {name for name in dir(NxgUnitHierarchy.object_type) if not name.startswith("_")}
+    for prop in ("name", "operation_key", "valid_from", "valid_to", "phase_key"):
+        assert prop in props, f'_upsert_hierarchy writes "{prop}", which NxgUnitHierarchy does not have.'

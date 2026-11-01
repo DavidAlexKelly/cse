@@ -1,7 +1,10 @@
 // ── hlamap/components/TopBar.tsx ──────────────────────────────────────────
-
-import type { CSSProperties, FC } from "react";
+// The screen header, in the pattern every screen shares (shared/hla/console.css):
+// eyebrow + title, the federation's state, simulation controls, demo mode,
+// the next act of the demo, and the app switcher.
+import type { FC } from "react";
 import { AppSwitcher } from "@/components/AppSwitcher";
+import "@/shared/hla/console.css";
 import type { BridgeStatusInfo } from "../types";
 import { UI } from "./ui";
 
@@ -13,6 +16,12 @@ interface Props {
   onStart: () => void;
   onPause: () => void;
   onStop: () => void;
+  /** Demo mode: the federation is simulated in the browser. */
+  mockDemo?: boolean;
+  /** Present when this app owns the setting (standalone); absent in Workshop. */
+  onToggleMockDemo?: (value: boolean) => void;
+  /** The next act of the demo; absent in Workshop, where the module's tabs do this. */
+  onOpenAnalysis?: () => void;
 }
 
 const DOT_COLOR: Record<ConnState, string> = {
@@ -21,80 +30,89 @@ const DOT_COLOR: Record<ConnState, string> = {
   offline: UI.red,
 };
 
-function btnStyle(color: string): CSSProperties {
-  return {
-    background: "transparent",
-    border: `1px solid ${color}66`,
-    color,
-    fontFamily: UI.fontMono,
-    fontSize: 11,
-    padding: "4px 10px",
-    cursor: "pointer",
-    letterSpacing: 1,
-  };
-}
-
-const TopBar: FC<Props> = ({ connState, status, onStart, onPause, onStop }) => {
-  const statusLabel =
-    connState === "loading"
-      ? "connecting…"
+const TopBar: FC<Props> = ({
+  connState,
+  status,
+  onStart,
+  onPause,
+  onStop,
+  mockDemo = false,
+  onToggleMockDemo,
+  onOpenAnalysis,
+}) => {
+  const entities = status?.entityCount ?? 0;
+  const statusLabel = mockDemo
+    ? `Simulated federation · ${entities} entities`
+    : connState === "loading"
+      ? "Connecting…"
       : connState === "offline"
-        ? "bridge unreachable"
-        : `${status?.connected ? "RTI connected" : "RTI offline"} · ${status?.federationName || "—"} · ${status?.entityCount ?? 0} live entities`;
+        ? "Bridge unreachable"
+        : `${status?.connected ? "RTI connected" : "RTI offline"} · ${status?.federationName || "—"} · ${entities} live entities`;
+  const dot = mockDemo ? UI.amber : DOT_COLOR[connState];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "0 14px",
-        minHeight: 38,
-        background: UI.bg1,
-        borderBottom: `1px solid ${UI.border}`,
-        fontFamily: UI.fontSans,
-        flexShrink: 0,
-      }}
-    >
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: 700,
-          color: UI.accent,
-          letterSpacing: 1,
-          fontFamily: UI.fontMono,
-        }}
-      >
-        HLA MAP
-      </span>
+    <>
+      <header className="hc-header">
+        <div className="hc-heading">
+          <div className="hc-eyebrow">LIVE MAP</div>
+          <div className="hc-title">HLA federation</div>
+        </div>
 
-      <div style={{ width: 1, height: 18, background: UI.border }} />
+        <div className="hc-status" role="status">
+          <span className="hc-dot" style={{ background: dot }} />
+          {statusLabel}
+        </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <span
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            background: DOT_COLOR[connState],
-            flexShrink: 0,
-          }}
-        />
-        <span style={{ fontSize: 11, color: UI.textDim, fontFamily: UI.fontMono }}>{statusLabel}</span>
-      </div>
+        <span className="hc-divider" />
 
-      <div style={{ width: 1, height: 18, background: UI.border }} />
+        <div style={{ display: "flex", gap: 6 }} role="group" aria-label="Simulation time">
+          <button type="button" className="mil-btn mil-btn--sm mil-btn--default" onClick={onStart}>
+            ▶ Start
+          </button>
+          <button type="button" className="mil-btn mil-btn--sm mil-btn--ghost" onClick={onPause}>
+            ❚❚ Pause
+          </button>
+          <button type="button" className="mil-btn mil-btn--sm mil-btn--danger" onClick={onStop}>
+            ■ Stop
+          </button>
+        </div>
 
-      <div style={{ display: "flex", gap: 6 }}>
-        <button style={btnStyle(UI.green)} onClick={onStart}>▶ Start</button>
-        <button style={btnStyle(UI.amber)} onClick={onPause}>⏸ Pause</button>
-        <button style={btnStyle(UI.red)} onClick={onStop}>■ Stop</button>
-      </div>
+        <span className="hc-spacer" />
 
-      <div style={{ marginLeft: "auto" }}>
+        {onToggleMockDemo ? (
+          <label
+            className="hc-demo-toggle"
+            title="Simulate the federation in the browser — no simulator, bridge or RTI needed"
+          >
+            <input
+              type="checkbox"
+              checked={mockDemo}
+              onChange={(e) => onToggleMockDemo(e.target.checked)}
+            />
+            Demo mode
+          </label>
+        ) : (
+          mockDemo && <span className="hc-demo-badge">DEMO MODE</span>
+        )}
+        {onOpenAnalysis && (
+          <button
+            type="button"
+            className="mil-btn mil-btn--sm mil-btn--primary"
+            onClick={onOpenAnalysis}
+            title="Replay the run against the phase plan and debrief it"
+          >
+            Analyse run →
+          </button>
+        )}
         <AppSwitcher />
-      </div>
-    </div>
+      </header>
+      {mockDemo && (
+        <div className="hc-banner" role="status">
+          Demo mode — the federation is simulated in the browser from the OP-BALTIC-SHIELD ORBAT.
+          Commands act on the simulation, not on a real federate.
+        </div>
+      )}
+    </>
   );
 };
 

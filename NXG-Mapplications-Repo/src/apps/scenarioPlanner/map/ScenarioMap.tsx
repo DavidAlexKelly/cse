@@ -30,6 +30,13 @@ import { FONT_MEDIUM, describeBasemapError, whenStyleLoaded } from "@acc/decho-b
 import { DechoBasemap } from "@acc/decho-basemap/react";
 import { assetStore, planetStore } from "../../../shared/map/dechoBasemapSetup";
 import type { PlacedUnit, UnitTemplate } from "./types";
+import {
+  type OrbatLevelFeature,
+  type OrbatLevelHandlers,
+  clearOrbatLevelLayer,
+  hitsOrbatLevelLayer,
+  syncOrbatLevelLayer,
+} from "./orbatLevelLayer";
 import { isOrbatEligible } from "../../../shared/orbat/eligibility";
 import {
   applyMilxOrderHandle,
@@ -353,6 +360,12 @@ interface Props {
    * rooted at this placement. Omit to hide the menu item.
    */
   onDefineOrbat?: (unit: PlacedUnit) => void;
+  /** Why this unit may not take an order (chain of command), or null. */
+  canAssignOrder?: (unit: PlacedUnit) => string | null;
+  /** Called with the reason when an order is refused. */
+  onOrderBlocked?: (reason: string) => void;
+  /** Right-click → Auto-generate ORBAT for a placed unit. Omit to hide the item. */
+  onAutoGenerateOrbat?: (unit: PlacedUnit) => void;
   onRemoveArrow?: (id: string) => void;
   onRemoveObjective?: (id: string) => void;
   onMapClick?: (lat: number, lng: number) => void;
@@ -382,6 +395,20 @@ interface Props {
   phaseEndOffset?: number;
   /** Callback when a terrain-routed arrow is created */
   onAddTerrainArrow?: (arrow: PlacedArrow) => void;
+  // ── Phase ORBAT level view ──
+  /**
+   * Units of the phase command tree at the selected level (the frontier — see
+   * shared/orbat/orbatLevels.ts), drawn as one symbol layer. Null hides the
+   * layer (the "Units" view).
+   */
+  orbatLevelNodes?: OrbatLevelFeature[] | null;
+  /** Allow dragging level-view units (moves the whole subtree). */
+  orbatLevelDraggable?: boolean;
+  onOrbatNodeClick?: (key: string, client: { x: number; y: number }) => void;
+  onOrbatNodeContext?: (key: string, client: { x: number; y: number }) => void;
+  onOrbatNodeMoved?: (key: string, lat: number, lng: number) => void;
+  /** Fires after every pan / zoom with the new zoom and centre latitude. */
+  onViewChange?: (zoom: number, centerLat: number) => void;
 }
 
 const MILX_SNAP_PX = 28;
@@ -408,6 +435,9 @@ export function ScenarioMap({
   onRemove,
   onUpdateUnit,
   onDefineOrbat,
+  onAutoGenerateOrbat,
+  canAssignOrder,
+  onOrderBlocked,
   onRemoveArrow,
   onRemoveObjective,
   onMapClick,
@@ -431,6 +461,12 @@ export function ScenarioMap({
   phaseStartOffset = 0,
   phaseEndOffset = 2,
   onAddTerrainArrow,
+  orbatLevelNodes = null,
+  orbatLevelDraggable = false,
+  onOrbatNodeClick,
+  onOrbatNodeContext,
+  onOrbatNodeMoved,
+  onViewChange,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -454,6 +490,21 @@ export function ScenarioMap({
   const onAttachUnitToMilxHandleRef = useRef(onAttachUnitToMilxHandle);
   const onDetachUnitFromMilxHandleRef = useRef(onDetachUnitFromMilxHandle);
   const onAssignUnitToOrderRef = useRef(onAssignUnitToOrder);
+  const onViewChangeRef = useRef(onViewChange);
+  onViewChangeRef.current = onViewChange;
+  /** Handlers for the ORBAT level layer — read at event time, so never stale. */
+  const orbatLevelHandlersRef = useRef<OrbatLevelHandlers>({});
+  orbatLevelHandlersRef.current = {
+    onClick: (key, point) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      onOrbatNodeClick?.(key, { x: point.x + (rect?.left ?? 0), y: point.y + (rect?.top ?? 0) });
+    },
+    onContext: (key, point) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      onOrbatNodeContext?.(key, { x: point.x + (rect?.left ?? 0), y: point.y + (rect?.top ?? 0) });
+    },
+    onDrop: (key, lat, lng) => onOrbatNodeMoved?.(key, lat, lng),
+  };
 
   const [mapInstance, setMapInstance] = useState<maplibregl.Map | null>(null);
   // Guards the one-time auto-fit-to-content below: fires at most once per
@@ -777,6 +828,9 @@ export function ScenarioMap({
     map.on("mouseout", () => setMgrsCoord(""));
 
     map.on("zoom", () => setZoom(map.getZoom()));
+    const reportView = () => onViewChangeRef.current?.(map.getZoom(), map.getCenter().lat);
+    map.on("moveend", reportView);
+    reportView();
 
     // The Scenario Planner mounts this map immediately but keeps its whole
     // subtree at display:none until the phase graph resolves — so "the map
@@ -792,6 +846,8 @@ export function ScenarioMap({
       // interaction — suppress every other handler (arrow clicks,
       // unit selection, unit placement, onMapClick, etc.).
       if (orderStepRef.current === 'reachabilityShown') return;
+      // A level-view unit owns its own click (see orbatLevelLayer).
+      if (hitsOrbatLevelLayer(map, e.point)) return;
 
       if (onArrowClickRef.current) {
         const hit = map.queryRenderedFeatures(e.point, { layers: [ARROWS_LAYER_HIT] });
@@ -818,6 +874,8 @@ export function ScenarioMap({
 
     // Right-click on empty map space → context menu
     map.on("contextmenu", (e) => {
+      // A level-view unit has its own menu.
+      if (hitsOrbatLevelLayer(map, e.point)) return;
       // Don't fire if the right-click hit an existing arrow or objective
       const hitArrow = map.queryRenderedFeatures(e.point, { layers: [ARROWS_LAYER_HIT] });
       const hitObj = map.queryRenderedFeatures(e.point, { layers: [OBJECTIVES_LAYER_CIRCLE, OBJECTIVES_LAYER_LABEL].filter((l) => map.getLayer(l)) });
@@ -1388,6 +1446,21 @@ export function ScenarioMap({
     attemptAutoFit();
   }, [mapInstance, placedUnits, arrows, objectives, attemptAutoFit]);
 
+  // ── Phase ORBAT level layer ───────────────────────────────────────────────
+  useEffect(() => {
+    const map = mapInstance;
+    if (!map) return;
+    if (!orbatLevelNodes) {
+      clearOrbatLevelLayer(map);
+      return;
+    }
+    syncOrbatLevelLayer(map, orbatLevelNodes, {
+      font: FONT_MEDIUM,
+      draggable: orbatLevelDraggable,
+      handlers: orbatLevelHandlersRef,
+    });
+  }, [mapInstance, orbatLevelNodes, orbatLevelDraggable]);
+
   // ── Sync unit markers ─────────────────────────────────────────────────────
   useEffect(() => {
     const map = mapRef.current;
@@ -1923,10 +1996,20 @@ export function ScenarioMap({
               ? () => onDefineOrbat(contextMenu.unit)
               : undefined
           }
+          onAutoGenerateOrbat={
+            onAutoGenerateOrbat && isOrbatEligible(contextMenu.unit)
+              ? () => onAutoGenerateOrbat(contextMenu.unit)
+              : undefined
+          }
           onEditUnit={() => {
             setEditDialogUnit(contextMenu.unit);
           }}
           onAssignOrders={() => {
+            const blocked = canAssignOrder?.(contextMenu.unit);
+            if (blocked) {
+              onOrderBlocked?.(blocked);
+              return;
+            }
             useOrderPlacementStore.getState().selectUnit(
               contextMenu.unit,
               { x: contextMenu.x, y: contextMenu.y },

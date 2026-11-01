@@ -47,6 +47,11 @@ interface Props {
   onPlaceUnit: (template: UnitTemplate, lat: number, lng: number) => void;
   /** Called when a drawing/tactic is selected for placement. */
   onPlaceDrawing: (style: ArrowStyle, lat: number, lng: number) => void;
+  /**
+   * Open the "Place unit" dialog that slots a unit into the selected phase's
+   * command tree. Shown only when a phase is selected.
+   */
+  onPlaceOrbatUnit?: (lat: number, lng: number) => void;
 }
 
 // ── Milsymbol renderer helper ─────────────────────────────────────────────────
@@ -76,7 +81,13 @@ function MilSymbolIcon({ svg, size }: { svg: string; size: number }) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function MapContextMenu({ contextMenu, onClose, onPlaceUnit, onPlaceDrawing }: Props) {
+export function MapContextMenu({
+  contextMenu,
+  onClose,
+  onPlaceUnit,
+  onPlaceDrawing,
+  onPlaceOrbatUnit,
+}: Props) {
   const [subMenu, setSubMenu] = useState<SubMenu>(null);
   const [search, setSearch] = useState("");
   const [selectedArchetype, setSelectedArchetype] = useState<UnitArchetype | null>(null);
@@ -184,8 +195,21 @@ export function MapContextMenu({ contextMenu, onClose, onPlaceUnit, onPlaceDrawi
           borderRadius: 6, padding: 4, minWidth: 160,
           backdropFilter: "blur(8px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
         }}>
+          {onPlaceOrbatUnit && (
+            <button
+              type="button"
+              onClick={() => {
+                onPlaceOrbatUnit(contextMenu.lat, contextMenu.lng);
+                onClose();
+              }}
+              style={dropdownItemStyle}
+              title="Place a unit into this phase's command tree"
+            >
+              <span style={{ fontSize: 14 }}>⊞</span> Place unit…
+            </button>
+          )}
           <button type="button" onClick={() => setSubMenu("unit")} style={dropdownItemStyle}>
-            <span style={{ fontSize: 14 }}>⬡</span> Place Unit
+            <span style={{ fontSize: 14 }}>⬡</span> {onPlaceOrbatUnit ? "Place map marker" : "Place Unit"}
           </button>
           <button type="button" onClick={() => setSubMenu("drawing")} style={dropdownItemStyle}>
             <span style={{ fontSize: 14 }}>↗</span> Drawing

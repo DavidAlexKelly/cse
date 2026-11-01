@@ -6,7 +6,7 @@
 //   planner  → requestOrbatDefinition({ …placement… })  → navigate /orbat?define=1
 //   orbat    → readOrbatDefinitionRequest()             → seeds a DRAFT tree
 //              …planner edits it / regenerates by prompt…
-//              → Confirm  → commitOrbatForPlacement()   → publishOrbatDefinitionResult()
+//              → Confirm  → commitDefinedOrbatToPhase()  → publishOrbatDefinitionResult()
 //              → navigate back to the planner
 //   planner  → takeOrbatDefinitionResult()              → links the placement
 //
@@ -33,8 +33,13 @@ export interface OrbatDefineRequest {
   side: Side;
   scenarioId: string;
   scenarioName: string;
-  /** Phase the placement belongs to, for the return trip. */
+  /**
+   * Phase the placement belongs to. When set, the ORBAT is written into that
+   * phase's own hierarchy (shared/orbat/phaseOrbat.commitDefinedOrbatToPhase).
+   */
   phaseId?: string;
+  /** The phase's display name — names the phase hierarchy if this creates it. */
+  phaseName?: string;
   /** Route to return to after confirm/cancel. */
   returnTo: string;
 }

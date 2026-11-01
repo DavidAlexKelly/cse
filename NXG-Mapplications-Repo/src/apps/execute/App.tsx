@@ -1,0 +1,631 @@
+// apps/execute/App.tsx — Execute: readiness → launch → live map, for one phase.
+//
+// The act of the demo between "the force is built" and "watch it fight":
+//
+//   1. Phase ORBAT     units per side in hier-{scenario}--{phase}
+//   2. Preflight       nxgPreflightOrbatFromPhase — will it actually spawn?
+//   3. CSE validation  CSE's own server-side schema (advised, not required)
+//   4. Launch          export → CSE project → load → publish → start
+//   5. Live map        /hlamap, in the same demo mode
+//
+// Demo mode (Workshop "mock-demo", or ?mock=1 standalone) simulates every CSE
+// and federation call and says so on screen. The phase ORBAT is still read
+// from the ontology when it can be, so the numbers in the demo are real.
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
+import { NxgPhase, NxgUnitHierarchy } from "@nxg-simulation-execution-testing/sdk";
+import { client } from "@/client";
+import { AppSwitcher } from "@/components/AppSwitcher";
+import { readPhaseParam, useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { useMockDemo } from "@/shared/hooks/useMockDemo";
+import {
+  type WorkshopObjectSetValue,
+  useWorkshopObjectKey,
+} from "@/shared/hooks/useWorkshopObjectKey";
+import { type LaunchRecord, digestOf } from "@/shared/lib/launchRecords";
+import { saveLaunch } from "@/shared/lib/launchStore";
+import { phaseHierarchyKey } from "@/shared/orbat/phaseKeys";
+import { loadPhaseForest } from "@/shared/orbat/phaseOrbat";
+import { operationKeyForScenario } from "@/shared/orbat/scenarioOrbat";
+import { useScenario } from "../scenarioPlanner/hooks/useScenario";
+import { DEFAULT_SCENARIO_ID } from "../scenarioPlanner/shared/phaseColours";
+import "./execute.css";
+import { EXECUTE_CONFIG } from "./executeConfig";
+import {
+  type CheckState,
+  LAUNCH_STEPS,
+  type LaunchStepId,
+  type OrbatCounts,
+  type CompositionInfo,
+  type StoredCseVerdict,
+  storedCseVerdict,
+  storedVerdictState,
+  assessReadiness,
+  defaultProjectName,
+  orbatState,
+  preflightState,
+} from "./lib/executePlan";
+import {
+  type CseCheck,
+  type ExecuteTarget,
+  type PreflightResult,
+  demoRunner,
+  liveRunner,
+} from "./lib/runner";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadedBool(field: any): boolean | null {
+  return field?.fieldValue?.status === "LOADED"
+    ? ((field.fieldValue.value as boolean) ?? null)
+    : null;
+}
+
+const ICON: Record<CheckState, string> = {
+  pending: "○",
+  running: "◌",
+  ok: "✓",
+  warn: "!",
+  fail: "✕",
+  skipped: "–",
+};
+
+function errorText(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+export default function ExecuteApp() {
+  const navigate = useAppNavigate();
+  const workshop = useWorkshopContext(EXECUTE_CONFIG);
+  const contextLoaded = workshop.status === "LOADED";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ctx = contextLoaded ? (workshop.value as any) : null;
+  const { mockDemo, standalone, setMockDemo } = useMockDemo({
+    value: loadedBool(ctx?.mockDemo),
+    contextLoaded,
+  });
+
+  // ── Scenario and phase ────────────────────────────────────────────────────
+  const scenarioRaw =
+    ctx?.scenario?.fieldValue?.status === "LOADED" ? ctx.scenario.fieldValue.value : undefined;
+  const { scenarioMeta, ontologyPhases, loading: scenarioLoading } = useScenario(scenarioRaw);
+  const scenarioId = scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID;
+  const scenarioName = scenarioMeta?.scenarioName ?? "Operation BALTIC SHIELD";
+  const phases = useMemo(() => ontologyPhases ?? [], [ontologyPhases]);
+
+  const phaseRaw: WorkshopObjectSetValue =
+    ctx?.selectedPhase?.fieldValue?.status === "LOADED"
+      ? (ctx.selectedPhase.fieldValue.value as WorkshopObjectSetValue)
+      : undefined;
+  const inboundPhaseId = useWorkshopObjectKey(phaseRaw, NxgPhase).primaryKey ?? null;
+  // A phase handed over in the URL (Scenario Planner's "Execute phase") is the
+  // first choice; Workshop's selectedPhase and the first phase follow.
+  const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : readPhaseParam(window.location.search),
+  );
+  const known = (id: string | null) => (id && phases.some((p) => p.id === id) ? id : null);
+  const phaseId = known(pickedPhaseId) ?? known(inboundPhaseId) ?? phases[0]?.id ?? null;
+  const phase = phases.find((p) => p.id === phaseId) ?? null;
+
+  // ── CSE settings ──────────────────────────────────────────────────────────
+  const [projectName, setProjectName] = useState(() => defaultProjectName(scenarioId));
+  useEffect(() => setProjectName(defaultProjectName(scenarioId)), [scenarioId]);
+  const [composition, setComposition] = useState("");
+  const [compositions, setCompositions] = useState<CompositionInfo[] | null>(null);
+  const compositionXml = compositions?.find((c) => c.name === composition)?.xml ?? null;
+  const [compositionsError, setCompositionsError] = useState<string | null>(null);
+
+  // ── Checks ────────────────────────────────────────────────────────────────
+  const [counts, setCounts] = useState<OrbatCounts | null>(null);
+  const [orbatNote, setOrbatNote] = useState<string | null>(null);
+  const [preflight, setPreflight] = useState<PreflightResult | null>(null);
+  const [preflightRun, setPreflightRun] = useState<CheckState>("pending");
+  const [preflightError, setPreflightError] = useState<string | null>(null);
+  const [cseCheck, setCseCheck] = useState<CseCheck | null>(null);
+  const [cseRun, setCseRun] = useState<CheckState>("pending");
+  const [cseError, setCseError] = useState<string | null>(null);
+
+  const unitCountRef = useRef(0);
+  unitCountRef.current = counts ? counts.blue + counts.red : 0;
+  const runner = useMemo(
+    () => (mockDemo ? demoRunner(() => unitCountRef.current) : liveRunner()),
+    [mockDemo],
+  );
+
+  const target = useMemo<ExecuteTarget | null>(
+    () =>
+      phaseId
+        ? { operationKey: operationKeyForScenario(scenarioId), phaseId, projectName, composition }
+        : null,
+    [scenarioId, phaseId, projectName, composition],
+  );
+
+  // Reset per phase / mode.
+  useEffect(() => {
+    setPreflight(null);
+    setPreflightRun("pending");
+    setPreflightError(null);
+    setCseCheck(null);
+    setCseRun("pending");
+    setCseError(null);
+    setLaunch({});
+    setLaunchLog([]);
+    setLaunched(false);
+  }, [phaseId, mockDemo]);
+
+  // 1. Phase ORBAT.
+  useEffect(() => {
+    if (!phaseId) return;
+    let live = true;
+    setCounts(null);
+    setOrbatNote(null);
+    loadPhaseForest(phaseHierarchyKey(scenarioId, phaseId), phaseId)
+      .then(({ nodes }) => {
+        if (!live) return;
+        setCounts({
+          blue: nodes.filter((n) => n.side === "blue").length,
+          red: nodes.filter((n) => n.side === "red").length,
+        });
+      })
+      .catch((err) => {
+        if (!live) return;
+        setCounts({ blue: 0, red: 0 });
+        setOrbatNote(`Could not read the phase ORBAT: ${errorText(err)}`);
+      });
+    return () => {
+      live = false;
+    };
+  }, [scenarioId, phaseId]);
+
+  // The verdict nxgCseValidatePhaseOrbat stored on the phase hierarchy, shown
+  // until a fresh check is run (plan 4.5). Live mode only.
+  const [storedVerdict, setStoredVerdict] = useState<StoredCseVerdict | null>(null);
+  useEffect(() => {
+    setStoredVerdict(null);
+    if (!phaseId || mockDemo) return;
+    let live = true;
+    client(NxgUnitHierarchy)
+      .fetchOne(phaseHierarchyKey(scenarioId, phaseId))
+      .then((h) => {
+        if (live) setStoredVerdict(storedCseVerdict(h as unknown as Record<string, unknown>));
+      })
+      .catch(() => {
+        /* no hierarchy yet, or no access — nothing stored to show */
+      });
+    return () => {
+      live = false;
+    };
+  }, [scenarioId, phaseId, mockDemo]);
+
+  const runPreflight = useCallback(async () => {
+    if (!target) return;
+    setPreflightRun("running");
+    setPreflightError(null);
+    try {
+      setPreflight(await runner.preflight(target, compositionXml));
+      setPreflightRun("ok");
+    } catch (err) {
+      setPreflight(null);
+      setPreflightRun("fail");
+      setPreflightError(errorText(err));
+    }
+  }, [runner, target, compositionXml]);
+
+  // Preflight runs by itself once the ORBAT is known to exist, and again when
+  // the composition changes — the composition-aware check depends on it.
+  const autoPreflightFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!phaseId || !counts || counts.blue + counts.red === 0) return;
+    const key = `${phaseId}|${mockDemo}|${composition}|${compositionXml ? "xml" : "-"}`;
+    if (autoPreflightFor.current === key) return;
+    autoPreflightFor.current = key;
+    void runPreflight();
+  }, [phaseId, counts, mockDemo, composition, compositionXml, runPreflight]);
+
+  const loadCompositions = useCallback(async () => {
+    setCompositionsError(null);
+    try {
+      const found = await runner.compositions();
+      setCompositions(found);
+      setComposition((current) => current || found[0]?.name || "");
+    } catch (err) {
+      setCompositions([]);
+      setCompositionsError(errorText(err));
+    }
+  }, [runner]);
+  useEffect(() => {
+    void loadCompositions();
+  }, [loadCompositions]);
+
+  const runCse = useCallback(async () => {
+    if (!target) return;
+    setCseRun("running");
+    setCseError(null);
+    try {
+      const check = await runner.validateWithCse(target);
+      setCseCheck(check);
+      setCseRun(check.passed ? "ok" : "fail");
+    } catch (err) {
+      setCseCheck(null);
+      setCseRun("fail");
+      setCseError(errorText(err));
+    }
+  }, [runner, target]);
+
+  // Readiness.
+  const oState = phaseId ? (counts && orbatNote ? "fail" : orbatState(counts)) : "pending";
+  const pState: CheckState =
+    preflightRun === "running"
+      ? "running"
+      : preflightRun === "fail"
+        ? "fail"
+        : preflight
+          ? preflightState(preflight)
+          : "pending";
+  const readiness = assessReadiness(oState, pState, cseRun);
+
+  // ── Launch ────────────────────────────────────────────────────────────────
+  const [launch, setLaunch] = useState<Partial<Record<LaunchStepId, CheckState>>>({});
+  const [launchLog, setLaunchLog] = useState<{ text: string; error?: boolean }[]>([]);
+  const [launching, setLaunching] = useState(false);
+  const [launched, setLaunched] = useState(false);
+
+  const [launchNote, setLaunchNote] = useState<string | null>(null);
+
+  const runLaunch = useCallback(async () => {
+    if (!target || launching) return;
+    setLaunching(true);
+    setLaunched(false);
+    setLaunch({});
+    setLaunchLog([]);
+    setLaunchNote(null);
+
+    // The launch record (NxgCseLaunch, docs/ORBAT_PIPELINE_PLAN.md 4.3): written
+    // at the start and after the steps that matter, never awaited by the launch.
+    const nowS = () => Math.floor(Date.now() / 1000);
+    let record: LaunchRecord = {
+      launchId: crypto.randomUUID(),
+      scenarioId,
+      phaseId: target.phaseId,
+      phaseName: phase?.name ?? target.phaseId,
+      operationKey: target.operationKey,
+      project: target.projectName,
+      composition: target.composition,
+      status: "running",
+      unitCount: counts ? counts.blue + counts.red : undefined,
+      startedAtS: nowS(),
+      launchedAtS: nowS(),
+      demo: runner.demo,
+    };
+    const save = (patch: Partial<LaunchRecord>) => {
+      record = { ...record, ...patch };
+      void saveLaunch(record).then((outcome) => setLaunchNote(outcome.note));
+    };
+    save({});
+
+    for (const step of LAUNCH_STEPS) {
+      setLaunch((s) => ({ ...s, [step.id]: "running" }));
+      try {
+        const line = await runner.launchStep(step.id, target);
+        setLaunch((s) => ({ ...s, [step.id]: "ok" }));
+        setLaunchLog((log) => [...log, { text: line }]);
+        if (step.id === "export") {
+          const xml = runner.exportedXml(target.phaseId);
+          if (xml) save({ orbatDigest: digestOf(xml) });
+        }
+        if (step.id === "publish") save({ publishedAtS: nowS() });
+      } catch (err) {
+        setLaunch((s) => ({ ...s, [step.id]: "fail" }));
+        setLaunchLog((log) => [
+          ...log,
+          { text: `${step.label} failed — ${errorText(err)}`, error: true },
+        ]);
+        save({ status: "failed", failedStep: step.id, error: errorText(err), endedAtS: nowS() });
+        setLaunching(false);
+        return;
+      }
+    }
+    setLaunching(false);
+    setLaunched(true);
+    // Lets Analysis open the resulting run on this phase's plan.
+    save({ status: "launched", simStartedAtS: nowS(), launchedAtS: nowS() });
+    ctx?.onLaunched?.executeEvent?.(undefined);
+  }, [target, launching, runner, ctx, scenarioId, phase?.name, counts]);
+
+  const openLiveMap = () => navigate(mockDemo ? "/hlamap?mock=1" : "/hlamap");
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div className="ex">
+      <header className="ex__header">
+        <div>
+          <div className="ex__eyebrow">EXECUTE</div>
+          <div className="ex__title">{scenarioName}</div>
+        </div>
+        <label className="ex__phase">
+          <span>Phase</span>
+          <select
+            value={phaseId ?? ""}
+            onChange={(e) => setPickedPhaseId(e.target.value || null)}
+            disabled={phases.length === 0 || launching}
+          >
+            {phases.length === 0 && (
+              <option value="">{scenarioLoading ? "Loading…" : "No phases"}</option>
+            )}
+            {phases.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <span className="ex__spacer" />
+        {standalone ? (
+          <label className="ex__demo-toggle">
+            <input
+              type="checkbox"
+              checked={mockDemo}
+              onChange={(e) => setMockDemo(e.target.checked)}
+            />
+            Demo mode
+          </label>
+        ) : (
+          mockDemo && <span className="ex__demo-badge">DEMO MODE</span>
+        )}
+        <AppSwitcher />
+      </header>
+
+      {mockDemo && (
+        <div className="ex__banner" role="status">
+          Demo mode — CSE and federation calls are simulated. The phase ORBAT shown is read from the
+          ontology where available.
+        </div>
+      )}
+
+      <main className="ex__body">
+        <section className="ex__card">
+          <h2 className="ex__card-title">Readiness{phase ? ` — ${phase.name}` : ""}</h2>
+
+          <Check
+            state={oState}
+            title="Phase ORBAT"
+            detail={
+              !counts
+                ? "Reading the phase ORBAT…"
+                : (orbatNote ??
+                  (counts.blue + counts.red === 0
+                    ? "No units in this phase's ORBAT yet."
+                    : `${counts.blue} Blue · ${counts.red} Red units` +
+                      (counts.red === 0 || counts.blue === 0
+                        ? " — only one side has forces."
+                        : "")))
+            }
+            action={
+              <button
+                type="button"
+                className="mil-btn mil-btn--sm mil-btn--ghost"
+                onClick={() => navigate("/scenario-plan")}
+              >
+                Open planner
+              </button>
+            }
+          />
+
+          <Check
+            state={pState}
+            title="Preflight"
+            detail={
+              preflightError ??
+              (preflight ? `${preflight.summary}${preflight.basis ? ` ${preflight.basis}` : ""}` : null) ??
+              (pState === "running" ? "Checking every unit will actually spawn…" : "Not run yet.")
+            }
+            action={
+              <button
+                type="button"
+                className="mil-btn mil-btn--sm mil-btn--default"
+                onClick={() => void runPreflight()}
+                disabled={!target || pState === "running" || oState === "fail"}
+              >
+                Run preflight
+              </button>
+            }
+          >
+            {preflight && preflight.issues.length > 0 && (
+              <ul className="ex__issues">
+                {preflight.issues.slice(0, 6).map((issue, i) => (
+                  <li key={i} className={issue.severity === "ERROR" ? "ex__issue--error" : ""}>
+                    <code>{issue.code}</code> {issue.message}
+                  </li>
+                ))}
+                {preflight.issues.length > 6 && <li>…and {preflight.issues.length - 6} more.</li>}
+              </ul>
+            )}
+          </Check>
+
+          <Check
+            state={cseRun === "pending" ? storedVerdictState(storedVerdict) : cseRun}
+            title="CSE validation"
+            detail={
+              cseError ??
+              cseCheck?.note ??
+              (cseRun === "running"
+                ? "Exporting the ORBAT and asking CSE…"
+                : storedVerdict
+                  ? `Last stored CSE check: ${storedVerdict.status}` +
+                    (storedVerdict.atS
+                      ? ` (${new Date(storedVerdict.atS * 1000).toLocaleString()})`
+                      : "") +
+                    (storedVerdict.detail && storedVerdict.status !== "PASSED"
+                      ? ` — ${storedVerdict.detail.slice(0, 200)}`
+                      : "") +
+                    ". Validate again for a fresh answer."
+                  : "Advised before launch.")
+            }
+            action={
+              <button
+                type="button"
+                className="mil-btn mil-btn--sm mil-btn--default"
+                onClick={() => void runCse()}
+                disabled={!target || !composition || cseRun === "running" || oState === "fail"}
+                title={composition ? undefined : "Choose a composition below"}
+              >
+                Validate with CSE
+              </button>
+            }
+          >
+            {cseCheck && cseCheck.errors.length > 0 && (
+              <ul className="ex__issues">
+                {cseCheck.errors.slice(0, 6).map((e, i) => (
+                  <li key={i} className="ex__issue--error">
+                    {e}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Check>
+
+          <div className="ex__settings">
+            <label>
+              <span>CSE project</span>
+              <input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                disabled={launching}
+              />
+            </label>
+            <label>
+              <span>Composition</span>
+              {compositions && compositions.length > 0 ? (
+                <select
+                  value={composition}
+                  onChange={(e) => setComposition(e.target.value)}
+                  disabled={launching}
+                >
+                  {compositions.map((c) => (
+                    <option key={c.name} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  value={composition}
+                  placeholder={compositions === null ? "Loading…" : "Composition name"}
+                  onChange={(e) => setComposition(e.target.value)}
+                  disabled={launching}
+                />
+              )}
+            </label>
+            {compositionsError && (
+              <div className="ex__hint">Could not list compositions: {compositionsError}</div>
+            )}
+          </div>
+        </section>
+
+        <section className="ex__card">
+          <h2 className="ex__card-title">Launch</h2>
+          <ol className="ex__steps">
+            {LAUNCH_STEPS.map((step) => {
+              const state = launch[step.id] ?? "pending";
+              return (
+                <li key={step.id} className={`ex__step ex__step--${state}`}>
+                  <span className="ex__step-icon" aria-hidden="true">
+                    {ICON[state]}
+                  </span>
+                  <span>
+                    <span className="ex__step-label">{step.label}</span>
+                    <span className="ex__step-detail">{step.detail}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+
+          {(() => {
+            // What the banner says follows the launch, not only readiness:
+            // once launched, "Ready to launch" is the wrong instruction.
+            const failedStep = LAUNCH_STEPS.find((st) => launch[st.id] === "fail");
+            const doneSteps = LAUNCH_STEPS.filter((st) => launch[st.id] === "ok").length;
+            const [tone, text] = launching
+              ? [
+                  "",
+                  `Launching — step ${Math.min(doneSteps + 1, LAUNCH_STEPS.length)} of ${LAUNCH_STEPS.length}…`,
+                ]
+              : failedStep
+                ? [
+                    "ex__reason--blocked",
+                    `${failedStep.label} failed — see the log below. Fix it and launch again.`,
+                  ]
+                : launched
+                  ? [
+                      "ex__reason--done",
+                      `Launched${runner.demo ? " (demo)" : ""} — the simulation is running. Open the live map to watch and task it.`,
+                    ]
+                  : [readiness.canLaunch ? "" : "ex__reason--blocked", readiness.reason];
+            return (
+              <div className={`ex__reason ${tone}`} role="status">
+                {text}
+              </div>
+            );
+          })()}
+
+          <div className="ex__actions">
+            <button
+              type="button"
+              className={`mil-btn mil-btn--md ${launched ? "mil-btn--default" : "mil-btn--primary"}`}
+              onClick={() => void runLaunch()}
+              disabled={!readiness.canLaunch || launching || !composition}
+              title={!composition ? "Choose a composition" : readiness.reason}
+            >
+              {launching ? "Launching…" : launched ? "Launch again" : "▶ Launch"}
+            </button>
+            <button
+              type="button"
+              className={`mil-btn mil-btn--md ${launched ? "mil-btn--primary" : "mil-btn--ghost"}`}
+              onClick={openLiveMap}
+              title={
+                launched
+                  ? undefined
+                  : "The live map works before a launch too — it shows whatever the federation is publishing"
+              }
+            >
+              Open live map →
+            </button>
+          </div>
+
+          {launchNote && <div className="ex__hint">{launchNote}</div>}
+          {launchLog.length > 0 && (
+            <ul className="ex__log" aria-live="polite">
+              {launchLog.map((entry, i) => (
+                <li key={i} className={entry.error ? "ex__log--error" : ""}>
+                  {entry.text}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function Check(props: {
+  state: CheckState;
+  title: string;
+  detail: string;
+  action?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className={`ex__check ex__check--${props.state}`}>
+      <span className="ex__check-icon" aria-label={props.state}>
+        {ICON[props.state]}
+      </span>
+      <div className="ex__check-body">
+        <div className="ex__check-title">{props.title}</div>
+        <div className="ex__check-detail">{props.detail}</div>
+        {props.children}
+      </div>
+      {props.action && <div className="ex__check-action">{props.action}</div>}
+    </div>
+  );
+}

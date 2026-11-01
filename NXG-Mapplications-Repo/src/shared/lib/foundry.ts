@@ -51,7 +51,6 @@ import {
   NxgOTemplateOrbatGraph,
 
   // ── Functions ─────────────────────────────────────────────────────────
-  cseValidateOrbat,
 } from "@nxg-simulation-execution-testing/sdk";
 
 import type {
@@ -66,19 +65,17 @@ import type {
   OEquipmentType,
   ORelationshipType,
   OHierarchy,
-  CompositionNode,
   AssetAvailability,
   OSimAsset,
   SimTarget,
 } from "../types/index";
-import { assertCompositionEligible } from "../orbat/assetEligibility";
 import {
   buildSwordFormationIndex,
   type SwordFormationIndex,
 } from "../orbat/swordFormations";
 
 import { cachedLoad, invalidatePrefix } from "./ontologyCache";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "../orbat/model";
+import { ontologyDate, PLACEHOLDER_DIS } from "../orbat/model";
 
 // ─── Auth token ────────────────────────────────────────────────────────────
 
@@ -255,7 +252,7 @@ export async function loadUnits(unitKeys: string[]): Promise<OUnit[]> {
     allegiance: u.allegiance ?? "",
     entityType: u.entityType ?? "organisation",
     owningSimulator: u.owningSimulator ?? "none",
-    dis: u.dis ?? "0.0.0.0.0.0.0",
+    dis: u.dis ?? PLACEHOLDER_DIS,
     canControlDrones: u.canControlDrones ?? false,
     // NxgUnit has no canonical_asset_key property — dis6Code IS the foreign key
     // that drives the NxgCanonicalAsset link. This used to be hardcoded to
@@ -768,158 +765,12 @@ export {
   type CompositionPlan,
 } from "./compositionPlan";
 
-import { planComposition } from "./compositionPlan";
-
-export interface CompositionResult {
-  rootUnitKey: string;
-  createdUnitKeys: string[];
-  createdSymbolKeys: string[];
-  createdEdgeKeys: string[];
-}
-
-/**
- * Maximum action calls sent in one `batchApplyAction`.
- *
- * Foundry allows up to 10,000 calls per batch for a standard (non
- * function-backed) action, and treats a batch as a single group for the
- * 10,000-objects-per-submission edit limit. 500 keeps request bodies small
- * enough to stay well inside both, and bounds how much has to be rolled back
- * if a chunk fails.
- */
-const ACTION_BATCH_SIZE = 500;
-
-function chunk<T>(items: readonly T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
-  return out;
-}
 
 
-interface WrittenKeys {
-  units: string[];
-  symbols: string[];
-  edges: string[];
-}
+// createCompositionInOntology (one action per unit, scenario-wide) was removed:
+// every ORBAT write goes through the phase reconcile (shared/orbat/phaseOrbat.ts),
+// docs/ORBAT_PIPELINE_PLAN.md 3.7.
 
-/**
- * Best-effort compensation for a partially-written composition.
- *
- * Foundry applies a batch as one transaction, but a composition spans three
- * action types and therefore at least three transactions. There is no
- * cross-action-type transaction available from the client, so if a later phase
- * fails we undo the earlier ones in reverse dependency order. This never
- * throws: the caller is already handling a failure and a rollback error must
- * not mask it.
- */
-async function rollbackComposition(written: WrittenKeys): Promise<void> {
-  const orphaned: string[] = [];
-
-  async function deleteAll(
-    label: string,
-    keys: string[],
-    applyChunk: (keys: string[]) => Promise<unknown>,
-  ): Promise<void> {
-    for (const batch of chunk(keys, ACTION_BATCH_SIZE)) {
-      try {
-        await applyChunk(batch);
-      } catch (err) {
-        orphaned.push(`${batch.length} ${label}`);
-        console.error(`[composition] rollback of ${batch.length} ${label} failed:`, err);
-      }
-    }
-  }
-
-  // Reverse dependency order: edges and symbols both reference units.
-  await deleteAll("edge(s)", written.edges, (keys) =>
-    client(deleteNxgUnitHierachyEdge).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey })),
-    ),
-  );
-  await deleteAll("symbol(s)", written.symbols, (keys) =>
-    client(deleteNxgTacticalGraphicSymbol).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey })),
-    ),
-  );
-  await deleteAll("unit(s)", written.units, (keys) =>
-    client(deleteNxgUnit).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey, cascadeSymbol: true, cascadeEdges: true })),
-    ),
-  );
-
-  if (orphaned.length) {
-    console.error(
-      `[composition] rollback incomplete — possibly orphaned in the ontology: ${orphaned.join(", ")}`,
-    );
-  }
-}
-
-/**
- * Write a composition tree to the ontology.
- *
- * Previously this issued one `applyAction` per unit, per symbol and per edge,
- * sequentially awaited inside a recursive walk — a battalion was hundreds of
- * serial round-trips, and a failure part-way left an unrecoverable mess of
- * half-created units with no compensation path.
- *
- * Now the tree is planned in memory first, then written as three batched
- * phases (units → symbols → edges, in dependency order). That is O(nodes/500)
- * round-trips instead of O(nodes), and each phase is atomic. If a later phase
- * fails, earlier phases are rolled back before the error propagates, so the
- * caller either gets a complete ORBAT or none of one.
- */
-export async function createCompositionInOntology(
-  _operationKey: string,
-  hierarchyKey: string,
-  root: CompositionNode,
-  rootLat: number,
-  rootLng: number
-): Promise<CompositionResult> {
-  // Refuse to persist units no simulator can spawn. The UI stops most of these
-  // at the point of adding, but templates, the AI generator and the Scenario
-  // Planner all reach this function too, so the guard belongs here — it is the
-  // one place every composition passes through. loadCanonicalAssetIndex is
-  // TTL-cached, so in practice this costs nothing.
-  assertCompositionEligible(root, await loadCanonicalAssetIndex());
-
-  const plan = planComposition(hierarchyKey, root, rootLat, rootLng);
-
-  if (!plan.units.length) {
-    return { rootUnitKey: "", createdUnitKeys: [], createdSymbolKeys: [], createdEdgeKeys: [] };
-  }
-
-  const written: WrittenKeys = { units: [], symbols: [], edges: [] };
-
-  try {
-    for (const batch of chunk(plan.units, ACTION_BATCH_SIZE)) {
-      await client(createNxgUnit).batchApplyAction(batch);
-      written.units.push(...batch.map((p) => p.primaryKey));
-    }
-    for (const batch of chunk(plan.symbols, ACTION_BATCH_SIZE)) {
-      await client(createNxgTacticalGraphicSymbol).batchApplyAction(batch);
-      written.symbols.push(...batch.map((p) => p.primaryKey));
-    }
-    for (const batch of chunk(plan.edges, ACTION_BATCH_SIZE)) {
-      await client(createNxgUnitHierachyEdge).batchApplyAction(batch);
-      written.edges.push(...batch.map((p) => p.primaryKey));
-    }
-  } catch (err) {
-    await rollbackComposition(written);
-    // `cause` is deliberately interpolated rather than passed as ErrorOptions:
-    // that overload is ES2022 and this project targets ES2020.
-    throw new Error(
-      `Failed to write composition "${root.unitIdentifier}" (${plan.units.length} units, ` +
-        `${plan.symbols.length} symbols, ${plan.edges.length} edges) to hierarchy ${hierarchyKey}. ` +
-        `Partial writes were rolled back. Cause: ${err instanceof Error ? err.message : String(err)}`,
-    );
-  }
-
-  return {
-    rootUnitKey: plan.rootUnitKey,
-    createdUnitKeys: written.units,
-    createdSymbolKeys: written.symbols,
-    createdEdgeKeys: written.edges,
-  };
-}
 
 // ─── Template Orbat Graph CRUD ────────────────────────────────────────────────
 
@@ -1134,124 +985,7 @@ export async function callGenerateOrbat(
   throw new Error(`generate${target === "vbs4" ? "Vbs4" : "Sword"}Orbat not yet exported by SDK.`);
 }
 
-// ─── Function: CSE validate ORBAT ──────────────────────────────────────────
-
-export interface CseValidationError {
-  type?: string;
-  message?: string;
-  description?: string;
-  isWarning?: boolean;
-  path?: string;
-}
-
-export interface CseValidationResult {
-  errors: CseValidationError[];
-  valid: boolean;
-}
-
-/**
- * Translates the ontology ORBAT data into the JSON payload expected by
- * cseValidateOrbat (VBS4 target) and returns the validation result.
- *
- * The payload shape mirrors what csePrep uses for its textarea-based flow:
- *   { units: [...], hierarchy: [...] }
- */
-export async function callCseValidateOrbat(
-  projectName: string,
-  units: Map<string, OUnit>,
-  edges: OEdge[],
-  symbols: Map<string, OSymbol>,
-): Promise<CseValidationResult> {
-  // Build the orbat JSON payload
-  const orbatPayload = buildVbs4OrbatPayload(units, edges, symbols);
-  const orbatContent = JSON.stringify(orbatPayload);
-
-  const raw = await (client(cseValidateOrbat as any) as any).executeFunction({
-    projectName,
-    orbatContent,
-  });
-
-  const result = typeof raw === "string" ? JSON.parse(raw) : raw;
-  const errors: CseValidationError[] = result?.errors ?? [];
-  return {
-    errors,
-    valid: errors.filter((e) => !e.isWarning).length === 0,
-  };
-}
-
-/**
- * Builds the VBS4 ORBAT JSON payload from ontology data.
- */
-export function buildVbs4OrbatPayload(
-  units: Map<string, OUnit>,
-  edges: OEdge[],
-  symbols: Map<string, OSymbol>,
-) {
-  const unitList = [...units.values()].map((u) => {
-    const symbol = symbols.get(u.primaryKey);
-    return {
-      id: u.primaryKey,
-      identifier: u.unitIdentifier,
-      sidc: u.sidc,
-      entityType: u.entityType,
-      simulatorIdentifierCode: u.simulatorIdentifierCode ?? null,
-      owningSimulator: u.owningSimulator,
-      dis: u.dis,
-      echelon: u.echelon,
-      militaryService: u.militaryService,
-      affiliation: u.affiliation,
-      latitude: symbol?.latitude ?? u.latitude ?? null,
-      longitude: symbol?.longitude ?? u.longitude ?? null,
-    };
-  });
-
-  const hierarchy = edges.map((e) => ({
-    parentId: e.parentUnitKey,
-    childId: e.childUnitKey,
-    relationshipType: e.relationshipType,
-  }));
-
-  return { units: unitList, hierarchy };
-}
-
-/**
- * Translates a CompositionNode tree (used in the Composition Builder) into
- * the same VBS4 ORBAT payload shape, so the builder can also call
- * cseValidateOrbat without first persisting to the ontology.
- */
-export function buildVbs4OrbatPayloadFromComposition(
-  root: CompositionNode,
-): { units: object[]; hierarchy: object[] } {
-  const unitList: object[] = [];
-  const hierarchy: object[] = [];
-
-  function walk(node: CompositionNode, parentId: string | null) {
-    for (let i = 0; i < Math.max(1, node.quantity); i++) {
-      const id = `${node.id}${node.quantity > 1 ? `-${i}` : ""}`;
-      unitList.push({
-        id,
-        identifier: node.quantity > 1 ? `${node.unitIdentifier} ${i + 1}` : node.unitIdentifier,
-        sidc: node.sidc,
-        entityType: node.entityType,
-        simulatorIdentifierCode: null, // not yet persisted
-        owningSimulator: node.owningSimulator,
-        dis: "0.0.0.0.0.0.0",
-        echelon: node.echelon,
-        militaryService: node.militaryService,
-        affiliation: node.affiliation,
-        latitude: null,
-        longitude: null,
-      });
-      if (parentId !== null) {
-        // Matches what planComposition writes to the ontology.
-        hierarchy.push({ parentId, childId: id, relationshipType: ORGANIC_RELATIONSHIP_KEY });
-      }
-      for (const child of node.children) {
-        walk(child, id);
-      }
-    }
-  }
-
-  walk(root, null);
-  return { units: unitList, hierarchy };
-}
+// ─── CSE validation ────────────────────────────────────────────────────────
+// The old in-browser route (VBS4 JSON payload → the SDK's cseValidateOrbat)
+// was removed: ORBATs are validated as the phase export, by the Translator's
+// preflight and CSE-Prep's nxgCse* functions (docs/ORBAT_PIPELINE_PLAN.md).

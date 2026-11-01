@@ -14,7 +14,7 @@ import type { IConfigDefinition } from "@osdk/workshop-iframe-custom-widget";
 //    operation         — NxgOperation object set. The widget loads that
 //                        operation's hierarchies, units, edges and symbols.
 //                        Was a bare `operationKey` string; unset still falls
-//                        back to OP-NORDIC-2026.
+//                        back to OPERATION-BALTIC-SHIELD.
 //    phase             — NxgPhase object set. When set, the widget imports that
 //                        phase's ORBAT from the Template Orbat Graph record the
 //                        Scenario Planner wrote for it (tagged "phase:<id>").
@@ -46,7 +46,7 @@ export const ORBAT_CONFIG = [
       helperText:
         "The operation whose ORBAT to manage. Wire a Workshop NxgOperation object-set " +
         "variable here; the widget reads the first operation in the set and loads its " +
-        "hierarchies, units and symbols. Leave unset to fall back to OP-NORDIC-2026.",
+        "hierarchies, units and symbols. Leave unset to fall back to OPERATION-BALTIC-SHIELD.",
       fieldValue: {
         type: "inputOutput" as const,
         variableType: { type: "temporaryObjectSetRid" as const },
@@ -133,23 +133,20 @@ export const ORBAT_CONFIG = [
 
   // ── Legacy CSE round-trip ──────────────────────────────────────────────────
   //
-  // The widget writes its placed ORBAT to `orbatJson`, a Workshop translation
-  // function rewrites it, and the result arrives back on `translatedInputOrbat`
-  // to be sent to cseValidateOrbat.
-  //
-  // The app can already call cseValidateOrbat directly (callCseValidateOrbat +
-  // buildVbs4OrbatPayload in shared/lib/foundry.ts), so this round-trip may be
-  // collapsible into one in-process call — which would delete both variables
-  // and the polling guards that go with them. Left exactly as it was until
-  // someone confirms the translation function does nothing extra.
+  // DEPRECATED — no longer read or written. The widget used to write its placed
+  // ORBAT to `orbatJson`, a Workshop translation function rewrote it into
+  // `translatedInputOrbat`, and that was sent to the older cseValidateOrbat.
+  // Validation now happens on the phase ORBAT in the ontology (Translator
+  // preflight here, CSE in Execute). Both fields stay declared for one release
+  // so existing Workshop wiring does not break; then remove them and the
+  // Workshop translation function (docs/ORBAT_PIPELINE_PLAN.md, 3.2).
   {
     fieldId: "orbatJson",
     field: {
       type: "single" as const,
       label: "ORBAT JSON output (legacy)",
       helperText:
-        "Legacy: the placed ORBAT as JSON, consumed by the Workshop translation function " +
-        "that feeds translatedInputOrbat. Prefer the object-set outputs above.",
+        "Deprecated — no longer written. Unwire it; it will be removed in the next release.",
       fieldValue: {
         type: "inputOutput" as const,
         variableType: { type: "string" as const, defaultValue: "" },
@@ -162,8 +159,8 @@ export const ORBAT_CONFIG = [
       type: "single" as const,
       label: "Translated Input Orbat (legacy)",
       helperText:
-        "Legacy: the translated ORBAT coming back from the Workshop translation function. " +
-        "The widget sends it to cseValidateOrbat when it changes.",
+        "Deprecated — no longer read. Unwire it and remove the Workshop translation function " +
+        "that fed it.",
       fieldValue: {
         type: "inputOutput" as const,
         variableType: { type: "string" as const, defaultValue: "" },

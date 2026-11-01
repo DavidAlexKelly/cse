@@ -44,3 +44,9 @@ export function sideForSidc(sidc: string | undefined): Side {
   const aff = (sidc?.[1] ?? "F").toUpperCase();
   return aff === "H" || aff === "S" ? "red" : "blue";
 }
+
+/**
+ * The DIS value written when a unit has no real one. The Translator and
+ * preflight use the same literal (rules fixture: placeholderDis).
+ */
+export const PLACEHOLDER_DIS = "0.0.0.0.0.0.0";

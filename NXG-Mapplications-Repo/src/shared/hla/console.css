@@ -1,0 +1,136 @@
+/* shared/hla/console.css — the screen header used by HLA Map and Analysis.
+ *
+ * The same pattern as Execute and Readiness (apps/execute/execute.css,
+ * apps/readiness/readiness.css): an eyebrow naming the act of the demo, a
+ * title, labelled controls, the demo-mode switch, then the app switcher.
+ * Buttons are the shared mil-btn classes (shared/styles/components.css).
+ */
+.hc-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 18px;
+  min-height: 56px;
+  border-bottom: 1px solid var(--border-subtle, #232a40);
+  background: var(--bg-panel-flat, #111418);
+  color: var(--text-primary, #e0e4ec);
+  font-family: var(--font-sans, "Inter", system-ui, sans-serif);
+  flex-shrink: 0;
+}
+.hc-heading {
+  min-width: 0;
+}
+.hc-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #58a6ff;
+}
+.hc-title {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+.hc-spacer {
+  flex: 1;
+}
+.hc-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--border-subtle, #232a40);
+}
+
+/* Labelled select, as Execute's "Phase". */
+.hc-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted, #8a93a6);
+}
+.hc-field select {
+  padding: 5px 8px;
+  background: #0f131b;
+  border: 1px solid var(--border-default, #2f3860);
+  border-radius: 4px;
+  color: #e8ecf4;
+  font: 12px var(--font-sans, "Inter", system-ui, sans-serif);
+  min-width: 180px;
+  max-width: 340px;
+}
+
+/* Two-way view switch (Map | Debrief). */
+.hc-seg {
+  display: inline-flex;
+  border: 1px solid var(--border-default, #2f3860);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.hc-seg button {
+  padding: 5px 14px;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted, #8a93a6);
+  font: 600 11px var(--font-sans, "Inter", system-ui, sans-serif);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.hc-seg button + button {
+  border-left: 1px solid var(--border-default, #2f3860);
+}
+.hc-seg button[aria-pressed="true"] {
+  background: var(--accent-primary-muted, rgba(47, 191, 113, 0.16));
+  color: var(--accent-primary, #2fbf71);
+}
+
+/* Connection / run status: a dot and a line of text. */
+.hc-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted, #8a93a6);
+  white-space: nowrap;
+}
+.hc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.hc-mono {
+  font-family: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+  font-size: 11px;
+}
+
+/* Demo mode — identical to Execute's toggle and badge. */
+.hc-demo-toggle {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.hc-demo-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #f0b429;
+  border: 1px solid #f0b429;
+  white-space: nowrap;
+}
+.hc-banner {
+  padding: 6px 18px;
+  background: rgba(240, 180, 41, 0.12);
+  border-bottom: 1px solid rgba(240, 180, 41, 0.4);
+  color: #f5d27a;
+  font: 12px var(--font-sans, "Inter", system-ui, sans-serif);
+  flex-shrink: 0;
+}

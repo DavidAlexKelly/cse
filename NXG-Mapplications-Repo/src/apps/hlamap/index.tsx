@@ -23,6 +23,8 @@ import { useEntityTrackStream } from "./hooks/useEntityTrackStream";
 import { useMockSimulation } from "./hooks/useMockSimulation";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { HLAMAP_CONFIG } from "./hlamapConfig";
+import { topLevelWindow, useMockDemo } from "@/shared/hooks/useMockDemo";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedBool(field: any): boolean | null {
@@ -56,9 +58,16 @@ const HlaMapApp: FC = () => {
   // client-side from the OP-BALTIC-SHIELD-2026 ORBAT, so the app is fully
   // demonstrable with no simulator, bridge or RTI available.
   const workshopCtxAsync = useWorkshopContext(HLAMAP_CONFIG);
+  const navigate = useAppNavigate();
+  const topLevel = useMemo(topLevelWindow, []);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = workshopCtxAsync.status === "LOADED" ? (workshopCtxAsync.value as any) : null;
-  const mockDemo = loadedBool(ctx?.mockDemo) ?? false;
+  // Workshop's boolean when embedded; ?mock=1 and a toggle when standalone —
+  // the same switch as Execute and Analysis, so the demo path stays in one mode.
+  const { mockDemo, standalone, setMockDemo } = useMockDemo({
+    value: loadedBool(ctx?.mockDemo),
+    contextLoaded: workshopCtxAsync.status === "LOADED",
+  });
 
   // Both sources are called unconditionally, because React requires hooks to run
   // on every render, and the active one is selected below. The mock idles while
@@ -446,6 +455,9 @@ const HlaMapApp: FC = () => {
         onStart={() => void runBridge("Start scenario", bridge.startScenario)}
         onPause={() => void runBridge("Pause scenario", bridge.pauseScenario)}
         onStop={() => void runBridge("Stop scenario", bridge.stopScenario)}
+        mockDemo={mockDemo}
+        onToggleMockDemo={standalone ? setMockDemo : undefined}
+        onOpenAnalysis={topLevel ? () => navigate("/analysis") : undefined}
       />
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <MapView

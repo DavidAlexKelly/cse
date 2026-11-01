@@ -9,28 +9,48 @@
 // duration. Windows outside the resident buffer are fetched on demand when the
 // playhead lands on them, so a 16-hour run is navigable without ever pulling
 // 20 million rows into the browser.
-
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
+import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { BALTIC_SHIELD_PLAN } from "@/shared/hla/balticShieldPlan";
 import type { HlaEntity, LatLon } from "@/shared/hla/types";
-import AnalysisMap, {
-  DEFAULT_PLAN_LAYERS,
-  type PlanLayerToggles,
-} from "./components/AnalysisMap";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { useMockDemo } from "@/shared/hooks/useMockDemo";
+import { topLevelWindow } from "@/shared/hooks/useMockDemo";
+import {
+  type WorkshopObjectSetValue,
+  useWorkshopObjectKey,
+} from "@/shared/hooks/useWorkshopObjectKey";
+import { launchForRun } from "@/shared/lib/launchRecords";
+import { useLaunchRecords } from "@/shared/lib/launchStore";
+import { SqlError } from "@/shared/lib/sqlClient";
+import { usePhaseCatalogues } from "../scenarioPlanner/hooks/usePhaseCatalogues";
+import { useScenario } from "../scenarioPlanner/hooks/useScenario";
+import { DEFAULT_SCENARIO_ID } from "../scenarioPlanner/shared/phaseColours";
+import { ANALYSIS_CONFIG } from "./analysisConfig";
+import AnalysisMap, { DEFAULT_PLAN_LAYERS, type PlanLayerToggles } from "./components/AnalysisMap";
 import CompliancePanel from "./components/CompliancePanel";
 import DebriefView from "./components/DebriefView";
+import { MatchReview } from "./components/MatchReview";
+import type { NextPhaseState } from "./components/NextPhaseCard";
 import SidePanel from "./components/SidePanel";
 import Timeline from "./components/Timeline";
 import TopBar, { type AnalysisView } from "./components/TopBar";
-import { UI } from "./components/ui";
+import { UI, tint } from "./components/ui";
+import { createNextPhaseFromRun } from "./data/nextPhase";
+import { loadPhaseStartState } from "./data/phasePlanSource";
 import { listRuns } from "./data/tracks";
-import { SqlError } from "@/shared/lib/sqlClient";
-import { planKeyEvents } from "./lib/planEvents";
-import { useRunPlayback } from "./hooks/useRunPlayback";
+import { useAnalystCalls } from "./hooks/useAnalystCalls";
+import { useLivePhaseAnalysis } from "./hooks/useLivePhaseAnalysis";
+import { useMatchOverrides } from "./hooks/useMatchOverrides";
 import { createMockRun, useMockRunPlayback } from "./hooks/useMockRunPlayback";
-import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
-import { useMockDemo } from "@/shared/hooks/useMockDemo";
-import { ANALYSIS_CONFIG } from "./analysisConfig";
+import { useRunPlayback } from "./hooks/useRunPlayback";
+import { DEMO_OBJECTIVES } from "./lib/demoObjectives";
+import { actualStartState, nextPhaseName } from "./lib/nextPhase";
+import { type MeasuredOrder, assessObjectives } from "./lib/objectiveAssessment";
+import { planKeyEvents } from "./lib/planEvents";
+import { sampleMockTrack } from "./lib/sampleMockTrack";
 import type { RunSummary } from "./types";
 
 /** Positions retained behind the selected unit, in frames. */
@@ -53,10 +73,10 @@ function Banner({ tone, children }: { tone: "error" | "warn"; children: React.Re
   return (
     <div
       style={{
-        background: `${color}18`,
-        borderBottom: `1px solid ${color}66`,
+        background: tint(color, 9),
+        borderBottom: `1px solid ${tint(color, 40)}`,
         color,
-        fontFamily: UI.fontMono,
+        fontFamily: UI.fontSans,
         fontSize: 11,
         padding: "8px 14px",
         lineHeight: 1.5,
@@ -71,14 +91,14 @@ function Banner({ tone, children }: { tone: "error" | "warn"; children: React.Re
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedString(field: any): string | null {
   return field?.fieldValue?.status === "LOADED"
-    ? (field.fieldValue.value as string) ?? null
+    ? ((field.fieldValue.value as string) ?? null)
     : null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedBool(field: any): boolean | null {
   return field?.fieldValue?.status === "LOADED"
-    ? (field.fieldValue.value as boolean) ?? null
+    ? ((field.fieldValue.value as boolean) ?? null)
     : null;
 }
 
@@ -133,7 +153,7 @@ const AnalysisScreen: FC = () => {
   const mockRun = useMemo(() => createMockRun(), []);
 
   const runs = useMemo(
-    () => (mockDemo ? [mockRun] : runsQuery.data ?? []),
+    () => (mockDemo ? [mockRun] : (runsQuery.data ?? [])),
     [mockDemo, mockRun, runsQuery.data],
   );
 
@@ -158,20 +178,26 @@ const AnalysisScreen: FC = () => {
   // ── Outputs: run and selected entity ──────────────────────────────────────
   // `run` is bidirectional, so writing it back here is what lets a debrief page
   // follow the screen rather than having to be driven separately.
+  // Writes go through a ref: each setLoadedValue hands back a NEW context
+  // object, so depending on `ctx` here re-ran the write forever (React's
+  // "Maximum update depth exceeded"). Only a change of value should write.
+  const ctxRef = useRef(ctx);
+  ctxRef.current = ctx;
+  const hasCtx = ctx != null;
   useEffect(() => {
-    if (!ctx) return;
-    ctx.run?.setLoadedValue?.(selectedRunId ?? "");
-  }, [ctx, selectedRunId]);
+    ctxRef.current?.run?.setLoadedValue?.(selectedRunId ?? "");
+  }, [hasCtx, selectedRunId]);
 
   useEffect(() => {
-    if (!ctx) return;
-    ctx.selectedEntity?.setLoadedValue?.(selectedEntityId ?? "");
-    if (selectedEntityId) ctx.onEntitySelected?.executeEvent?.(undefined);
-  }, [ctx, selectedEntityId]);
+    const current = ctxRef.current;
+    if (!current) return;
+    current.selectedEntity?.setLoadedValue?.(selectedEntityId ?? "");
+    if (selectedEntityId) current.onEntitySelected?.executeEvent?.(undefined);
+  }, [hasCtx, selectedEntityId]);
 
   const selectedRun: RunSummary | null = useMemo(
     () => runs.find((run) => run.id === selectedRunId) ?? null,
-    [runs, selectedRunId]
+    [runs, selectedRunId],
   );
 
   // Both are called unconditionally because hooks must be, but each is handed
@@ -190,12 +216,55 @@ const AnalysisScreen: FC = () => {
     setSelectedOrderId(null);
   }, [selectedRunId]);
 
+  // ── Which phase the run executed ─────────────────────────────────────────
+  // The mock run carries its own plan. A real run is measured against a phase
+  // of the scenario: the one picked here, else the one Execute recorded
+  // launching it for, else Workshop's selected phase, else the first.
+  const scenarioRaw =
+    ctx?.scenario?.fieldValue?.status === "LOADED" ? ctx.scenario.fieldValue.value : undefined;
+  const { scenarioMeta, ontologyPhases } = useScenario(scenarioRaw);
+  const scenarioId = scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID;
+  const phases = useMemo(() => ontologyPhases ?? [], [ontologyPhases]);
+  const phaseRaw: WorkshopObjectSetValue =
+    ctx?.selectedPhase?.fieldValue?.status === "LOADED"
+      ? (ctx.selectedPhase.fieldValue.value as WorkshopObjectSetValue)
+      : undefined;
+  const inboundPhaseId = useWorkshopObjectKey(phaseRaw, NxgPhase).primaryKey ?? null;
+  const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(null);
+  // Launch records (NxgCseLaunch, else this device's): which phase a run executed.
+  const launchRecords = useLaunchRecords(mockDemo ? null : scenarioId, !mockDemo);
+  const launchedPhaseId = useMemo(() => {
+    if (mockDemo || !selectedRun) return null;
+    const record = launchForRun(selectedRun, launchRecords.launches);
+    return record && record.scenarioId === scenarioId ? record.phaseId : null;
+  }, [mockDemo, selectedRun, scenarioId, launchRecords.launches]);
+  // A different run may have executed a different phase: let the record speak again.
+  useEffect(() => setPickedPhaseId(null), [selectedRunId]);
+  const known = (id: string | null) => (id && phases.some((p) => p.id === id) ? id : null);
+  const phaseId =
+    known(pickedPhaseId) ??
+    known(launchedPhaseId) ??
+    known(inboundPhaseId) ??
+    phases[0]?.id ??
+    null;
+  const phase = phases.find((p) => p.id === phaseId) ?? null;
+
   // ── Plan vs execution ────────────────────────────────────────────────────
-  // Keyed on the playback supplying a compliance result rather than on the
-  // mock-demo flag. Only mock runs can produce one today, but when a real run
-  // can — a plan resolved from the ontology, a track sampled by SQL — nothing
-  // here needs to change.
-  const compliance = playback.compliance;
+  // Mock runs: the checked-in plan and synthetic track. Real runs: the
+  // phase's saved plan, measured against the run's whole track with planned
+  // units matched to simulated entities (useLivePhaseAnalysis).
+  const matchOverrides = useMatchOverrides(mockDemo ? null : phaseId);
+  const [reviewingMatches, setReviewingMatches] = useState(false);
+  const live = useLivePhaseAnalysis(
+    mockDemo ? null : selectedRun,
+    scenarioId,
+    phase,
+    matchOverrides.overrides,
+  );
+  const analysis = mockDemo
+    ? { plan: playback.plan, compliance: playback.compliance, debrief: playback.debrief }
+    : { plan: live.plan, compliance: live.compliance, debrief: live.debrief };
+  const compliance = analysis.compliance;
   const selectedOrder = useMemo(
     () => compliance?.orders.find((order) => order.orderId === selectedOrderId) ?? null,
     [compliance, selectedOrderId],
@@ -213,7 +282,133 @@ const AnalysisScreen: FC = () => {
     [compliance],
   );
 
-  const debrief = playback.debrief;
+  const debrief = analysis.debrief;
+
+  // ── Training objectives ──────────────────────────────────────────────────
+  // The phase's objectives (scenario-wide ones when none are tied to a phase),
+  // assessed against the measured orders. Mock mode falls back to demo
+  // objectives only when the ontology has none, and labels them.
+  const catalogues = usePhaseCatalogues(scenarioId);
+  const objectivesPhaseId = mockDemo ? BALTIC_SHIELD_PLAN.phaseId : phaseId;
+  const objectivesFor = useMemo(() => {
+    const forPhase = catalogues.objectives.filter((o) => o.phaseId === objectivesPhaseId);
+    if (forPhase.length > 0) return { list: forPhase, source: "ontology" as const };
+    const scenarioWide = catalogues.objectives.filter((o) => !o.phaseId);
+    if (scenarioWide.length > 0) return { list: scenarioWide, source: "ontology" as const };
+    if (mockDemo && !catalogues.loading) return { list: DEMO_OBJECTIVES, source: "demo" as const };
+    return { list: [], source: "ontology" as const };
+  }, [catalogues.objectives, catalogues.loading, objectivesPhaseId, mockDemo]);
+  const phaseInjects = useMemo(
+    () => catalogues.injects.filter((i) => i.phaseId && i.phaseId === objectivesPhaseId),
+    [catalogues.injects, objectivesPhaseId],
+  );
+  const assessments = useMemo(() => {
+    if (!analysis.compliance) return [];
+    const category = new Map((analysis.plan?.orders ?? []).map((o) => [o.id, o.category]));
+    const measured: MeasuredOrder[] = analysis.compliance.orders.map((c) => ({
+      compliance: c,
+      category: category.get(c.orderId) ?? "Infantry",
+    }));
+    return assessObjectives(objectivesFor.list, measured, phaseInjects);
+  }, [analysis.compliance, analysis.plan, objectivesFor.list, phaseInjects]);
+  // ── Next phase from actuals ──────────────────────────────────────────────
+  // The phase this run executed, the track it produced and which entity each
+  // planned unit is — from the live analysis, or from the mock run's own plan.
+  const navigate = useAppNavigate();
+  const sourcePhase = mockDemo
+    ? (phases.find((p) => p.id === BALTIC_SHIELD_PLAN.phaseId) ?? null)
+    : phase;
+  const runTrack = useMemo(() => {
+    if (mockDemo) {
+      if (!selectedRun) return null;
+      return {
+        track: sampleMockTrack(Math.max(1, selectedRun.endS - selectedRun.startS)),
+        entityFor: new Map(
+          BALTIC_SHIELD_PLAN.units.flatMap((u) =>
+            u.entityId ? [[u.id, u.entityId] as const] : [],
+          ),
+        ),
+      };
+    }
+    return live.track && live.match ? { track: live.track, entityFor: live.match.entityFor } : null;
+  }, [mockDemo, selectedRun, live.track, live.match]);
+  const [nextPhase, setNextPhase] = useState<NextPhaseState>({ status: "idle" });
+  useEffect(() => setNextPhase({ status: "idle" }), [selectedRunId, sourcePhase?.id]);
+
+  const handleCreateNextPhase = useCallback(
+    async (name: string) => {
+      if (!sourcePhase || !runTrack || !analysis.plan) return;
+      setNextPhase({ status: "working", step: "Reading the phase…" });
+      try {
+        const source = await loadPhaseStartState(sourcePhase.id);
+        if (!source || source.units.length === 0) {
+          throw new Error(`"${sourcePhase.name}" has no saved start state to carry forward.`);
+        }
+        const start = actualStartState(source, analysis.plan, runTrack.entityFor, runTrack.track);
+        const created = await createNextPhaseFromRun({
+          scenarioId,
+          scenarioName: scenarioMeta?.scenarioName ?? "Exercise",
+          source: sourcePhase,
+          name,
+          sequenceNumber: phases.length + 1,
+          startState: start.state,
+          onProgress: (step) => setNextPhase({ status: "working", step }),
+        });
+        setNextPhase({
+          status: "done",
+          result: {
+            phaseName: created.phaseName,
+            observed: start.observed,
+            notObserved: start.notObserved,
+            orbatUnits: created.orbatUnits,
+          },
+        });
+        ctx?.onNextPhaseCreated?.executeEvent?.(undefined);
+      } catch (err) {
+        setNextPhase({ status: "error", error: String((err as Error)?.message ?? err) });
+      }
+    },
+    [
+      sourcePhase,
+      runTrack,
+      analysis.plan,
+      scenarioId,
+      scenarioMeta?.scenarioName,
+      phases.length,
+      ctx,
+    ],
+  );
+
+  const nextPhaseBlocked = !sourcePhase
+    ? "The phase this run executed is not in the ontology."
+    : !runTrack || !analysis.plan
+      ? "Waiting for the run to be measured…"
+      : null;
+
+  const assessmentCtx = useMemo(
+    () =>
+      selectedRun && objectivesPhaseId
+        ? {
+            scenarioId,
+            phaseId: objectivesPhaseId,
+            runId: selectedRun.id,
+            runStartS: selectedRun.startS,
+            runEndS: selectedRun.endS,
+          }
+        : null,
+    [selectedRun, objectivesPhaseId, scenarioId],
+  );
+  const suggestions = useMemo(
+    () => new Map(assessments.map((a) => [a.objectiveId, { rating: a.suggested, basis: a.basis }])),
+    [assessments],
+  );
+  // The demo run's calls stay on this device: a synthetic run must not leave
+  // assessments in the real record.
+  const { calls, setCall, storage, storageNote } = useAnalystCalls(
+    assessmentCtx,
+    !mockDemo,
+    suggestions,
+  );
 
   // A run with no event log has nothing to put on a second tab, and an empty
   // tab is worse than no tab. Fall back to the map if one disappears from under
@@ -248,10 +443,7 @@ const AnalysisScreen: FC = () => {
   // Destroyed units are dimmed rather than removed: in a replay, where a unit
   // died is part of what you are looking for. The feed does not populate
   // damage_state today, so this is currently inert.
-  const isFaded = useCallback(
-    (entity: HlaEntity) => entity.damageState === "Destroyed",
-    []
-  );
+  const isFaded = useCallback((entity: HlaEntity) => entity.damageState === "Destroyed", []);
 
   // ── Breadcrumb trail for the selected unit ───────────────────────────────
   // Accumulated from frames as they are displayed rather than queried, so it
@@ -281,13 +473,14 @@ const AnalysisScreen: FC = () => {
 
     lastTrailTsRef.current = currentFrameTs;
     const points = [...trailRef.current.points, { lat: entity.lat, lon: entity.lon }].slice(
-      -TRAIL_LENGTH
+      -TRAIL_LENGTH,
     );
     trailRef.current = { id: selectedEntityId, points };
     setTrail(points);
   }, [selectedEntityId, playback.entities, currentFrameTs]);
 
   const runsError = runsQuery.error;
+  const standaloneWindow = useMemo(topLevelWindow, []);
   const permissionProblem =
     playback.permissionDenied || (runsError instanceof SqlError && runsError.permissionDenied);
 
@@ -312,7 +505,33 @@ const AnalysisScreen: FC = () => {
         onToggleMockDemo={ownsMockDemo ? setMockDemo : undefined}
         view={debriefAvailable ? view : undefined}
         onViewChange={debriefAvailable ? setView : undefined}
+        phases={mockDemo ? undefined : phases}
+        selectedPhaseId={phaseId}
+        onSelectPhase={setPickedPhaseId}
+        title={mockDemo ? "Operation BALTIC SHIELD" : scenarioMeta?.scenarioName}
       />
+
+      {!mockDemo && selectedRun && phase && (
+        <PlanStatus
+          live={live}
+          phaseName={phase.name}
+          launched={launchedPhaseId === phaseId}
+          reviewing={reviewingMatches}
+          onReview={() => setReviewingMatches((v) => !v)}
+        />
+      )}
+      {!mockDemo && reviewingMatches && live.status === "ready" && live.plan && (
+        <MatchReview
+          units={live.plan.units}
+          matches={live.match?.matches ?? []}
+          candidates={live.candidates ?? []}
+          overrides={matchOverrides.overrides}
+          stale={live.staleOverrides ?? []}
+          onChange={matchOverrides.setOverride}
+          onClearAll={matchOverrides.clearAll}
+          onClose={() => setReviewingMatches(false)}
+        />
+      )}
 
       {permissionProblem && (
         <Banner tone="error">
@@ -332,7 +551,83 @@ const AnalysisScreen: FC = () => {
       )}
 
       {view === "map" && (
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
+          {!mockDemo && !runsQuery.isLoading && runs.length === 0 && (
+            // An empty grey map says nothing; say what to do instead.
+            <div
+              role="status"
+              style={{
+                position: "absolute",
+                top: "38%",
+                left: "calc(50% - 160px)",
+                transform: "translate(-50%, -50%)",
+                zIndex: 1100,
+                maxWidth: 420,
+                background: UI.bg1,
+                borderRadius: UI.radiusCard,
+                border: `1px solid ${UI.border}`,
+                borderLeft: `3px solid ${UI.accent}`,
+                padding: "16px 18px",
+                color: UI.text,
+                fontSize: 13,
+                lineHeight: 1.5,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: UI.fontSans,
+                  fontSize: 10,
+                  letterSpacing: 1,
+                  color: UI.accent,
+                }}
+              >
+                NO RECORDED RUNS {runsError != null ? "AVAILABLE" : "YET"}
+              </div>
+              <div style={{ margin: "6px 0 10px" }}>
+                {runsError != null
+                  ? "The track dataset could not be read, so there is no run to replay."
+                  : "A run appears here once a phase has been launched and the federation has published positions."}{" "}
+                Launch a phase from Execute
+                {ownsMockDemo ? ", or replay the demo run." : ", or switch on demo mode."}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {ownsMockDemo && (
+                  <button
+                    type="button"
+                    onClick={() => setMockDemo(true)}
+                    style={{
+                      background: tint(UI.amber, 13),
+                      color: UI.amber,
+                      border: `1px solid ${UI.amber}`,
+                      fontFamily: UI.fontSans,
+                      fontSize: 11,
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    REPLAY THE DEMO RUN
+                  </button>
+                )}
+                {standaloneWindow && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/execute")}
+                    style={{
+                      background: "transparent",
+                      color: UI.accent,
+                      border: `1px solid ${UI.border}`,
+                      fontFamily: UI.fontSans,
+                      fontSize: 11,
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    OPEN EXECUTE →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           <AnalysisMap
             entities={playback.entities}
             selectedId={selectedEntityId}
@@ -346,7 +641,7 @@ const AnalysisScreen: FC = () => {
             // Re-frame the camera when the analyst switches run: a different
             // execution can be somewhere else entirely.
             fitKey={selectedRun?.id}
-            plan={playback.plan}
+            plan={analysis.plan}
             compliance={compliance}
             selectedOrderId={selectedOrderId}
             onSelectOrder={handleSelectOrder}
@@ -368,6 +663,28 @@ const AnalysisScreen: FC = () => {
           events={debrief.events}
           runDurationSec={Math.max(1, selectedRun.endS - selectedRun.startS)}
           onJumpToMoment={handleJumpToMoment}
+          nextPhase={{
+            sourcePhaseName: `"${sourcePhase?.name ?? analysis.plan?.phaseName ?? "this phase"}"`,
+            defaultName: nextPhaseName(sourcePhase?.name ?? analysis.plan?.phaseName ?? "Phase 1"),
+            blockedReason: nextPhaseBlocked,
+            demo: mockDemo,
+            state: nextPhase,
+            onCreate: (name) => void handleCreateNextPhase(name),
+            onOpenPlanner: () => navigate("/scenario-plan"),
+          }}
+          objectives={
+            analysis.compliance
+              ? {
+                  phaseName: analysis.plan?.phaseName ?? phase?.name ?? "this phase",
+                  assessments,
+                  source: objectivesFor.source,
+                  calls,
+                  onCall: setCall,
+                  storage,
+                  storageNote,
+                }
+              : undefined
+          }
         />
       )}
 
@@ -408,7 +725,7 @@ const AnalysisScreen: FC = () => {
               background: UI.bg1,
               borderTop: `1px solid ${UI.border}`,
               padding: "18px 14px",
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 11,
               color: UI.textDim,
               letterSpacing: 1,
@@ -423,6 +740,99 @@ const AnalysisScreen: FC = () => {
     </div>
   );
 };
+
+/** One line on what this run is being measured against, and how well the two lined up. */
+function PlanStatus({
+  live,
+  phaseName,
+  launched,
+  reviewing,
+  onReview,
+}: {
+  live: ReturnType<typeof useLivePhaseAnalysis>;
+  phaseName: string;
+  launched: boolean;
+  reviewing: boolean;
+  onReview: () => void;
+}) {
+  let text: string;
+  let tone: string = UI.textDim;
+  switch (live.status) {
+    case "loading":
+      text = `Measuring this run against "${phaseName}" — reading the whole run…`;
+      break;
+    case "no-plan":
+      text = `"${phaseName}" has no saved plan to measure against. Pick another phase, or plan this one in the Scenario Planner.`;
+      tone = UI.amber;
+      break;
+    case "error":
+      text = `Could not measure this run against "${phaseName}": ${live.error}`;
+      tone = UI.red;
+      break;
+    case "ready": {
+      const matches = live.match?.matches ?? [];
+      const by = (m: string) => matches.filter((x) => x.method === m).length;
+      text =
+        `Plan: "${phaseName}"${launched ? " (launched from Execute)" : ""} — ` +
+        `${matches.length} of ${live.plannedCount} planned units found in the run` +
+        (matches.length > 0
+          ? ` (${[
+              by("manual") > 0 ? `${by("manual")} corrected` : "",
+              `${by("name")} by name`,
+              `${by("position")} by nearest position — position matches are inferred`,
+            ]
+              .filter(Boolean)
+              .join(", ")})`
+          : "") +
+        "." +
+        ((live.staleOverrides?.length ?? 0) > 0
+          ? ` ${live.staleOverrides!.length} correction${live.staleOverrides!.length === 1 ? " names" : "s name"} no one in this run.`
+          : "");
+      if (matches.length < live.plannedCount || (live.staleOverrides?.length ?? 0) > 0)
+        tone = UI.amber;
+      break;
+    }
+    default:
+      return null;
+  }
+  return (
+    <div
+      style={{
+        background: UI.bg1,
+        borderBottom: `1px solid ${UI.border}`,
+        color: tone,
+        fontFamily: UI.fontSans,
+        fontSize: 10,
+        padding: "6px 14px",
+        flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+      }}
+      role="status"
+    >
+      <span style={{ flex: 1 }}>{text}</span>
+      {live.status === "ready" && (live.plannedCount ?? 0) > 0 && (
+        <button
+          type="button"
+          onClick={onReview}
+          style={{
+            background: reviewing ? UI.bg2 : "transparent",
+            color: UI.accent,
+            border: `1px solid ${UI.border}`,
+            fontFamily: UI.fontSans,
+            fontSize: 10,
+            padding: "2px 8px",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          {reviewing ? "HIDE MATCHES" : "REVIEW MATCHES"}
+        </button>
+      )}
+    </div>
+  );
+}
 
 const AnalysisScreenApp: FC = () => (
   <QueryClientProvider client={queryClient}>

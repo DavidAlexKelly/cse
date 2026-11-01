@@ -165,10 +165,53 @@ export function echelonForPlacedUnit(unit: Pick<PlacedUnit, "templateId" | "sidc
   return "Battalion";
 }
 
+/**
+ * Default cap for "Auto-generate ORBAT" when the root's echelon is unknown.
+ * Counted in NxgUnit rows (quantity expanded), which is what a write costs.
+ */
+export const AUTO_ORBAT_MAX_UNITS = 500;
+
+/**
+ * Unit cap for a full-depth auto-generated ORBAT, by the root's echelon.
+ *
+ * Big enough that a formation reaches its working level — a brigade reaches
+ * platoons, a battalion its sections — and small enough that one reconcile
+ * call, one load and one CSE run stay fast. A division gets the most room, and
+ * still stops above the bottom of the ladder rather than writing ~3,000 teams.
+ */
+const AUTO_ORBAT_CAPS: Partial<Record<UnitEchelon, number>> = {
+  "Army Group": 3000,
+  Army: 3000,
+  Corps: 3000,
+  Division: 3000,
+  Brigade: 1000,
+  Regiment: 400,
+  Group: 400,
+  Battalion: 150,
+  Squadron: 150,
+  Company: 40,
+  Battery: 40,
+  Troop: 40,
+  Platoon: 15,
+  Section: 8,
+};
+
+export function autoOrbatCapFor(echelon: string | undefined): number {
+  return AUTO_ORBAT_CAPS[(echelon ?? "") as UnitEchelon] ?? AUTO_ORBAT_MAX_UNITS;
+}
+
 export interface OrbatSkeletonOptions {
-  /** Levels of subordinates to generate below the root. Default 2. */
+  /** Levels of subordinates to generate below the root. Default 2. Pass
+   *  Infinity to go to the bottom of the echelon ladder. */
   depth?: number;
-  /** Cap on total nodes, so a large formation can't run away. Default 60. */
+  /**
+   * Cap on total units (quantity expanded), so a large formation can't run
+   * away. Default 60.
+   *
+   * The tree is built breadth-first and a level is only added if ALL of it
+   * fits: a capped division keeps every brigade and battalion and loses its
+   * platoons, rather than keeping one brigade at full depth and losing two.
+   */
   maxNodes?: number;
   /**
    * SWORD catalogue index. When supplied, every generated organisation is
@@ -212,6 +255,22 @@ export function buildOrbatSkeleton(
   unit: PlacedUnit,
   options: OrbatSkeletonOptions = {},
 ): CompositionNode {
+  return buildOrbatSkeletonWithReport(unit, options).root;
+}
+
+export interface OrbatSkeletonReport {
+  root: CompositionNode;
+  /** NxgUnit rows the tree will write (quantity expanded). */
+  unitCount: number;
+  /** True when a level was left out because it would exceed maxNodes. */
+  truncated: boolean;
+}
+
+/** buildOrbatSkeleton, plus whether the cap cut it short. */
+export function buildOrbatSkeletonWithReport(
+  unit: PlacedUnit,
+  options: OrbatSkeletonOptions = {},
+): OrbatSkeletonReport {
   const depth = options.depth ?? 2;
   const maxNodes = options.maxNodes ?? 60;
 
@@ -229,8 +288,6 @@ export function buildOrbatSkeleton(
     UNIT_ARCHETYPES.find((a) => unit.templateId?.startsWith(a.id)) ?? undefined;
   const militaryService = template?.militaryService ?? archetype?.militaryService ?? "Army";
 
-  let nodeCount = 0;
-
   const makeNode = (
     label: string,
     echelon: UnitEchelon,
@@ -239,8 +296,6 @@ export function buildOrbatSkeleton(
      *  different echelon and would otherwise all claim the same type key. */
     isRoot = false,
   ): CompositionNode => {
-    nodeCount++;
-
     // Match the node to a SWORD formation of the same nature and echelon.
     // Null above company level is the expected answer, not a failure: SWORD
     // composes brigades and divisions out of automats rather than carrying
@@ -278,28 +333,37 @@ export function buildOrbatSkeleton(
    *          └─ 2 Bn, 1 Bde
    * The parent's own designator (not the whole chain) is enough to
    * disambiguate, and keeps names short enough for the map and the tree.
+   *
+   * Built BREADTH-FIRST, one level at a time. A level is staged in full and
+   * only attached if the whole of it fits under maxNodes. The depth-first walk
+   * this replaces filled the first brigade to the bottom and then ran out of
+   * budget, leaving the other brigades empty — a lopsided force no planner
+   * would draw.
    */
-  const expand = (
-    node: CompositionNode,
-    echelon: UnitEchelon,
-    levelsLeft: number,
-    parentQualifier: string,
-  ): void => {
-    if (levelsLeft <= 0) return;
-    const nextEchelon = childEchelon(echelon);
-    if (!nextEchelon) return;
-    const count = SUBORDINATE_COUNT[echelon] ?? 0;
-    if (count === 0) return;
+  interface FrontierItem {
+    node: CompositionNode;
+    echelon: UnitEchelon;
+    levelsLeft: number;
+    qualifier: string;
+  }
+
+  /** Units written for a node (quantity expanded), including its subtree. */
+  const weight = (node: CompositionNode): number => countNodes(node);
+
+  const stageChildren = (item: FrontierItem): { child: CompositionNode; next?: FrontierItem }[] => {
+    if (item.levelsLeft <= 0) return [];
+    const nextEchelon = childEchelon(item.echelon);
+    if (!nextEchelon) return [];
+    const count = SUBORDINATE_COUNT[item.echelon] ?? 0;
+    const staged: { child: CompositionNode; next?: FrontierItem }[] = [];
 
     for (let i = 0; i < count; i++) {
-      if (nodeCount >= maxNodes) return;
       const ownDesignator = designator(nextEchelon, i);
       const child = makeNode(
-        `${ownDesignator}, ${parentQualifier}`,
+        `${ownDesignator}, ${item.qualifier}`,
         nextEchelon,
         withEchelonGlyph(unit.sidc, nextEchelon),
       );
-      node.children.push(child);
 
       // At an automat the ladder stops being a guess and SWORD has the answer.
       //
@@ -325,16 +389,23 @@ export function buildOrbatSkeleton(
       // the catalogue says "ART.Guns firing platoon ×3, 4 guns each" is
       // strictly worse information.
       if (isAutomatNode(child)) {
-        if (levelsLeft - 1 <= 0 || !options.expandAutomat) continue;
-        const expanded = options.expandAutomat(child);
-        if (!expanded) continue;
-        node.children[node.children.length - 1] = expanded;
-        nodeCount += expanded.children.length;
+        const expanded =
+          item.levelsLeft - 1 > 0 && options.expandAutomat ? options.expandAutomat(child) : null;
+        staged.push({ child: expanded ?? child });
         continue;
       }
 
-      expand(child, nextEchelon, levelsLeft - 1, ownDesignator);
+      staged.push({
+        child,
+        next: {
+          node: child,
+          echelon: nextEchelon,
+          levelsLeft: item.levelsLeft - 1,
+          qualifier: ownDesignator,
+        },
+      });
     }
+    return staged;
   };
 
   const root = makeNode(unit.label, rootEchelon, unit.sidc, true);
@@ -343,15 +414,47 @@ export function buildOrbatSkeleton(
   // placing a company on the map matches it to an automat, and the ladder
   // would then have generated three platoons underneath — the same company
   // twice, in the very first tree the app builds for a placement. The
-  // automat check inside expand() never saw the root, because expand() only
+  // automat check in stageChildren never sees the root, because it only
   // examines the children it creates.
   if (isAutomatNode(root)) {
-    if (depth <= 0 || !options.expandAutomat) return root;
-    return options.expandAutomat(root) ?? root;
+    if (depth <= 0 || !options.expandAutomat) {
+      return { root, unitCount: weight(root), truncated: false };
+    }
+    const expanded = options.expandAutomat(root) ?? root;
+    if (weight(expanded) > maxNodes) return { root, unitCount: weight(root), truncated: true };
+    return { root: expanded, unitCount: weight(expanded), truncated: false };
   }
 
-  expand(root, rootEchelon, depth, unit.label);
-  return root;
+  let unitCount = weight(root);
+  let truncated = false;
+  let frontier: FrontierItem[] = [
+    { node: root, echelon: rootEchelon, levelsLeft: depth, qualifier: unit.label },
+  ];
+
+  while (frontier.length > 0) {
+    const level = frontier.map((item) => ({ item, staged: stageChildren(item) }));
+    const levelWeight = level.reduce(
+      (sum, { staged }) => sum + staged.reduce((s, { child }) => s + weight(child), 0),
+      0,
+    );
+    if (levelWeight === 0) break;
+    if (unitCount + levelWeight > maxNodes) {
+      truncated = true;
+      break;
+    }
+
+    const nextFrontier: FrontierItem[] = [];
+    for (const { item, staged } of level) {
+      for (const { child, next } of staged) {
+        item.node.children.push(child);
+        if (next) nextFrontier.push(next);
+      }
+    }
+    unitCount += levelWeight;
+    frontier = nextFrontier;
+  }
+
+  return { root, unitCount, truncated };
 }
 
 /** Total nodes in a composition tree (accounting for quantity). */

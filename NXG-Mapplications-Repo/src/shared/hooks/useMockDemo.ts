@@ -69,16 +69,23 @@ export function readMockDemoParam(search: string): boolean {
  *                    no Workshop, or one that cannot answer; both mean the
  *                    setting is unreachable unless the app owns it.
  *
- * The order matters. A loaded context always wins, so an embedded widget never
- * grows a second control that could disagree with its module.
+ * A top-level window is always standalone. @osdk/workshop-iframe-custom-widget
+ * reports a LOADED context outside an iframe too — filled with each field's
+ * default — so "loaded" says nothing about a Workshop being present until the
+ * window is known to be embedded. Treating it as Workshop's answer made the
+ * app ignore ?mock=1 and hide its own toggle whenever it was opened directly.
+ *
+ * Embedded, a loaded context always wins, so a widget never grows a second
+ * control that could disagree with its module.
  */
 export function isStandalone(
   contextLoaded: boolean,
   topLevel: boolean,
   handshakeExpired: boolean,
 ): boolean {
+  if (topLevel) return true;
   if (contextLoaded) return false;
-  return topLevel || handshakeExpired;
+  return handshakeExpired;
 }
 
 /** Workshop wins wherever it has an opinion. */
@@ -86,8 +93,12 @@ export function resolveMockDemo(workshopValue: boolean | null, localValue: boole
   return workshopValue ?? localValue;
 }
 
-/** Whether this window is the top-level one, i.e. not embedded anywhere. */
-function topLevelWindow(): boolean {
+/**
+ * Whether this window is the top-level one, i.e. not embedded anywhere.
+ * Standalone, the apps link to each other directly; in Workshop the module's
+ * own tabs do that, so in-app "next step" links are hidden there.
+ */
+export function topLevelWindow(): boolean {
   if (typeof window === "undefined") return false;
   try {
     return window.self === window.top;
@@ -161,7 +172,8 @@ export function useMockDemo(source: MockDemoSource): MockDemoControl {
   }, [standalone, localValue]);
 
   return {
-    mockDemo: resolveMockDemo(workshopValue, localValue),
+    // Standalone, the "Workshop" value is only the field's default.
+    mockDemo: standalone ? localValue : resolveMockDemo(workshopValue, localValue),
     standalone,
     setMockDemo,
   };

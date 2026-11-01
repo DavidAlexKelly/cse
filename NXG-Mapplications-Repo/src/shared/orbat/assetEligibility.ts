@@ -57,13 +57,25 @@ export type AssetIndex = ReadonlyMap<string, OCanonicalAsset>;
  * go through here rather than matching strings at the call site.
  * Returns null for "none"/empty: a unit that is not federated to any simulator.
  */
+const SIM_ALIASES: Readonly<Record<string, SimTarget>> = {
+  vbs: "vbs4",
+  vbs3: "vbs4",
+  vbs4: "vbs4",
+  "onearc/vbs4": "vbs4",
+  sword: "sword",
+  "masa/sword": "sword",
+  simworks: "simworks",
+  "sim works": "simworks",
+  "plexsys/simworks": "simworks",
+};
+
 export function normaliseSimTarget(raw: string | null | undefined): SimTarget | null {
   const value = (raw ?? "").trim().toLowerCase();
   if (!value || value === "none") return null;
-  if (value === "vbs4" || value === "vbs" || value === "vbs3") return "vbs4";
-  if (value === "sword") return "sword";
-  if (value === "simworks" || value === "sim works") return "simworks";
-  return null;
+  // The Translator's alias table (simulator_targets.py), restricted to the
+  // three simulators that have asset catalogues here; the rules fixture
+  // (simulatorNames) keeps the two in step.
+  return SIM_ALIASES[value] ?? null;
 }
 
 /** The catalogues that can model a given entity type. */

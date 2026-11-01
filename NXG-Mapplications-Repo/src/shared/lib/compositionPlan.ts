@@ -20,7 +20,7 @@ import type {
   createNxgUnitHierachyEdge,
 } from "@nxg-simulation-execution-testing/sdk";
 import type { CompositionNode } from "../types/index";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "../orbat/model";
+import { ORGANIC_RELATIONSHIP_KEY, ontologyDate, PLACEHOLDER_DIS } from "../orbat/model";
 
 /**
  * Determines whether a node should get a map symbol.
@@ -111,7 +111,7 @@ export function planComposition(
         allegiance: node.allegiance,
         entityType: node.entityType,
         owningSimulator: node.owningSimulator,
-        dis: "0.0.0.0.0.0.0",
+        dis: PLACEHOLDER_DIS,
         canControlDrones: false,
         canonicalAssetKey: node.canonicalAssetKey ?? null,
         latitude: null, // position set later on the map

@@ -305,15 +305,20 @@ export interface ReconcileUnit {
   unitIdentifier: string;
   entityType: string;
   owningSimulator: string;
-  dis: string;
+  /**
+   * Omit (with latitude/longitude) to leave the stored value alone: the
+   * reconcile writes only the fields present (Translator, plan 2.1). Saving an
+   * edited tree relies on this so it never moves units that already exist.
+   */
+  dis?: string;
   canControlDrones: boolean;
   militaryService: string;
   echelon: string;
   sidc: string;
   affiliation: string;
   allegiance: string;
-  latitude: number | null;
-  longitude: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
   unitTypeKey?: string | null;
   equipmentTypeKey?: string | null;
   /** The chosen catalogue row — the FK the simulator export resolves. */

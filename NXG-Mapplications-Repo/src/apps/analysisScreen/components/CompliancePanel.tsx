@@ -146,7 +146,7 @@ const CompliancePanel: FC<Props> = ({
       >
         <span
           style={{
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
             color: UI.accent,
             letterSpacing: 1,
@@ -156,7 +156,7 @@ const CompliancePanel: FC<Props> = ({
           {expanded ? "▾" : "▸"} PLAN VS EXECUTION
         </span>
 
-        <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
+        <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}>
           {compliance.phaseName} · {summary.total} orders · planned across{" "}
           {compliance.phaseDurationHours} h
         </span>
@@ -165,23 +165,23 @@ const CompliancePanel: FC<Props> = ({
 
         {/* The headline: the distribution, not a row-by-row verdict. */}
         {summary.lateCount > 0 && summary.medianLatePhaseHours != null && (
-          <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.amber }}>
+          <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.amber }}>
             {summary.lateCount}/{summary.arrived} arrivals late · median{" "}
             {hours(summary.medianLatePhaseHours)} h
           </span>
         )}
         {summary.withdrewCount > 0 && (
-          <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.amber }}>
+          <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.amber }}>
             {summary.withdrewCount} did not hold
           </span>
         )}
         {summary.byStatus.NOT_OBSERVED > 0 && (
-          <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
+          <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}>
             {summary.byStatus.NOT_OBSERVED} never published
           </span>
         )}
         {summary.conflictedUnitCount > 0 && (
-          <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.red }}>
+          <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.red }}>
             {summary.conflictedUnitCount} unit
             {summary.conflictedUnitCount === 1 ? "" : "s"} with conflicting orders
           </span>
@@ -196,7 +196,7 @@ const CompliancePanel: FC<Props> = ({
                 padding: "7px 14px",
                 borderBottom: `1px solid ${UI.border}`,
                 background: UI.bg2,
-                fontFamily: UI.fontMono,
+                fontFamily: UI.fontSans,
                 fontSize: 11,
                 color: UI.text,
                 lineHeight: 1.5,
@@ -223,7 +223,7 @@ const CompliancePanel: FC<Props> = ({
               style={{
                 width: "100%",
                 borderCollapse: "collapse",
-                fontFamily: UI.fontMono,
+                fontFamily: UI.fontSans,
                 fontSize: 10,
               }}
             >
@@ -326,7 +326,7 @@ const CompliancePanel: FC<Props> = ({
             style={{
               padding: "5px 14px",
               borderTop: `1px solid ${UI.border}`,
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 9,
               color: UI.textFaint,
               lineHeight: 1.5,

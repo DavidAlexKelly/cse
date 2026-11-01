@@ -7,7 +7,7 @@ from typing import Optional
 
 from src.ontology_store import Unit
 from src.config_store import UnitSimulatorConfig
-from src.utils import get_stable_id
+from src.builders import orbat_id_for
 
 
 def build_sword_organisation(
@@ -32,6 +32,9 @@ def build_sword_organisation(
     Returns:
         SWORD-compatible organisation dict
     """
+    # No POSITION_MISSING flag here, unlike builders.build_base_fields:
+    # validate.xsd gives OrganisationType no Location, so an organisation's
+    # 0,0 never reaches the document. Only units carry a position CSE uses.
     location = {
         "latitude": unit.latitude if unit.latitude is not None else 0.0,
         "longitude": unit.longitude if unit.longitude is not None else 0.0,
@@ -39,7 +42,7 @@ def build_sword_organisation(
 
     node: dict = {
         "$type": "organisation",
-        "id": get_stable_id(unit.primary_key),
+        "id": orbat_id_for(unit, config),
         "name": unit.unit_identifier,
         "sidc": unit.sidc,
         "location": location,
@@ -56,13 +59,11 @@ def build_sword_organisation(
         "simulatorIdentifierCode": unit.simulator_identifier_code,
     }
 
-    if config.sword:
-        node["sword"] = config.sword.to_dict()
-    else:
-        node["sword"] = {
-            "controllable": False,
-            "class": None,
-        }
+    if not config.sword:
+        # build_sword_tree only builds units that carry a SWORD asset; the
+        # classless fallback that used to sit here could never be reached.
+        raise ValueError(f"Unit {unit.primary_key} has no SWORD config block")
+    node["sword"] = config.sword.to_dict()
 
     if unit.sword_asset is not None:
         node["swordAsset"] = unit.sword_asset.to_dict()

@@ -1,10 +1,9 @@
 """
 Tests for src.representation — mirrored from the app.
 
-The CASES table below must stay comparable with the TypeScript one:
-  [NXG] Mapplications Repo -> src/shared/orbat/representation.test.ts
-Same cases, same order, same names. If you add one here, add it there.
-Every value is taken from the ontology as it stands, not invented.
+The case table is shared with the TypeScript suite through
+tests/shared/rules_fixture.json (see test_shared_rules.py). Every value is
+taken from the ontology as it stands, not invented.
 """
 
 import pytest
@@ -22,85 +21,17 @@ from src.representation import (
 )
 
 # ---------------------------------------------------------------------------
-# SHARED CASE TABLE — (name, entity_type, code, expected)
+# SHARED CASE TABLE — read from tests/shared/rules_fixture.json, the one file
+# both this suite and the TypeScript one (src/shared/orbat/representation.test.ts
+# in NXG-Mapplications) run. Add cases there, not here.
 # ---------------------------------------------------------------------------
 
+import json
+from pathlib import Path
+
+_FIXTURE = json.loads((Path(__file__).parent / "shared" / "rules_fixture.json").read_text())
 CASES = [
-    # -- physical things are entities, whatever else is true of them --------
-    (
-        "vehicle with a VBS4 model",
-        "vehicle",
-        "vbs_us_army_m163_vulcan_grn_x",
-        ENTITY,
-    ),
-    (
-        "aircraft with a SimWorks model",
-        "aircraft",
-        "GBR AH-64 (HELO)",
-        ENTITY,
-    ),
-    (
-        "human with no model chosen yet is an incomplete entity, not structure",
-        "human",
-        None,
-        ENTITY,
-    ),
-    (
-        "vehicle carrying a SWORD equipment code",
-        "vehicle",
-        "CP.Armored vehicle|AAA.Surface to air battery|1.1.225.2.5.33.0|equipment",
-        ENTITY,
-    ),
-    # -- organisations: the SWORD row decides -------------------------------
-    (
-        "organisation with a SWORD automat row",
-        "organisation",
-        "AAA.Surface to air battery|automat",
-        AUTOMAT,
-    ),
-    (
-        "organisation with a SWORD automat row, whitespace padded",
-        "organisation",
-        "  INF.Mechanised company|automat  ",
-        AUTOMAT,
-    ),
-    (
-        "organisation with a SWORD unit row is one slice of an automat",
-        "organisation",
-        "INF.Rifle platoon|unit",
-        SUBFORMATION,
-    ),
-    (
-        "organisation with no asset is plain structure",
-        "organisation",
-        None,
-        AGGREGATE,
-    ),
-    (
-        "organisation with an empty asset code is plain structure",
-        "organisation",
-        "",
-        AGGREGATE,
-    ),
-    (
-        "organisation carrying a platform code is still structure: it cannot be emitted",
-        "organisation",
-        "GBR L118 (ARTILLERY)",
-        AGGREGATE,
-    ),
-    (
-        "organisation carrying a SWORD equipment code is not an automat",
-        "organisation",
-        "CP.Armored vehicle|INF.Mechanised company|1.1.225.2.1.10.0|equipment",
-        AGGREGATE,
-    ),
-    # -- the suffix has to be the suffix, not merely present ----------------
-    (
-        "the word automat inside a name does not make an automat",
-        "organisation",
-        "INF.Automat support company",
-        AGGREGATE,
-    ),
+    (c["name"], c["entityType"], c["code"], c["expected"]) for c in _FIXTURE["representation"]
 ]
 
 

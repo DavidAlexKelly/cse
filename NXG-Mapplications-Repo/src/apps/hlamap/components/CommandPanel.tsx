@@ -12,7 +12,7 @@ import type {
   PickMode,
   ResourceType,
 } from "../types";
-import { UI } from "./ui";
+import { UI, tint } from "./ui";
 
 const section: CSSProperties = {
   padding: "10px 12px",
@@ -40,9 +40,9 @@ const select: CSSProperties = {
 function btn(color: string, disabled = false): CSSProperties {
   return {
     background: "transparent",
-    border: `1px solid ${color}66`,
+    border: `1px solid ${tint(color, 40)}`,
     color: disabled ? UI.textFaint : color,
-    fontFamily: UI.fontMono,
+    fontFamily: UI.fontSans,
     fontSize: 11,
     padding: "5px 10px",
     cursor: disabled ? "default" : "pointer",

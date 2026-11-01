@@ -18,6 +18,11 @@ interface UnitContextMenuProps {
    * (e.g. no scenario context to attach the ORBAT to).
    */
   onDefineOrbat?: () => void;
+  /**
+   * Build this unit's full ORBAT in the selected phase (SWORD compositions
+   * where the catalogue has them, capped by echelon). Omit to hide the item.
+   */
+  onAutoGenerateOrbat?: () => void;
   /** Called when user clicks 'Assign Orders' */
   onAssignOrders: () => void;
   /** Called when user clicks 'Remove Unit' */
@@ -32,6 +37,7 @@ export const UnitContextMenu: React.FC<UnitContextMenuProps> = ({
   onEditUnit,
   hasOrbat = false,
   onDefineOrbat,
+  onAutoGenerateOrbat,
   onAssignOrders,
   onRemoveUnit,
   onClose,
@@ -85,6 +91,12 @@ export const UnitContextMenu: React.FC<UnitContextMenuProps> = ({
         <button className="ucm-item" onClick={() => { onDefineOrbat(); onClose(); }}>
           <span className="ucm-icon">{hasOrbat ? "🌳" : "❗"}</span>
           <span>{hasOrbat ? "Edit ORBAT" : "Define ORBAT"}</span>
+        </button>
+      )}
+      {onAutoGenerateOrbat && (
+        <button className="ucm-item" onClick={() => { onAutoGenerateOrbat(); onClose(); }}>
+          <span className="ucm-icon">⚙️</span>
+          <span>Auto-generate ORBAT</span>
         </button>
       )}
       <button className="ucm-item" onClick={() => { onAssignOrders(); onClose(); }}>
