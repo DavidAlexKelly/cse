@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING
 
 from src.simulator_targets import normalise_owning_simulator
+from src.utils import assign_stable_ids
 
 if TYPE_CHECKING:
     from src.ontology_store import Unit
@@ -126,6 +127,11 @@ class UnitSimulatorConfig:
     # When present, the XML serialiser emits both <simworks:Simworks> and <vbs4:Vbs4>
     # on the same node so that VBS4 can receive position updates for the asset.
     canonical_vbs4: Optional[VBS4Config] = None
+    # Integer ORBAT id for this unit, assigned by SimulatorConfigStore from the
+    # whole unit set so collisions resolve deterministically. None when the
+    # config was built on its own; the builders then fall back to the plain
+    # hashed id (utils.get_stable_id).
+    orbat_id: Optional[int] = None
 
     @classmethod
     def from_unit(cls, unit: "Unit") -> "UnitSimulatorConfig":
@@ -258,6 +264,11 @@ class SimulatorConfigStore:
         terrain_name: str,
     ) -> None:
         self._configs: dict[str, UnitSimulatorConfig] = {u.primary_key: UnitSimulatorConfig.from_unit(u) for u in units}
+        # IDs from the full key set, so every store built over the same units
+        # (the VBS4, SimWorks and SWORD passes) agrees on them — the passes are
+        # merged by id — and re-exporting the same units gives the same ids.
+        for key, orbat_id in assign_stable_ids(self._configs).items():
+            self._configs[key].orbat_id = orbat_id
         self.target_simulator = target_simulator
         self.terrain_name = terrain_name
 

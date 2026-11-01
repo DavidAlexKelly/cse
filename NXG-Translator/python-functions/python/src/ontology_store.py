@@ -44,6 +44,15 @@ if TYPE_CHECKING:
     )
 
 
+def _first_attr(obj, *names: str) -> Optional[str]:
+    """The first truthy attribute of *obj* among *names*, or None. Never raises."""
+    for name in names:
+        value = getattr(obj, name, None)
+        if value:
+            return value
+    return None
+
+
 @dataclass
 class SwordAsset:
     """Snapshot of NxgOSwordAssetCatalogue fields needed for translation."""
@@ -77,7 +86,15 @@ class SwordAsset:
         return cls(
             identifier=obj.identifier or "",
             entity_type=obj.entity_type,
-            dis6_code=obj.dis6code or obj.dis_code,
+            # NxgOSwordAssetCatalogue's apiName is "dis6code" (lower-case c),
+            # which the OSDK leaves as dis6code — unlike NxgVbs4AssetCatalogue
+            # and NxgUnit, whose "dis6Code" becomes dis6_code (Vbs4Asset below).
+            # The app reads the SWORD row as `dis6code` and the VBS4/SimWorks
+            # rows as `dis6Code` (Plan-Prepare-Widgets useAssetData.ts), so the
+            # two spellings are both right, for different object types. Read
+            # tolerantly anyway: a wrong guess here raises AttributeError and
+            # takes the whole load down.
+            dis6_code=_first_attr(obj, "dis6code", "dis6_code", "dis_code"),
             display_name=obj.display_name,
             sidc=obj.sidc,
             is_group=obj.is_group,
@@ -179,7 +196,7 @@ class Vbs4Asset:
     def from_osdk(cls, obj: "OsdkVbs4Asset") -> "Vbs4Asset":
         return cls(
             identifier=obj.identifier or "",
-            dis6_code=obj.dis6_code or None,
+            dis6_code=_first_attr(obj, "dis6_code", "dis6code"),
             is_drone=obj.is_drone or False,
             has_commander=bool(obj.has_commander),
             num_cargo_seats=int(obj.num_cargo_seats or 0),

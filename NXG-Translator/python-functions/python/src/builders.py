@@ -15,6 +15,20 @@ from src.representation import REPRESENTATION_FIELD, representation_of_unit
 from src.utils import get_stable_id
 
 
+def orbat_id_for(unit: Unit, config: UnitSimulatorConfig) -> int:
+    """The unit's integer ORBAT id: the store-assigned one, else the plain hash."""
+    orbat_id = getattr(config, "orbat_id", None)
+    return orbat_id if orbat_id is not None else get_stable_id(unit.primary_key)
+
+
+#: Internal flag set on a unit node whose NxgUnit has no latitude/longitude.
+#: The XML still writes 0,0 (Location is required on units), so the flag is
+#: what lets orbat_preflight report POSITION_MISSING instead of the unit
+#: silently spawning at 0,0. xml_translator only reads keys it knows about, so
+#: this never reaches the document.
+POSITION_MISSING_FIELD = "positionMissing"
+
+
 # ---------------------------------------------------------------------------
 # Base node — fields common to all entity types
 # ---------------------------------------------------------------------------
@@ -37,13 +51,14 @@ def build_base_fields(
     Returns:
         Dict of base fields
     """
+    position_missing = unit.latitude is None or unit.longitude is None
     location = {
         "latitude": unit.latitude if unit.latitude is not None else 0.0,
         "longitude": unit.longitude if unit.longitude is not None else 0.0,
     }
 
-    return {
-        "id": get_stable_id(unit.primary_key),
+    base = {
+        "id": orbat_id_for(unit, config),
         "name": unit.unit_identifier,
         "sidc": unit.sidc,
         "location": location,
@@ -53,6 +68,9 @@ def build_base_fields(
         "canControlDrones": config.can_control_drones,
         "controlledDroneIds": [],
     }
+    if position_missing:
+        base[POSITION_MISSING_FIELD] = True
+    return base
 
 
 # ---------------------------------------------------------------------------
@@ -82,7 +100,7 @@ def build_organisation(
     """
     node: dict = {
         "$type": "organisation",
-        "id": get_stable_id(unit.primary_key),
+        "id": orbat_id_for(unit, config),
         "name": unit.unit_identifier,
         "sidc": unit.sidc,
         "isExpanded": True,
@@ -130,6 +148,12 @@ def build_vehicle(
     human_index = 0
     for child in children:
         if child.get("$type") == "human":
+            # Crew with no VBS4 block (a SimWorks human with no canonical VBS4
+            # asset) has no VBS4 seat to fill. Indexing child["vbs4"] used to
+            # raise KeyError here and take the whole vehicle — and with it the
+            # translation — down.
+            if not isinstance(child.get("vbs4"), dict):
+                continue
             if human_index == 0:
                 child["vbs4"]["role"] = "Driver"
             elif human_index < len(role_sequence):

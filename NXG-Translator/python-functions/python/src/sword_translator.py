@@ -100,36 +100,61 @@ def build_sword_tree(
     unit: Unit,
     ontology: OntologyStore,
     configs: SimulatorConfigStore,
-) -> Optional[dict]:
+    dropped: Optional[list[dict]] = None,
+    _seen: Optional[set[str]] = None,
+) -> list[dict]:
     """
-    Recursively build a SWORD organisation tree.
+    Build the SWORD organisation nodes for *unit* and everything beneath it.
 
-    Only organisation nodes are included. Vehicles and humans are skipped.
+    A unit with a SWORD asset becomes one organisation node, with the SWORD
+    nodes found beneath it as its children. A unit WITHOUT one (an aggregate
+    root, a VBS4 vehicle, a unit with no config) contributes no node of its
+    own, but its SWORD-bearing descendants are still built and lifted up to the
+    nearest SWORD ancestor — or to the top level, where they become roots.
+
+    This used to return None at the first node without a SWORD asset without
+    looking at its children, so a SWORD force placed under a plain structural
+    root (the usual shape of a phase ORBAT) vanished from a SWORD-only export.
 
     Args:
-        unit:     The Unit to build a node for
+        unit:     The Unit to build from
         ontology: OntologyStore for link resolution
         configs:  SimulatorConfigStore for sword config lookup
+        dropped:  When given, SWORD units that fail to build are appended here
+                  as {"primaryKey", "name", "reason"}.
 
     Returns:
-        SWORD-compatible organisation dict, or None if not an organisation
+        Zero or more SWORD organisation dicts.
     """
+    seen = _seen if _seen is not None else set()
+    if unit.primary_key in seen:
+        return []  # a cycle in the edges; already built higher up
+    seen.add(unit.primary_key)
+
+    children: list[dict] = []
+    for child in ontology.get_children(unit.primary_key):
+        children.extend(build_sword_tree(child, ontology, configs, dropped, seen))
+
     config = configs.get_config(unit.primary_key)
-    if not config:
-        log.warning(f"No simulator config for unit: {unit.primary_key} ({unit.unit_identifier}) — skipping")
-        return None
-
-    if not config.sword:
-        return None
-
-    child_units = ontology.get_children(unit.primary_key)
-    children = [node for child in child_units if (node := build_sword_tree(child, ontology, configs)) is not None]
+    if not config or not config.sword:
+        # Not a SWORD unit: contribute nothing itself, pass its SWORD
+        # descendants up.
+        return children
 
     try:
-        return build_sword_organisation(unit, config, children)
-    except Exception as exc:
+        return [build_sword_organisation(unit, config, children)]
+    except (ValueError, KeyError, TypeError, AttributeError) as exc:
         log.error(f"Failed to build SWORD node for {unit.primary_key}: {exc}")
-        return None
+        if dropped is not None:
+            dropped.append(
+                {
+                    "primaryKey": unit.primary_key,
+                    "name": unit.unit_identifier or "",
+                    "reason": f"SWORD node could not be built: {exc}",
+                }
+            )
+        # Keep the descendants rather than losing them with the parent.
+        return children
 
 
 # ---------------------------------------------------------------------------
@@ -161,7 +186,11 @@ def translate_sword(
     root_units = ontology.get_root_units()
     log.info(f"Root units : {len(root_units)} ({', '.join(u.primary_key for u in root_units)})")
 
-    entities = [node for root in root_units if (node := build_sword_tree(root, ontology, configs)) is not None]
+    dropped: list[dict] = []
+    seen: set[str] = set()
+    entities: list[dict] = []
+    for root in root_units:
+        entities.extend(build_sword_tree(root, ontology, configs, dropped, seen))
 
     orbat = {
         "id": generate_scenario_id(ontology.operation.primary_key),
@@ -172,6 +201,8 @@ def translate_sword(
         "title": ontology.operation.primary_key,
         "terrainName": configs.terrain_name,
         "targetSimulator": "sword",
+        # Internal, as on translator.translate(): read by preflight only.
+        "droppedUnits": dropped,
     }
 
     log.info("SWORD TRANSLATION COMPLETE")

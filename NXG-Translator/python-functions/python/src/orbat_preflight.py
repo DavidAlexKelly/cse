@@ -150,6 +150,22 @@ def _check_unit(node: dict) -> list[Issue]:
                 )
             )
 
+    # ── position ───────────────────────────────────────────────────────────
+    # The XML still writes 0,0 for a unit with no position (Location is
+    # required), so a missing position is invisible in the document. The
+    # builders flag it explicitly; 0,0 itself is not taken as "missing".
+    if node.get("positionMissing"):
+        issues.append(
+            Issue(
+                "ERROR",
+                "POSITION_MISSING",
+                f'"{name}" has no latitude/longitude. It is exported at 0,0 because the schema '
+                f"requires a Location, so it would spawn in the wrong place. Place the unit on the map.",
+                entity_id,
+                name,
+            )
+        )
+
     # ── dis ────────────────────────────────────────────────────────────────
     dis = str(node.get("dis", "") or "")
     if not dis:
