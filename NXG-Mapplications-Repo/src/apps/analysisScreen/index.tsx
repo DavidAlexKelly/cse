@@ -10,6 +10,7 @@
 // playhead lands on them, so a 16-hour run is navigable without ever pulling
 // 20 million rows into the browser.
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
@@ -29,18 +30,23 @@ import { ANALYSIS_CONFIG } from "./analysisConfig";
 import AnalysisMap, { DEFAULT_PLAN_LAYERS, type PlanLayerToggles } from "./components/AnalysisMap";
 import CompliancePanel from "./components/CompliancePanel";
 import DebriefView from "./components/DebriefView";
+import type { NextPhaseState } from "./components/NextPhaseCard";
 import SidePanel from "./components/SidePanel";
 import Timeline from "./components/Timeline";
 import TopBar, { type AnalysisView } from "./components/TopBar";
 import { UI } from "./components/ui";
+import { createNextPhaseFromRun } from "./data/nextPhase";
+import { loadPhaseStartState } from "./data/phasePlanSource";
 import { listRuns } from "./data/tracks";
 import { useAnalystCalls } from "./hooks/useAnalystCalls";
 import { useLivePhaseAnalysis } from "./hooks/useLivePhaseAnalysis";
 import { createMockRun, useMockRunPlayback } from "./hooks/useMockRunPlayback";
 import { useRunPlayback } from "./hooks/useRunPlayback";
 import { DEMO_OBJECTIVES } from "./lib/demoObjectives";
+import { actualStartState, nextPhaseName } from "./lib/nextPhase";
 import { type MeasuredOrder, assessObjectives } from "./lib/objectiveAssessment";
 import { planKeyEvents } from "./lib/planEvents";
+import { sampleMockTrack } from "./lib/sampleMockTrack";
 import type { RunSummary } from "./types";
 
 /** Positions retained behind the selected unit, in frames. */
@@ -286,6 +292,80 @@ const AnalysisScreen: FC = () => {
     }));
     return assessObjectives(objectivesFor.list, measured, phaseInjects);
   }, [analysis.compliance, analysis.plan, objectivesFor.list, phaseInjects]);
+  // ── Next phase from actuals ──────────────────────────────────────────────
+  // The phase this run executed, the track it produced and which entity each
+  // planned unit is — from the live analysis, or from the mock run's own plan.
+  const navigate = useNavigate();
+  const sourcePhase = mockDemo
+    ? (phases.find((p) => p.id === BALTIC_SHIELD_PLAN.phaseId) ?? null)
+    : phase;
+  const runTrack = useMemo(() => {
+    if (mockDemo) {
+      if (!selectedRun) return null;
+      return {
+        track: sampleMockTrack(Math.max(1, selectedRun.endS - selectedRun.startS)),
+        entityFor: new Map(
+          BALTIC_SHIELD_PLAN.units.flatMap((u) =>
+            u.entityId ? [[u.id, u.entityId] as const] : [],
+          ),
+        ),
+      };
+    }
+    return live.track && live.match ? { track: live.track, entityFor: live.match.entityFor } : null;
+  }, [mockDemo, selectedRun, live.track, live.match]);
+  const [nextPhase, setNextPhase] = useState<NextPhaseState>({ status: "idle" });
+  useEffect(() => setNextPhase({ status: "idle" }), [selectedRunId, sourcePhase?.id]);
+
+  const handleCreateNextPhase = useCallback(
+    async (name: string) => {
+      if (!sourcePhase || !runTrack || !analysis.plan) return;
+      setNextPhase({ status: "working", step: "Reading the phase…" });
+      try {
+        const source = await loadPhaseStartState(sourcePhase.id);
+        if (!source || source.units.length === 0) {
+          throw new Error(`"${sourcePhase.name}" has no saved start state to carry forward.`);
+        }
+        const start = actualStartState(source, analysis.plan, runTrack.entityFor, runTrack.track);
+        const created = await createNextPhaseFromRun({
+          scenarioId,
+          scenarioName: scenarioMeta?.scenarioName ?? "Exercise",
+          source: sourcePhase,
+          name,
+          sequenceNumber: phases.length + 1,
+          startState: start.state,
+          onProgress: (step) => setNextPhase({ status: "working", step }),
+        });
+        setNextPhase({
+          status: "done",
+          result: {
+            phaseName: created.phaseName,
+            observed: start.observed,
+            notObserved: start.notObserved,
+            orbatUnits: created.orbatUnits,
+          },
+        });
+        ctx?.onNextPhaseCreated?.executeEvent?.(undefined);
+      } catch (err) {
+        setNextPhase({ status: "error", error: String((err as Error)?.message ?? err) });
+      }
+    },
+    [
+      sourcePhase,
+      runTrack,
+      analysis.plan,
+      scenarioId,
+      scenarioMeta?.scenarioName,
+      phases.length,
+      ctx,
+    ],
+  );
+
+  const nextPhaseBlocked = !sourcePhase
+    ? "The phase this run executed is not in the ontology."
+    : !runTrack || !analysis.plan
+      ? "Waiting for the run to be measured…"
+      : null;
+
   const { calls, setCall } = useAnalystCalls(
     selectedRun && objectivesPhaseId ? `${selectedRun.id}|${objectivesPhaseId}` : null,
   );
@@ -447,6 +527,15 @@ const AnalysisScreen: FC = () => {
           events={debrief.events}
           runDurationSec={Math.max(1, selectedRun.endS - selectedRun.startS)}
           onJumpToMoment={handleJumpToMoment}
+          nextPhase={{
+            sourcePhaseName: `"${sourcePhase?.name ?? analysis.plan?.phaseName ?? "this phase"}"`,
+            defaultName: nextPhaseName(sourcePhase?.name ?? analysis.plan?.phaseName ?? "Phase 1"),
+            blockedReason: nextPhaseBlocked,
+            demo: mockDemo,
+            state: nextPhase,
+            onCreate: (name) => void handleCreateNextPhase(name),
+            onOpenPlanner: () => navigate("/scenario-plan"),
+          }}
           objectives={
             analysis.compliance
               ? {

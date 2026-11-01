@@ -14,6 +14,7 @@ import { type ComponentProps, type FC, useMemo, useState } from "react";
 import type { RunEvent, RunEventKind } from "@/shared/hla/runEvents";
 import type { Debrief } from "../lib/debriefNarrative";
 import type { RunStatistics } from "../lib/runStatistics";
+import NextPhaseCard from "./NextPhaseCard";
 import TrainingObjectivesSection from "./TrainingObjectivesSection";
 import { UI, formatClock } from "./ui";
 
@@ -26,6 +27,8 @@ interface Props {
   onJumpToMoment: (ts: number) => void;
   /** Training objectives assessed against this run — the section planners read first. */
   objectives?: ComponentProps<typeof TrainingObjectivesSection>;
+  /** "Plan the next phase from this run" — the debrief's closing action. */
+  nextPhase?: ComponentProps<typeof NextPhaseCard>;
 }
 
 const KIND_STYLE: Record<RunEventKind, { colour: string; label: string }> = {
@@ -117,6 +120,7 @@ const DebriefView: FC<Props> = ({
   runDurationSec,
   onJumpToMoment,
   objectives,
+  nextPhase,
 }) => {
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
@@ -522,6 +526,8 @@ const DebriefView: FC<Props> = ({
             );
           })}
         </div>
+
+        {nextPhase && <NextPhaseCard {...nextPhase} />}
       </div>
     </div>
   );

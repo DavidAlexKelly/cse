@@ -106,4 +106,15 @@ export const ANALYSIS_CONFIG = [
       fieldValue: { type: "event" as const },
     },
   },
+  {
+    fieldId: "onNextPhaseCreated",
+    field: {
+      type: "single" as const,
+      label: "On Next Phase Created",
+      helperText:
+        "Fired when the debrief creates the next phase from this run's actual end state, " +
+        "so a Workshop page can switch to the planner.",
+      fieldValue: { type: "event" as const },
+    },
+  },
 ] as const satisfies IConfigDefinition;

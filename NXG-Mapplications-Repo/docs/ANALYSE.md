@@ -73,6 +73,29 @@ The debrief opens with the phase's training objectives
   demo objectives written against the Blue Phase 1 plan, badged "DEMO OBJECTIVES". On the mock run
   they read: 0 of 4 demonstrated, 3 partially, 1 needs observer judgement.
 
+## Next phase from actuals (debrief, closing card)
+
+**Plan next phase from actuals** creates the next phase starting where the force **actually** ended
+the run, rather than where the plan predicted it would (`lib/nextPhase.ts`, `data/nextPhase.ts`):
+
+1. **Start state.**
+   - Every matched unit starts at its last observed position.
+   - A unit not seen in the run starts at its predicted end position, or else its start position.
+   - Those units are listed afterwards, so a prediction is never mistaken for an observation.
+   - Placements get fresh ids. ORBAT links are kept, objectives carry over and orders are cleared.
+2. **Phase.** It is created based on the measured phase, using the planner's own write path
+   (`createPhaseInOntology`), with the same duration and starting where the source phase ended.
+3. **Force structure.** Every placement's ORBAT is copied into the new phase's own hierarchy, each
+   subtree re-laid around where its unit actually ended (`savePhaseOrbat`, the same call as the
+   planner's Add phase).
+4. **Map state.** It is written once, with the copied ORBAT links already on it.
+5. **Open in Scenario Planner.** The planner opens on the furthest branch, which is the new phase.
+   The Workshop event `onNextPhaseCreated` fires as well.
+
+In mock mode this works too, using the demo run's synthetic positions. The card says so before
+anything is written. It needs the Baltic Shield Phase 1 phase (`obs_phase_01`) to exist in the
+ontology.
+
 ## Which phase a run is measured against
 
 Highest priority first:

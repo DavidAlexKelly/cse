@@ -18,6 +18,7 @@ import { type RunDebrief, generateDebrief } from "../lib/debriefNarrative";
 import { type MatchResult, matchPlannedUnits } from "../lib/entityMatch";
 import { withEntityIds } from "../lib/phasePlan";
 import { computeRunStatistics } from "../lib/runStatistics";
+import type { SampledTrack } from "../lib/sampleMockTrack";
 import { candidatesFromFrames, rosterFromFrames, trackFromFrames } from "../lib/trackSample";
 import type { RunSummary } from "../types";
 
@@ -27,6 +28,8 @@ export interface LivePhaseAnalysis {
   compliance?: RunCompliance;
   debrief?: RunDebrief;
   match?: MatchResult;
+  /** The run's sampled track — where each entity ended up, for planning the next phase. */
+  track?: SampledTrack;
   /** Planned units in the plan, for the "x of y matched" line. */
   plannedCount: number;
   error?: string;
@@ -85,6 +88,7 @@ export function useLivePhaseAnalysis(
         plan,
         compliance,
         match,
+        track,
         plannedCount: plan.units.length,
         debrief: {
           events: [],
