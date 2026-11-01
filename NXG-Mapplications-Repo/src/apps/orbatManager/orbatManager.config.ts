@@ -14,7 +14,7 @@ import type { IConfigDefinition } from "@osdk/workshop-iframe-custom-widget";
 //    operation         — NxgOperation object set. The widget loads that
 //                        operation's hierarchies, units, edges and symbols.
 //                        Was a bare `operationKey` string; unset still falls
-//                        back to OP-NORDIC-2026.
+//                        back to OPERATION-BALTIC-SHIELD.
 //    phase             — NxgPhase object set. When set, the widget imports that
 //                        phase's ORBAT from the Template Orbat Graph record the
 //                        Scenario Planner wrote for it (tagged "phase:<id>").
@@ -46,7 +46,7 @@ export const ORBAT_CONFIG = [
       helperText:
         "The operation whose ORBAT to manage. Wire a Workshop NxgOperation object-set " +
         "variable here; the widget reads the first operation in the set and loads its " +
-        "hierarchies, units and symbols. Leave unset to fall back to OP-NORDIC-2026.",
+        "hierarchies, units and symbols. Leave unset to fall back to OPERATION-BALTIC-SHIELD.",
       fieldValue: {
         type: "inputOutput" as const,
         variableType: { type: "temporaryObjectSetRid" as const },

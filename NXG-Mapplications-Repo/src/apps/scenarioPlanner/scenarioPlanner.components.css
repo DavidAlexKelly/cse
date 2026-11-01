@@ -1174,8 +1174,10 @@
 .sp-orders-tab__intent-input:disabled { opacity: 0.5; }
 
 .sp-orders-tab__actions {
-  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+  display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;
 }
+/* The button keeps its label on one line; the hint wraps beside it instead. */
+.sp-orders-tab__actions > button { flex-shrink: 0; white-space: nowrap; }
 
 .sp-orders-tab__hint {
   font-size: var(--text-sm); color: var(--text-muted);

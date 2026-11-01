@@ -27,6 +27,7 @@ import { C } from "./components/shared/milStyles";
 import { loadOrbatForest, loadOrbatSubtree } from "../../shared/orbat/loadOrbatSubtree";
 import { buildOrbatSkeleton } from "../../shared/orbat/skeleton";
 import {
+  DEFAULT_OPERATION_KEY,
   commitOrbatForPlacement,
   describeActionError,
 } from "../../shared/orbat/scenarioOrbat";
@@ -812,7 +813,9 @@ export default function App() {
   // can type-check the wiring. We still work in primary keys internally — the
   // whole app is keyed on operationKey — so take the first key from the set.
   const operationKey: string =
-    firstPrimaryKey(workshopCtx?.operation) || "OP-NORDIC-2026";
+    // Unset (standalone, or not wired) → the same default exercise as every
+    // other app, not a stale one from an earlier demo.
+    firstPrimaryKey(workshopCtx?.operation) || DEFAULT_OPERATION_KEY;
 
   // Phase to import, likewise an object set. Replaces the phaseOrbatJson
   // string: rather than another widget pushing an entire ORBAT across as JSON,

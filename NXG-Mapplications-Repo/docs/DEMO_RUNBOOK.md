@@ -66,6 +66,10 @@ Do these in order. Each item names the doc with the details.
   on the rehearsal run recorded earlier (it is real data) or in demo mode.
 - **Switching mid-demo is safe.** Demo mode is one Workshop toggle; every simulated answer is
   labelled as simulated on screen.
+- **Outside Workshop** (the app opened directly, e.g. full-screen on the projector), each screen
+  links to the next: **Execute phase ▶** in the planner's map toolbar, **Open live map** after a
+  launch, **Analyse run →** on the live map. `?mock=1`, or the **Demo mode** tick-box, carries
+  through every link. Inside Workshop, use the module's tabs instead.
 - **Leave a recorded run in place.** Analysis lists runs from the track dataset; a good rehearsal run
   is the best insurance for acts 5–7.
 
