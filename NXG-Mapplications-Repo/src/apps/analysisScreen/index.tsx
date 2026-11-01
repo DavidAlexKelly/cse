@@ -366,8 +366,29 @@ const AnalysisScreen: FC = () => {
       ? "Waiting for the run to be measured…"
       : null;
 
-  const { calls, setCall } = useAnalystCalls(
-    selectedRun && objectivesPhaseId ? `${selectedRun.id}|${objectivesPhaseId}` : null,
+  const assessmentCtx = useMemo(
+    () =>
+      selectedRun && objectivesPhaseId
+        ? {
+            scenarioId,
+            phaseId: objectivesPhaseId,
+            runId: selectedRun.id,
+            runStartS: selectedRun.startS,
+            runEndS: selectedRun.endS,
+          }
+        : null,
+    [selectedRun, objectivesPhaseId, scenarioId],
+  );
+  const suggestions = useMemo(
+    () => new Map(assessments.map((a) => [a.objectiveId, { rating: a.suggested, basis: a.basis }])),
+    [assessments],
+  );
+  // The demo run's calls stay on this device: a synthetic run must not leave
+  // assessments in the real record.
+  const { calls, setCall, storage, storageNote } = useAnalystCalls(
+    assessmentCtx,
+    !mockDemo,
+    suggestions,
   );
 
   // A run with no event log has nothing to put on a second tab, and an empty
@@ -544,6 +565,8 @@ const AnalysisScreen: FC = () => {
                   source: objectivesFor.source,
                   calls,
                   onCall: setCall,
+                  storage,
+                  storageNote,
                 }
               : undefined
           }

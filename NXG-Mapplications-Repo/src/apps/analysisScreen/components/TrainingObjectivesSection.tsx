@@ -45,6 +45,9 @@ interface Props {
   source: "ontology" | "demo";
   calls: Record<string, AnalystCall>;
   onCall: (objectiveId: string, call: AnalystCall) => void;
+  /** Where the analyst's calls are kept — shown so nobody assumes they are shared when they are not. */
+  storage?: "loading" | "foundry" | "device";
+  storageNote?: string | null;
 }
 
 function Badge({ colour, children }: { colour: string; children: React.ReactNode }) {
@@ -72,6 +75,8 @@ const TrainingObjectivesSection: FC<Props> = ({
   source,
   calls,
   onCall,
+  storage,
+  storageNote,
 }) => {
   const [open, setOpen] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -104,6 +109,8 @@ const TrainingObjectivesSection: FC<Props> = ({
           suggested from the measured orders · the analyst&rsquo;s call stands
         </div>
         {source === "demo" && <Badge colour={UI.amber}>DEMO OBJECTIVES</Badge>}
+        {storage === "foundry" && <Badge colour={UI.green}>SAVED TO FOUNDRY</Badge>}
+        {storage === "device" && <Badge colour={UI.amber}>SAVED ON THIS DEVICE ONLY</Badge>}
         <div style={{ flex: 1 }} />
         {assessments.length > 0 && (
           <button
@@ -127,6 +134,11 @@ const TrainingObjectivesSection: FC<Props> = ({
       <div style={{ fontSize: 14, color: UI.text, marginBottom: 10 }}>
         {summariseObjectives(assessments, calls)}
       </div>
+      {storageNote && (
+        <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.amber, marginBottom: 8 }}>
+          {storageNote}
+        </div>
+      )}
 
       {assessments.map((a) => {
         const call = calls[a.objectiveId];

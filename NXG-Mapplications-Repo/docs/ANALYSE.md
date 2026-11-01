@@ -66,8 +66,13 @@ The debrief opens with the phase's training objectives
 - **The analyst's call:**
   - Each objective has a rating override and an observer note.
   - Where made, the analyst's rating replaces the suggestion everywhere and is marked "analyst".
-  - Calls are kept per run and phase in the browser (localStorage); there is no assessment object
-    type in the ontology yet.
+  - Calls are saved to the ontology as **`NxgObjectiveAssessment`** objects once that type exists
+    (setup below), so a debrief is shared across browsers.
+  - Every call is also kept in the browser. That keeps the screen working before the type exists,
+    when Foundry can't be reached, and in mock mode, where a synthetic run's calls must not reach the
+    real record.
+  - A badge shows which is in effect: **SAVED TO FOUNDRY** or **SAVED ON THIS DEVICE ONLY**, with
+    the reason.
 - **Copy summary** puts plain text on the clipboard for a debrief slide or an email.
 - **Mock mode** uses the scenario's objectives from the ontology. If there are none, it uses four
   demo objectives written against the Blue Phase 1 plan, badged "DEMO OBJECTIVES". On the mock run
@@ -95,6 +100,52 @@ the run, rather than where the plan predicted it would (`lib/nextPhase.ts`, `dat
 In mock mode this works too, using the demo run's synthetic positions. The card says so before
 anything is written. It needs the Baltic Shield Phase 1 phase (`obs_phase_01`) to exist in the
 ontology.
+
+## Setting up `NxgObjectiveAssessment` (Ontology Manager)
+
+The app writes and reads this type by API name (`src/shared/lib/platformObjects.ts`). It switches
+from device-only to Foundry as soon as the type and its actions exist and the app can see them. No
+SDK release is needed, though regenerating the SDK later works too.
+
+**Object type `NxgObjectiveAssessment`**
+- **Folder:** `2. Ontology/Plan And Prepare`, alongside the other `[NXG-P]` types. Back it with a new
+  dataset.
+- **Display name:** `[NXG-P] Objective Assessment`.
+- **Primary key:** `assessmentId`. **Title:** `objectiveId`.
+
+| Property (API name) | Type | Notes |
+|---|---|---|
+| `assessmentId` | String | **Primary key**, `{runId}\|{phaseId}\|{objectiveId}`. Deterministic, so repeated saves converge on one object. |
+| `objectiveId` | String | Links to `NxgTrainingObjective.objectiveId` |
+| `phaseId` | String | Links to `NxgPhase.phaseId` |
+| `scenarioId` | String | |
+| `runId` | String | Run as Analysis detects it, e.g. `run-1789300000` |
+| `runStartTime` | Timestamp | |
+| `runEndTime` | Timestamp | |
+| `rating` | String | The analyst's rating, or null. One of `DEMONSTRATED`, `PARTIALLY_DEMONSTRATED`, `NOT_DEMONSTRATED`, `NOT_OBSERVED`, `NEEDS_JUDGEMENT`. |
+| `note` | String | Observer note, or null |
+| `suggestedRating` | String | What the screen suggested at the time, for audit |
+| `suggestionBasis` | String | Why the screen suggested it |
+| `assessedAt` | Timestamp | When the call was last saved |
+
+Who made each call comes from the action log (edit history), so there is no user property.
+
+**Links (optional, recommended):**
+- `NxgTrainingObjective` 1 → many `NxgObjectiveAssessment`, on `objectiveId`.
+- `NxgPhase` 1 → many `NxgObjectiveAssessment`, on `phaseId`.
+
+These let Workshop and Quiver show "this objective, across every run".
+
+**Actions** (the standard generated ones; the API names must match):
+
+| Action API name | Kind | Parameters |
+|---|---|---|
+| `createNxgObjectiveAssessment` | Create object | Every property above, with the same API names |
+| `modifyNxgObjectiveAssessment` | Modify object | `nxgObjectiveAssessment` (the object), plus every property except the primary key |
+| `deleteNxgObjectiveAssessment` | Delete object | `nxgObjectiveAssessment` |
+
+**Developer Console:** add the object type and the three actions to the Mapplications application's
+resources. The app already requests `api:use-ontologies-write`.
 
 ## Which phase a run is measured against
 
