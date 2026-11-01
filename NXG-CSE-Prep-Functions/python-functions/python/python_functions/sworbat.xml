@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Orbat
+    xmlns="https://accenture.com/2026-03/cse/orbat"
+    xmlns:sword="https://accenture.com/2026-03/cse/orbat/sword">
+
+    <Entities>
+
+        <Organisation id="1" name="Battle Group North" sidc="SFGPU------J---">
+            <Children>
+
+                <Organisation id="2" name="BG HQ" sidc="SFGPUCA---AH---">
+                    <Location latitude="69.44950256828420" longitude="30.22263830336032"/>
+                    <sword:Sword controllable="false" class="CP.Battle group CP"/>
+                </Organisation>
+
+                <Organisation id="3" name="A Company (Tanks)" sidc="SFGPUCA--------">
+                    <Location latitude="69.46120000000000" longitude="30.19850000000000"/>
+                    <sword:Sword controllable="false" class="ARMOR.Heavy tank company"/>
+                </Organisation>
+
+                <Organisation id="4" name="Recce Platoon" sidc="SFGPUCA--------">
+                    <Location latitude="69.47480000000000" longitude="30.15600000000000"/>
+                    <sword:Sword controllable="false" class="ARMOR.Scout platoon"/>
+                </Organisation>
+
+            </Children>
+            <sword:Sword controllable="false"/>
+        </Organisation>
+
+    </Entities>
+</Orbat>

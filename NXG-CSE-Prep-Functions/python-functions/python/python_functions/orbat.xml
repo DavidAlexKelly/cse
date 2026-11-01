@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Orbat
+    xmlns="https://accenture.com/2026-03/cse/orbat"
+    xmlns:vbs4="https://accenture.com/2026-03/cse/orbat/vbs4"
+    xmlns:sword="https://accenture.com/2026-03/cse/orbat/sword">
+
+    <Entities>
+
+        <Organisation id="4" name="Navy" sidc="SFGPU------K---">
+            <Children>
+
+                <Organisation
+                    id="234"
+                    name="NavyCorps 1"
+                    sidc="SFGPU------J---">
+                    <Children>
+
+                        <Organisation
+                            id="174"
+                            name="ARMOR.Armored company CP 2"
+                            sidc="SFGPUCA---AH---">
+                            <Children>
+
+                                <Vehicle id="15" name="ARMOR.Light Armored Vehicle Antitank"
+                                         sidc="SFGPUCA--------"
+                                         owningSimulator="vbs4" canControlDrones="false"
+                                         dis="1.1.225.2.3.0.0"
+                                         isDrone="false">
+                                    <Location latitude="69.4495025682842" longitude="30.222638303360316"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_us_mc_m1163_tan_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="17" name="Crew 1" sidc="SFGPUCA--------"
+                                               owningSimulator="vbs4" canControlDrones="true"
+                                               dis="3.1.225.11.5.0.0">
+                                            <Location latitude="69.56710789313182" longitude="29.565853585137038"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_us_mc_afvcrew_des_m_medium_mtw_none_m4a1" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                        width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="18" name="Crew 2" sidc="SFGPUCA--------"
+                                               owningSimulator="vbs4" canControlDrones="true"
+                                               dis="3.1.225.11.5.0.0">
+                                            <Location latitude="69.56710789313182" longitude="29.565853585137038"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_us_mc_afvcrew_des_m_medium_mtw_none_m4a1" role="Cargo">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                        width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="19" name="Crew 3" sidc="SFGPUCA--------"
+                                               owningSimulator="vbs4" canControlDrones="true"
+                                               dis="3.1.225.11.5.0.0">
+                                            <Location latitude="69.56710789313182" longitude="29.565853585137038"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_us_mc_afvcrew_des_m_medium_mtw_none_m4a1" role="Cargo">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                        width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+
+                                <Vehicle id="179" name="CP.Armored vehicle"
+                                         sidc="SFGPEVAA----DEG"
+                                         owningSimulator="vbs4" canControlDrones="false"
+                                         dis="1.1.78.3.8.1.0"
+                                         isDrone="false">
+                                    <Location latitude="69.66521677163857" longitude="29.595694009411655"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="bisim_dt_de_army_rmmv_fuchs1a8a3_wdl_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="190" name="Private 5" sidc="SFGPEWRR----DEG"
+                                               owningSimulator="vbs4" canControlDrones="true"
+                                               dis="3.1.78.11.1.0.0">
+                                            <Location latitude="69.67540280068056" longitude="29.539257295685285"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="bisim_de_army_soldier_wdl_m_medium_idz_none_g36_helmet" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                        width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="191" name="Warrant officer 2" sidc="SFGPEWRR----DEG"
+                                               owningSimulator="vbs4" canControlDrones="true"
+                                               dis="3.1.78.11.1.0.0">
+                                            <Location latitude="69.67540280068056" longitude="29.539257295685285"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="bisim_de_army_soldier_wdl_m_medium_idz_none_g36_helmet" role="Cargo">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0"
+                                                                        width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+
+                            </Children>
+                            <sword:Sword controllable="false" class="ARMOR.Armored company CP"/>
+                        </Organisation>
+
+                    </Children>
+                    <sword:Sword controllable="false"/>
+                </Organisation>
+
+            </Children>
+            <sword:Sword controllable="false"/>
+        </Organisation>
+
+    </Entities>
+</Orbat>

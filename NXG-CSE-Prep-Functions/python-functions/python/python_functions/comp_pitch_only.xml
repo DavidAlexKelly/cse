@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Composition [
+
+    <!ENTITY simulation-os SYSTEM "_Content/.ntfa/service/onearc/service-simulation-os.xml" >
+    <!ENTITY sword SYSTEM "_Content/.ntfa/service/masa/service-sword-simple.xml">
+    <!ENTITY simworks SYSTEM "_Content/.ntfa/service/plexsys/service-simworks.xml">
+    <!ENTITY vbs4 SYSTEM "_Content/.ntfa/service/onearc/service-vbs4.xml">
+    <!ENTITY mediation SYSTEM "_Content/.ntfa/service/accenture/service-mediation.xml">
+    ]>
+<Composition
+    xmlns="https://accenture.com/2026-03/cse/composition"
+    Name="Mission-level Physical Computer Assisted Wargaming (CAW) - OpenShift+Proxmox in FI">
+    <Description>TODO</Description>
+    <Capabilities>
+        <Type>Wargaming</Type>
+        <Scale MinUnits="100" MaxUnits="1000" />
+        <Level MinLevel="Platoon" MaxLevel="Battalion" />
+        <Resolution Time="Seconds|Minutes|10Minutes|Hour" Space="Meters|10meters|100meters" />
+    </Capabilities>
+    <Services>
+        &simulation-os;
+        &sword;
+        &simworks;
+        &vbs4;
+        &mediation;
+    </Services>
+
+    <Systems>
+        <System Name="In-Process" Type="InProcess" Platform="RedHat/OpenShift">
+            <Applications>
+                <Application Name="HLA Monitor" Symbol="HlaMonitor"/>
+                <Application Name="COT Forwarder" Symbol="CotForwarder"/>
+                <Application Name="SitaWare C2 Mediation" Symbol="SitaWare"/>
+                <Application Name="Open TAK Server C2 Mediation" Symbol="OpenTAKServer"/>
+                <Application Name="TAK Server C2 Mediation" Symbol="TAKServer"/>
+                <Application Name="ACOP C2 Mediation" Symbol="ACOP"/>
+            </Applications>
+        </System>
+        <System Name="Pitch RTI" Type="Container/ArchLinux" HostName="pitch-rti" Registry="nexgen.extern.pitch" Platform="RedHat/OpenShift">
+            <Image>nextenextpitch.azurecr.io/pitch/prti6-crc:6.1.3-2</Image>
+            <Applications>
+                <Application Name="Pitch RTI" Symbol="PitchRTI" />
+            </Applications>
+        </System>
+        <System Name="Pitch DIS Adapter" Type="Container/ArchLinux" HostName="pitch-dis-adapter" Registry="nexgen.extern.pitch" Platform="RedHat/OpenShift">
+            <Image>nextenextpitch.azurecr.io/pitch/dis-adapter-lrc6:3.2.0-2</Image>
+            <Applications>
+                <Application Name="Pitch DIS Adapter" Symbol="PitchDis" />
+            </Applications>
+        </System>
+        <System Name="Pitch Federate Protocol Server" Type="Container/ArchLinux" HostName="pitch-fedpro" Registry="nexgen.extern.pitch" Platform="RedHat/OpenShift">
+            <Image>nextenextpitch.azurecr.io/pitch/prti6-fedpro-server:6.1.3-1</Image>
+            <Applications>
+                <Application Name="Pitch Federate Protocol Server" Symbol="PitchFedPro" />
+            </Applications>
+        </System>
+    </Systems>
+</Composition>

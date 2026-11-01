@@ -1,0 +1,2 @@
+foundry-compute-modules
+httpx==0.27.0

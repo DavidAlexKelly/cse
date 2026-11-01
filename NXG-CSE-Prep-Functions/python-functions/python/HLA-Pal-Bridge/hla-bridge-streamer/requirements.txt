@@ -1,0 +1,9 @@
+# httpx: polling the bridge sidecar over localhost, and the Streams API call.
+# foundry-compute-modules: the third-party application credentials the publisher
+#   authenticates to Foundry with (compute_modules.auth). This image registers no
+#   functions, so the runtime itself is unused.
+# No foundry-sdk: publishing is a single documented POST, and calling it directly
+#   keeps the path and the OAuth scope explicit — both differ by stack, and both
+#   need a fallback that an SDK version bump could otherwise take away.
+httpx==0.27.0
+foundry-compute-modules

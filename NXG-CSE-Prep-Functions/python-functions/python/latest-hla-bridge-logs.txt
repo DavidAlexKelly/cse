@@ -1,0 +1,100 @@
+Pod has been scheduled to a node
+Pulling image "pool-container-registry.palantirfoundry.fr/hla-bridge@sha256:a9da118f67feac2e9d6336adcf03fd34c47c7b81342e8dc325827ad004c0d2a1"
+Successfully pulled image "pool-container-registry.palantirfoundry.fr/hla-bridge-functions@sha256:8b08f6e61e9096b3692368fc35097296c0ce290194048b170238b3ee37428825" in 181ms (181ms including waiting). Image size: 48673849 bytes.
+Started container telemetry-sidecar-39a39755
+Started container hla-bridge-functions
+Pulling image "pool-container-registry.palantirfoundry.fr/hla-bridge-functions@sha256:8b08f6e61e9096b3692368fc35097296c0ce290194048b170238b3ee37428825"
+Started container runtime-v1-96ad52f0-2c4f-4b41-8dd2-be500c80c3e1
+Started container hla-bridge
+Successfully pulled image "pool-container-registry.palantirfoundry.fr/hla-bridge@sha256:a9da118f67feac2e9d6336adcf03fd34c47c7b81342e8dc325827ad004c0d2a1" in 204ms (204ms including waiting). Image size: 123402621 bytes.
+INFO:__main__:HLA Bridge functions starting, connecting to http://localhost:8080/api/v1/bridge
+Container created
+Container image pulled successfully
+Started container telemetry-sidecar-450a0713
+starting server: %s
+XNIO version %s
+XNIO NIO Implementation Version %s
+Started InternalQueryServer
+Calculated synthetic cpu shares equivalent processors
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@256216b3]
+SLF4J(W): Found provider [org.slf4j.nop.NOPServiceProvider@2a18f23c]
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@256216b3]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ :: Spring Boot ::                (v3.2.3)
+ =========|_|==============|___/=/_/_/_/
+
+2026-08-13T12:29:36.983Z  INFO 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : Starting BridgeApplication v1.0.0 using Java 21.0.11 with PID 7 (/app/app.jar started by app in /app)
+2026-08-13T12:29:36.985Z DEBUG 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : Running with Spring Boot v3.2.3, Spring v6.1.4
+2026-08-13T12:29:37.805Z  INFO 7 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-08-13T12:29:36.985Z  INFO 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-08-13T12:29:37.818Z  INFO 7 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-13T12:29:37.818Z  INFO 7 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-08-13T12:29:37.842Z  INFO 7 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-08-13T12:29:37.843Z  INFO 7 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 780 ms
+2026-08-13T12:29:37.899Z  INFO 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : Starting HLA bridge — CSE_ENVIRONMENT=1 CRC: pitch-rti:30110 FedPro: 4.165.4.53:30120 (protocol=tcp) Federation: CSE-Prep
+2026-08-13T12:29:37.904Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : ── Port probe starting for 4.165.4.53 (environment 1, diagnostic only — see FEDPRO_CONNECTION.md) ──
+2026-08-13T12:29:37.900Z  INFO 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : Will retry 60 times with 10s delay
+2026-08-13T12:29:37.913Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30110 (crc) -> OPEN (8ms)
+2026-08-13T12:29:37.915Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30112 (crc-registry) -> OPEN (0ms)
+2026-08-13T12:29:37.914Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30111 (crc-ui) -> OPEN (0ms)
+2026-08-13T12:29:37.916Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30120 (fedpro-tcp) -> OPEN (1ms)
+2026-08-13T12:29:37.917Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30124 (fedpro-ws) -> OPEN (1ms)
+2026-08-13T12:29:37.916Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30121 (fedpro-tls) -> OPEN (0ms)
+2026-08-13T12:29:37.917Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : Port probe 4.165.4.53:30125 (fedpro-wss) -> OPEN (0ms)
+2026-08-13T12:29:38.072Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : TLS probe 4.165.4.53:30121 (sni=pitch-federate-protocol-server.cse-prep-simulation-01.apps.cse-cluster.cse.local) -> SSLHandshakeException — Remote host terminated the handshake (155ms)
+2026-08-13T12:29:38.073Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeApplication   : ── Port probe complete ──
+2026-08-13T12:29:38.073Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Set FedPro.connect.hostname=4.165.4.53 FedPro.connect.port=30120 FedPro.connect.protocol=tcp FedPro.connect.timeout=15s FedPro.tls.sniHostname=(unset)
+2026-08-13T12:29:38.073Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Connection attempt 1/60 to federation 'CSE-Prep'
+2026-08-13T12:29:38.146Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : RTI Ambassador obtained.
+2026-08-13T12:29:38.147Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Connecting with settings: crcAddress=4.165.4.53:30120, crcHost=4.165.4.53, crcPort=30120
+2026-08-13T12:29:38.191Z  INFO 7 --- [     hla-bridge] s.p.o.f.client.transport.TransportBase   : Federate Protocol client transport layer settings used:
+	connect.hostname = 4.165.4.53
+	connect.port = 30120
+
+2026-08-13T12:29:38.206Z  INFO 7 --- [     hla-bridge] s.p.o.f.c.session.PersistentSessionImpl  : Federate Protocol client session layer settings used:
+	connect.maxRetryAttempts = 0
+	messageQueue.outgoing.limitedRate = false
+	connect.timeout = 15 seconds
+	messageQueue.size = 2000
+	FED_TIMEOUT_HEART = 180 seconds
+	FED_TIMEOUT_RECONNECT = 600 seconds
+	FED_INT_HEART = 60 seconds
+
+	connect.protocol = tcp
+2026-08-13T12:29:38.207Z  INFO 7 --- [     hla-bridge] s.p.o.f.c.RTIambassadorClientGenericBase : Federate Protocol client service layer settings used:
+	asyncUpdates = false
+
+2026-08-13T12:29:38.299Z  INFO 7 --- [           main] com.decho.cse.bridge.BridgeApplication   : Started BridgeApplication in 1.71 seconds (process running for 2.089)
+2026-08-13T12:29:38.282Z  INFO 7 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-08-13T12:29:38.362Z DEBUG 7 --- [     hla-bridge] s.p.o.fedpro.client.session.SessionImpl  : Client Session 0000-0000-0000-0000: NEW -> STARTING
+2026-08-13T12:29:38.373Z DEBUG 7 --- [     hla-bridge] s.p.o.f.common.session.SocketWriter      : Client Session 0000-0000-0000-0000: Sent     seq.nr.   0, type CTRL_NEW_SESSION
+2026-08-13T12:29:38.497Z DEBUG 7 --- [     hla-bridge] s.p.o.fedpro.client.session.SessionImpl  : Client Session 0000-0000-0000-0000: Received seq.nr.   1, type CTRL_NEW_SESSION_STATUS
+2026-08-13T12:29:38.498Z DEBUG 7 --- [     hla-bridge] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: STARTING -> RUNNING
+2026-08-13T12:29:38.509Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   1, type HLA_CALL_REQUEST
+2026-08-13T12:29:38.845Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   2, type HLA_CALL_RESPONSE
+2026-08-13T12:29:38.965Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Connected to RTI via FedPro 4.165.4.53:30120.
+2026-08-13T12:29:38.966Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : FOM file: SWORD_FOM.xml
+2026-08-13T12:29:39.825Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   3, type HLA_CALL_RESPONSE
+2026-08-13T12:29:39.010Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   2, type HLA_CALL_REQUEST
+2026-08-13T12:29:39.828Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   3, type HLA_CALL_REQUEST
+2026-08-13T12:29:39.827Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Federation 'CSE-Prep' created.
+2026-08-13T12:29:39.955Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   4, type HLA_CALL_RESPONSE
+2026-08-13T12:29:39.962Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Joined federation 'CSE-Prep'.
+2026-08-13T12:29:39.962Z  INFO 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Resolving FOM handles...
+2026-08-13T12:29:39.963Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   4, type HLA_CALL_REQUEST
+Started container telemetry-sidecar-3e3a4fb1
+2026-08-13T12:29:40.109Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   7, type HLA_CALL_RESPONSE
+2026-08-13T12:29:40.011Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   5, type HLA_CALL_RESPONSE
+2026-08-13T12:29:40.014Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   5, type HLA_CALL_REQUEST
+2026-08-13T12:29:40.109Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   7, type HLA_CALL_REQUEST
+2026-08-13T12:29:40.157Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   8, type HLA_CALL_RESPONSE
+2026-08-13T12:29:40.167Z  WARN 7 --- [     hla-bridge] com.decho.cse.bridge.BridgeFederate      : Attempt 1/60 failed: getInteractionClassHandle HLAinteractionRoot.CseEvent.CreateEntity (909149037). Retrying in 10s...
+2026-08-13T12:29:40.060Z DEBUG 7 --- [ Reader Thread.] s.p.o.fedpro.client.session.SessionImpl  : Client Session 7205-fa31-72f8-9a13: Received seq.nr.   6, type HLA_CALL_RESPONSE
+2026-08-13T12:29:40.064Z DEBUG 7 --- [ Writer Thread.] s.p.o.f.common.session.SocketWriter      : Client Session 7205-fa31-72f8-9a13: Sent     seq.nr.   6, type HLA_CALL_REQUEST

@@ -1,0 +1,9 @@
+{
+  "allowBetaGeneratorVersions": true,
+  "sdkGenerators": {
+    "conda": {
+      "semVerRange": ">=1.141.0 <3.0.0"
+    }
+  },
+  "useSdkSidebar": true
+}
