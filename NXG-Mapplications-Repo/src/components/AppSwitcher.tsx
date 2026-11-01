@@ -1,7 +1,7 @@
 /**
  * AppSwitcher — floating pill button that opens a small popover menu letting
- * the user jump between the four apps: ORBAT Manager, Scenario Planner,
- * CSE-Prep, and Map View.
+ * the user jump between the apps, in lifecycle order: Scenario Planner,
+ * ORBAT Manager, Execute, HLA Map and Analysis.
  *
  * Designed to sit in the top-right corner of every app's header without
  * disturbing existing layout — each app adds it wherever there is a natural
@@ -17,13 +17,7 @@ import { useEffect, useRef, useState } from "react";
 // ── App catalogue ─────────────────────────────────────────────────────────────
 
 const APPS = [
-  {
-    path: "/orbat",
-    label: "ORBAT Manager",
-    icon: "⬡",
-    sub: "Hierarchy & composition",
-    accent: "#2fbf71",
-  },
+  // In the order of the exercise lifecycle: plan → force → execute → analyse.
   {
     path: "/scenario-plan",
     label: "Scenario Planner",
@@ -32,24 +26,24 @@ const APPS = [
     accent: "#4A90D9",
   },
   {
-    path: "/cse-prep",
-    label: "CSE Prep",
-    icon: "⚙",
-    sub: "Simulation control panel",
-    accent: "#58a6ff",
+    path: "/orbat",
+    label: "ORBAT Manager",
+    icon: "⬡",
+    sub: "Hierarchy & composition",
+    accent: "#2fbf71",
   },
   {
-    path: "/execution-demo",
-    label: "Execution Demo",
+    path: "/execute",
+    label: "Execute",
     icon: "▶",
-    sub: "Force simulation & COP",
-    accent: "#4fc3f7",
+    sub: "Readiness & launch",
+    accent: "#58a6ff",
   },
   {
     path: "/hlamap",
     label: "HLA Map",
     icon: "⌖",
-    sub: "Map & HLA bridge commands",
+    sub: "Live map & HLA commands",
     accent: "#d95c5c",
   },
   {
@@ -135,7 +129,7 @@ export function AppSwitcher() {
 
   // Derive the current app label for the button
   const current = APPS.find(
-    (a) => location.pathname === a.path || (a.path === "/orbat" && location.pathname === "/"),
+    (a) => location.pathname === a.path || (a.path === "/scenario-plan" && location.pathname === "/"),
   );
 
   // Position popover below-right of the button on open

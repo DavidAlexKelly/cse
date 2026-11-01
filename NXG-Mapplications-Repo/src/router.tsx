@@ -7,9 +7,12 @@ const ScenarioPlannerApp  = lazy(() => import("./apps/scenarioPlanner/App"));
 const TimelineViewApp     = lazy(() => import("./apps/timelineView/App"));
 const HlaMapApp           = lazy(() => import("./apps/hlamap/index"));
 const AnalysisScreenApp   = lazy(() => import("./apps/analysisScreen/index"));
-// Bare map for testing the chunked planet basemap media set. No units, no
-// terrain, no orders — just tiles.
-const GlobeMapApp         = lazy(() => import("./apps/globeMap/App"));
+// Readiness → launch → live map for one phase. The Execute tab of the Plan &
+// Prepare Workshop embeds this route.
+const ExecuteApp          = lazy(() => import("./apps/execute/App"));
+// /globe (a bare basemap test page, apps/globeMap) was removed: its source is
+// not in this repository, and a lazy import of a missing module fails the
+// build, not just the route.
 // The Battlegroup Wargame System (/bgws) now lives in its own repository and
 // Developer Console app ("Realtime AI Wargaming").
 
@@ -40,16 +43,9 @@ function withSuspense(element: React.ReactNode) {
 export const router = createBrowserRouter(
   [
     {
-      // Restored to master's landing page. This branch had it pointed at the
-      // globe test app and then at Scenario Planner while developing the
-      // basemap; neither belongs in a merge whose subject is the basemap.
-      // Both remain reachable at /globe and /scenario-plan.
+      // The Scenario Planner, also reachable at /scenario-plan.
       path: "/",
       element: withSuspense(<ScenarioPlannerApp />),
-    },
-    {
-      path: "/globe",
-      element: withSuspense(<GlobeMapApp />),
     },
     {
       path: "/orbat",
@@ -62,6 +58,10 @@ export const router = createBrowserRouter(
     {
       path: "/timeline",
       element: withSuspense(<TimelineViewApp />),
+    },
+    {
+      path: "/execute",
+      element: withSuspense(<ExecuteApp />),
     },
     {
       path: "/hlamap",
