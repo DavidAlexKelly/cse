@@ -1,0 +1,41 @@
+{
+  "name": "@my-functions/my-functions",
+  "version": "0.0.0",
+  "description": "My useful functions",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json",
+    "resources.json",
+    ".sdk"
+  ],
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/api-logs": "^0.215.0",
+    "@osdk/api": "2.34.0",
+    "@osdk/client": "2.34.0",
+    "@osdk/functions": "1.13.0",
+    "@osdk/language-models": "0.7.0",
+    "@palantir/functions-sources": "0.67.0",
+    "@ontology/sdk": "file:./.sdk/@ontology/sdk"
+  },
+  "devDependencies": {
+    "@foundry/functions-typescript-runtime": "0.275.0",
+    "@osdk/foundry-sdk-generator": "2.34.0",
+    "@osdk/unit-testing": "0.15.0",
+    "@types/node": "^24.12.0",
+    "vitest": "^4.0.18"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "license": "UNLICENSED"
+}

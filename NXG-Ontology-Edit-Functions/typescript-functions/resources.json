@@ -1,0 +1,240 @@
+{
+  "resources": {
+    "ontologies": [
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.ontology.cc5e8302-efb1-44a0-b5ed-94c47bef6b9e"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      }
+    ],
+    "objects": [
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.0a5b2b83-07d0-4cf2-a54a-574d16eae99a"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.3692ee06-2e3e-45dd-83ae-4e6039f88949"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.3833c4ca-aff8-4878-8120-c3b8b36ca257"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.3b54c017-3d98-44ce-a915-2100db36dc59"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.3c9d0baf-41fb-4b09-87b8-36180d73b526"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.46e13967-ee74-471e-8933-ab83795f61be"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.5081c7b5-798f-4a28-b0dc-6236793d736b"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.5605a14f-9677-4fbd-b2ad-fb44191133a9"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.6148fe80-6c2b-437a-b526-c2f3c3fe811a"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.88f1151f-f825-4783-bb86-5ec06bb8601e"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.97d9094c-203f-417f-82e1-d7935b594812"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.994dced7-d788-4950-82af-268786ee509f"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.ba721810-9fc8-4f18-abd3-f277eddc74ba"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.c86ababd-90e9-4b0e-bfbe-a6b7ea278f61"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.d2d1a007-c315-4a1d-be2e-62e4d59a9e14"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.e6d24345-6ee1-4e5a-bba8-7b8c279ee1c0"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.object-type.fba601eb-2427-4024-999b-b9fb2d915a3b"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      }
+    ],
+    "links": [
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.0d36a0d9-0038-476a-a55d-779c69768eab"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.107096bc-0b0f-44bd-bd6a-ed82caa86b8b"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.21f2884e-80df-497f-ac15-ed60c7aaa7e9"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.2b22b24d-ff33-48d8-94b4-a62e1b17b3c9"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.45695f6c-7c71-45f0-bf49-9fb11cfca15b"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.4b2eaa32-8b68-4e12-a6b2-d14b232a7b77"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.6ff2d3c5-3a11-46f1-97fb-ed9e206d7fa9"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.8ac98650-b156-42de-ba29-c3ea3e0e448c"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      },
+      {
+        "identifier": {
+          "rid": "ri.ontology.main.relation.d33fdb23-c7ce-4c05-97f0-113425276fe1"
+        },
+        "verbs": [
+          "ONTOLOGIES_READ"
+        ]
+      }
+    ],
+    "interfaces": [],
+    "actions": [],
+    "queries": [],
+    "osdks": [],
+    "models": [],
+    "datasets": [],
+    "mediasets": [],
+    "streams": [],
+    "custom": {}
+  },
+  "egress": {
+    "connections": []
+  },
+  "_comment": "DO NOT EDIT THIS FILE MANUALLY, IT MAY RESULT IN COMPILE ERRORS. DO NOT DELETE THIS FILE.",
+  "version": 1
+}
