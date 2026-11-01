@@ -24,7 +24,7 @@ import { planRollup, type Renderable } from "./symbology/rollup";
 import { useSwordCatalogue, type SwordCatalogue } from "./useSwordCatalogue";
 import { iconSignature, type IconOptions } from "./iconSignature";
 import type { HlaEntity, LatLon } from "./types";
-import { forceColor, UI } from "./ui";
+import { forceColor, MAP, tint, UI } from "./ui";
 
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY ?? "";
 const TILE_URL = `https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`;
@@ -186,7 +186,7 @@ function buildEntityIcon(
     rolledUp > 0
       ? `<div style="position:absolute;top:-3px;right:-6px;min-width:13px;height:13px;padding:0 2px;
            border-radius:7px;background:rgba(14,18,25,0.92);border:1px solid ${tint}99;
-           color:${tint};font-family:'Courier New';font-size:9px;font-weight:700;line-height:13px;
+           color:${tint};font-family:${MAP.font};font-size:9px;font-weight:700;line-height:13px;
            text-align:center;pointer-events:none;">+${rolledUp}</div>`
       : "";
 
@@ -219,7 +219,7 @@ function markerTooltip(renderable: Renderable<HlaEntity>, rolledUpHint: string):
     .join("");
 
   return (
-    `<div style="font-family:'Courier New';font-size:10px;line-height:1.45;">` +
+    `<div style="font-family:${MAP.font};font-size:10px;line-height:1.45;">` +
     `<div style="font-weight:700;">${title}</div>` +
     (renderable.headquarters ? `<div style="opacity:0.8;">includes command post</div>` : "") +
     (rolledUp > 0
@@ -558,7 +558,7 @@ const EntityMap: FC<EntityMapProps> = ({
             background: "rgba(14,18,25,0.88)",
             border: `1px solid ${UI.border}`,
             color: UI.textDim,
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
             padding: "4px 9px",
             letterSpacing: 0.5,
@@ -578,9 +578,9 @@ const EntityMap: FC<EntityMapProps> = ({
             left: "50%",
             transform: "translateX(-50%)",
             background: "rgba(14,18,25,0.92)",
-            border: `1px solid ${UI.accent}55`,
+            border: `1px solid ${tint(UI.accent, 33)}`,
             color: UI.accent,
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 11,
             padding: "5px 12px",
             letterSpacing: 1,

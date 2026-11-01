@@ -18,14 +18,15 @@ import {
   objectivesAsText,
   summariseObjectives,
 } from "../lib/objectiveAssessment";
-import { UI } from "./ui";
+import { UI, tint } from "./ui";
 
 const RATING_COLOUR: Record<ObjectiveRating, string> = {
   DEMONSTRATED: UI.green,
   PARTIALLY_DEMONSTRATED: UI.amber,
   NOT_DEMONSTRATED: UI.red,
   NOT_OBSERVED: UI.textDim,
-  NEEDS_JUDGEMENT: UI.accent,
+  // Neutral, not the accent: green reads as "good", and this is undecided.
+  NEEDS_JUDGEMENT: UI.blue,
 };
 
 const TONE_COLOUR = { good: UI.green, warn: UI.amber, bad: UI.red, muted: UI.textDim } as const;
@@ -54,12 +55,12 @@ function Badge({ colour, children }: { colour: string; children: React.ReactNode
   return (
     <span
       style={{
-        fontFamily: UI.fontMono,
+        fontFamily: UI.fontSans,
         fontSize: 9,
         letterSpacing: 1,
         color: colour,
-        border: `1px solid ${colour}66`,
-        background: `${colour}18`,
+        border: `1px solid ${tint(colour, 40)}`,
+        background: tint(colour, 9),
         padding: "2px 6px",
         whiteSpace: "nowrap",
       }}
@@ -96,7 +97,7 @@ const TrainingObjectivesSection: FC<Props> = ({
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
         <div
           style={{
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
             color: UI.accent,
             letterSpacing: 1.5,
@@ -105,7 +106,7 @@ const TrainingObjectivesSection: FC<Props> = ({
         >
           TRAINING OBJECTIVES
         </div>
-        <div style={{ fontFamily: UI.fontMono, fontSize: 9, color: UI.textFaint }}>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 9, color: UI.textFaint }}>
           suggested from the measured orders · the analyst&rsquo;s call stands
         </div>
         {source === "demo" && <Badge colour={UI.amber}>DEMO OBJECTIVES</Badge>}
@@ -120,7 +121,7 @@ const TrainingObjectivesSection: FC<Props> = ({
               background: UI.bg2,
               color: copied ? UI.green : UI.textDim,
               border: `1px solid ${UI.border}`,
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 10,
               padding: "4px 9px",
               cursor: "pointer",
@@ -135,7 +136,7 @@ const TrainingObjectivesSection: FC<Props> = ({
         {summariseObjectives(assessments, calls)}
       </div>
       {storageNote && (
-        <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.amber, marginBottom: 8 }}>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.amber, marginBottom: 8 }}>
           {storageNote}
         </div>
       )}
@@ -151,6 +152,7 @@ const TrainingObjectivesSection: FC<Props> = ({
               border: `1px solid ${UI.border}`,
               borderLeft: `3px solid ${RATING_COLOUR[rating]}`,
               background: UI.bg1,
+              borderRadius: UI.radiusCard,
               marginBottom: 6,
             }}
           >
@@ -172,7 +174,7 @@ const TrainingObjectivesSection: FC<Props> = ({
               }}
             >
               <span
-                style={{ fontFamily: UI.fontMono, fontSize: 11, color: UI.textDim, minWidth: 48 }}
+                style={{ fontFamily: UI.fontSans, fontSize: 11, color: UI.textDim, minWidth: 48 }}
               >
                 {a.ref || "TO"}
               </span>
@@ -199,7 +201,7 @@ const TrainingObjectivesSection: FC<Props> = ({
                   <>
                     <div
                       style={{
-                        fontFamily: UI.fontMono,
+                        fontFamily: UI.fontSans,
                         fontSize: 9,
                         color: UI.textFaint,
                         margin: "6px 0 4px",
@@ -213,7 +215,7 @@ const TrainingObjectivesSection: FC<Props> = ({
                           <span
                             style={{
                               color: TONE_COLOUR[statusTone(o.status)],
-                              fontFamily: UI.fontMono,
+                              fontFamily: UI.fontSans,
                               fontSize: 10,
                             }}
                           >
@@ -231,7 +233,7 @@ const TrainingObjectivesSection: FC<Props> = ({
                   <>
                     <div
                       style={{
-                        fontFamily: UI.fontMono,
+                        fontFamily: UI.fontSans,
                         fontSize: 9,
                         color: UI.textFaint,
                         margin: "8px 0 4px",
@@ -243,7 +245,7 @@ const TrainingObjectivesSection: FC<Props> = ({
                       {a.injects.map((i) => (
                         <li key={i.injectId} style={{ marginBottom: 3 }}>
                           <span
-                            style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}
+                            style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}
                           >
                             {i.dayOffset}
                           </span>{" "}
@@ -269,7 +271,7 @@ const TrainingObjectivesSection: FC<Props> = ({
                     flexWrap: "wrap",
                   }}
                 >
-                  <label style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
+                  <label style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}>
                     ANALYST RATING{" "}
                     <select
                       value={call?.rating ?? ""}

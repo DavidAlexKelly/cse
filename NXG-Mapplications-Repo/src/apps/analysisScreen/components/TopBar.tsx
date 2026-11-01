@@ -1,8 +1,10 @@
 // ── analysisScreen/components/TopBar.tsx ───────────────────────────────────
 // Title, run picker and run metadata.
 import type { FC } from "react";
+import { AppSwitcher } from "@/components/AppSwitcher";
+import "@/shared/hla/console.css";
 import type { RunSummary } from "../types";
-import { UI, formatDateTime, formatDuration } from "./ui";
+import { formatDateTime, formatDuration } from "./ui";
 
 interface Props {
   runs: RunSummary[];
@@ -35,13 +37,15 @@ interface Props {
   phases?: { id: string; name: string }[];
   selectedPhaseId?: string | null;
   onSelectPhase?: (phaseId: string) => void;
+  /** The exercise, shown as the screen title (as on Execute). */
+  title?: string;
 }
 
 export type AnalysisView = "map" | "debrief";
 
 const VIEWS: { id: AnalysisView; label: string }[] = [
-  { id: "map", label: "MAP" },
-  { id: "debrief", label: "DEBRIEF" },
+  { id: "map", label: "Map" },
+  { id: "debrief", label: "Debrief" },
 ];
 
 const TopBar: FC<Props> = ({
@@ -57,198 +61,109 @@ const TopBar: FC<Props> = ({
   phases,
   selectedPhaseId,
   onSelectPhase,
+  title,
 }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 16,
-      background: UI.bg1,
-      borderBottom: `1px solid ${UI.border}`,
-      padding: "0 14px",
-      height: 46,
-      flexShrink: 0,
-      fontFamily: UI.fontSans,
-    }}
-  >
-    <div
-      style={{
-        fontFamily: UI.fontMono,
-        fontSize: 13,
-        color: UI.accent,
-        letterSpacing: 2,
-        fontWeight: 700,
-      }}
-    >
-      ANALYSIS
-    </div>
-    <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textFaint }}>
-      HLA ENTITY TRACKS · AFTER-ACTION REVIEW
-    </div>
+  <>
+    <header className="hc-header">
+      <div className="hc-heading">
+        <div className="hc-eyebrow">ANALYSE</div>
+        <div className="hc-title" title={title}>
+          {title ?? "After-action review"}
+        </div>
+      </div>
 
-    {onViewChange && view && (
-      <div style={{ display: "flex", marginLeft: 4 }}>
-        {VIEWS.map((option) => {
-          const active = view === option.id;
-          return (
+      {onViewChange && view && (
+        <div className="hc-seg" role="group" aria-label="View">
+          {VIEWS.map((option) => (
             <button
               key={option.id}
+              type="button"
+              aria-pressed={view === option.id}
               onClick={() => onViewChange(option.id)}
-              style={{
-                background: active ? UI.bg2 : "transparent",
-                color: active ? UI.accent : UI.textDim,
-                border: `1px solid ${active ? UI.accent : UI.border}`,
-                borderRightWidth: option.id === "map" ? 0 : 1,
-                fontFamily: UI.fontMono,
-                fontSize: 10,
-                padding: "4px 12px",
-                cursor: "pointer",
-                letterSpacing: 1,
-              }}
             >
               {option.label}
             </button>
-          );
-        })}
-      </div>
-    )}
+          ))}
+        </div>
+      )}
 
-    <div style={{ flex: 1 }} />
+      {phases && onSelectPhase && (
+        <label className="hc-field" title="The phase whose plan this run is measured against">
+          <span>Plan</span>
+          <select
+            value={selectedPhaseId ?? ""}
+            disabled={phases.length === 0}
+            onChange={(e) => onSelectPhase(e.target.value)}
+          >
+            {phases.length === 0 && <option value="">No phases</option>}
+            {phases.map((phase) => (
+              <option key={phase.id} value={phase.id}>
+                {phase.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
-    {/* Standalone only. In Workshop the module's variable governs, and a
-        second control here could disagree with the HLA map next to it. */}
-    {onToggleMockDemo && (
-      <button
-        onClick={() => onToggleMockDemo(!mockDemo)}
-        title={
-          mockDemo
-            ? "Replaying the synthetic OP-BALTIC-SHIELD run. Click to read the HLA tracks dataset instead."
-            : "Reading the HLA tracks dataset. Click to replay the synthetic OP-BALTIC-SHIELD run instead."
-        }
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          background: mockDemo ? `${UI.amber}22` : UI.bg2,
-          color: mockDemo ? UI.amber : UI.textDim,
-          border: `1px solid ${mockDemo ? UI.amber : UI.border}`,
-          fontFamily: UI.fontMono,
-          fontSize: 10,
-          padding: "4px 9px",
-          cursor: "pointer",
-          letterSpacing: 0.5,
-        }}
-      >
-        <span
-          style={{
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: mockDemo ? UI.amber : UI.textFaint,
-          }}
-        />
-        {mockDemo ? "DEMO MODE" : "LIVE DATA"}
-      </button>
-    )}
-
-    {selectedRun && (
-      <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
-        {formatDateTime(selectedRun.startS)} ·{" "}
-        {formatDuration(selectedRun.endS - selectedRun.startS)}
-      </div>
-    )}
-
-    {phases && onSelectPhase && (
-      <label
-        style={{
-          fontFamily: UI.fontMono,
-          fontSize: 10,
-          color: UI.textFaint,
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-        }}
-        title="The phase whose plan this run is measured against"
-      >
-        PLAN
+      <label className="hc-field">
+        <span>Run</span>
         <select
-          value={selectedPhaseId ?? ""}
-          disabled={phases.length === 0}
-          onChange={(e) => onSelectPhase(e.target.value)}
-          style={{
-            background: UI.bg2,
-            color: UI.text,
-            border: `1px solid ${UI.border}`,
-            fontFamily: UI.fontMono,
-            fontSize: 11,
-            padding: "4px 6px",
-            minWidth: 180,
-          }}
+          value={selectedRun?.id ?? ""}
+          disabled={loadingRuns || runs.length === 0}
+          onChange={(e) => onSelectRun(e.target.value)}
+          style={{ minWidth: 260 }}
         >
-          {phases.length === 0 && <option value="">no phases</option>}
-          {phases.map((phase) => (
-            <option key={phase.id} value={phase.id}>
-              {phase.name}
+          {loadingRuns && <option value="">Detecting runs…</option>}
+          {!loadingRuns && runs.length === 0 && <option value="">No runs found</option>}
+          {runs.map((run, index) => (
+            <option key={run.id} value={run.id}>
+              {index === 0 ? "Latest · " : ""}
+              {formatDateTime(run.startS)} · {formatDuration(run.endS - run.startS)} ·{" "}
+              {run.activeMinutes} min active
             </option>
           ))}
         </select>
       </label>
-    )}
-
-    <label
-      style={{
-        fontFamily: UI.fontMono,
-        fontSize: 10,
-        color: UI.textFaint,
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-      }}
-    >
-      RUN
-      <select
-        value={selectedRun?.id ?? ""}
-        disabled={loadingRuns || runs.length === 0}
-        onChange={(e) => onSelectRun(e.target.value)}
-        style={{
-          background: UI.bg2,
-          color: UI.text,
-          border: `1px solid ${UI.border}`,
-          fontFamily: UI.fontMono,
-          fontSize: 11,
-          padding: "4px 6px",
-          minWidth: 300,
-        }}
+      <button
+        type="button"
+        className="mil-btn mil-btn--sm mil-btn--ghost"
+        onClick={onRefresh}
+        disabled={loadingRuns}
+        title="Look for new runs in the track dataset"
       >
-        {loadingRuns && <option value="">detecting runs…</option>}
-        {!loadingRuns && runs.length === 0 && <option value="">no runs found</option>}
-        {runs.map((run, index) => (
-          <option key={run.id} value={run.id}>
-            {index === 0 ? "▸ latest · " : ""}
-            {formatDateTime(run.startS)} · {formatDuration(run.endS - run.startS)} ·{" "}
-            {run.activeMinutes} min active
-          </option>
-        ))}
-      </select>
-    </label>
+        Refresh
+      </button>
 
-    <button
-      onClick={onRefresh}
-      disabled={loadingRuns}
-      style={{
-        background: UI.bg2,
-        color: UI.textDim,
-        border: `1px solid ${UI.border}`,
-        fontFamily: UI.fontMono,
-        fontSize: 10,
-        padding: "5px 9px",
-        cursor: loadingRuns ? "default" : "pointer",
-        letterSpacing: 0.5,
-      }}
-    >
-      REFRESH
-    </button>
-  </div>
+      <span className="hc-spacer" />
+
+      {/* Standalone only. In Workshop the module's variable governs, and a
+          second control here could disagree with the HLA map next to it. */}
+      {onToggleMockDemo ? (
+        <label
+          className="hc-demo-toggle"
+          title="Replay the synthetic OP-BALTIC-SHIELD run instead of the HLA tracks dataset"
+        >
+          <input
+            type="checkbox"
+            checked={!!mockDemo}
+            onChange={(e) => onToggleMockDemo(e.target.checked)}
+          />
+          Demo mode
+        </label>
+      ) : (
+        mockDemo && <span className="hc-demo-badge">DEMO MODE</span>
+      )}
+      <AppSwitcher />
+    </header>
+    {mockDemo && (
+      <div className="hc-banner" role="status">
+        Demo mode — replaying a synthetic run of Operation BALTIC SHIELD against its Phase 1 plan.
+        {selectedRun
+          ? ` Run length ${formatDuration(selectedRun.endS - selectedRun.startS)}.`
+          : ""}
+      </div>
+    )}
+  </>
 );
 
 export default TopBar;

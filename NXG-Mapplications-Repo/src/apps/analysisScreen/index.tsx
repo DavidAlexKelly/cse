@@ -36,7 +36,7 @@ import type { NextPhaseState } from "./components/NextPhaseCard";
 import SidePanel from "./components/SidePanel";
 import Timeline from "./components/Timeline";
 import TopBar, { type AnalysisView } from "./components/TopBar";
-import { UI } from "./components/ui";
+import { UI, tint } from "./components/ui";
 import { createNextPhaseFromRun } from "./data/nextPhase";
 import { loadPhaseStartState } from "./data/phasePlanSource";
 import { listRuns } from "./data/tracks";
@@ -72,10 +72,10 @@ function Banner({ tone, children }: { tone: "error" | "warn"; children: React.Re
   return (
     <div
       style={{
-        background: `${color}18`,
-        borderBottom: `1px solid ${color}66`,
+        background: tint(color, 9),
+        borderBottom: `1px solid ${tint(color, 40)}`,
         color,
-        fontFamily: UI.fontMono,
+        fontFamily: UI.fontSans,
         fontSize: 11,
         padding: "8px 14px",
         lineHeight: 1.5,
@@ -505,6 +505,7 @@ const AnalysisScreen: FC = () => {
         phases={mockDemo ? undefined : phases}
         selectedPhaseId={phaseId}
         onSelectPhase={setPickedPhaseId}
+        title={mockDemo ? "Operation BALTIC SHIELD" : scenarioMeta?.scenarioName}
       />
 
       {!mockDemo && selectedRun && phase && (
@@ -560,6 +561,7 @@ const AnalysisScreen: FC = () => {
                 zIndex: 1100,
                 maxWidth: 420,
                 background: UI.bg1,
+                borderRadius: UI.radiusCard,
                 border: `1px solid ${UI.border}`,
                 borderLeft: `3px solid ${UI.accent}`,
                 padding: "16px 18px",
@@ -570,7 +572,7 @@ const AnalysisScreen: FC = () => {
             >
               <div
                 style={{
-                  fontFamily: UI.fontMono,
+                  fontFamily: UI.fontSans,
                   fontSize: 10,
                   letterSpacing: 1,
                   color: UI.accent,
@@ -591,10 +593,10 @@ const AnalysisScreen: FC = () => {
                     type="button"
                     onClick={() => setMockDemo(true)}
                     style={{
-                      background: `${UI.amber}22`,
+                      background: tint(UI.amber, 13),
                       color: UI.amber,
                       border: `1px solid ${UI.amber}`,
-                      fontFamily: UI.fontMono,
+                      fontFamily: UI.fontSans,
                       fontSize: 11,
                       padding: "5px 10px",
                       cursor: "pointer",
@@ -611,7 +613,7 @@ const AnalysisScreen: FC = () => {
                       background: "transparent",
                       color: UI.accent,
                       border: `1px solid ${UI.border}`,
-                      fontFamily: UI.fontMono,
+                      fontFamily: UI.fontSans,
                       fontSize: 11,
                       padding: "5px 10px",
                       cursor: "pointer",
@@ -720,7 +722,7 @@ const AnalysisScreen: FC = () => {
               background: UI.bg1,
               borderTop: `1px solid ${UI.border}`,
               padding: "18px 14px",
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 11,
               color: UI.textDim,
               letterSpacing: 1,
@@ -796,7 +798,7 @@ function PlanStatus({
         background: UI.bg1,
         borderBottom: `1px solid ${UI.border}`,
         color: tone,
-        fontFamily: UI.fontMono,
+        fontFamily: UI.fontSans,
         fontSize: 10,
         padding: "6px 14px",
         flexShrink: 0,
@@ -815,7 +817,7 @@ function PlanStatus({
             background: reviewing ? UI.bg2 : "transparent",
             color: UI.accent,
             border: `1px solid ${UI.border}`,
-            fontFamily: UI.fontMono,
+            fontFamily: UI.fontSans,
             fontSize: 10,
             padding: "2px 8px",
             cursor: "pointer",

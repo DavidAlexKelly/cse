@@ -3,4 +3,4 @@
 // hlamap can go on importing `{ UI } from "./ui"`, but the tokens themselves
 // live in shared/hla/ui so the live map and the analysis replay cannot drift.
 
-export { UI, forceColor } from "@/shared/hla/ui";
+export { MAP, UI, forceColor, tint } from "@/shared/hla/ui";

@@ -5,7 +5,7 @@
 // units ACTUALLY ended (lib/nextPhase.ts, data/nextPhase.ts), then opens it in
 // the Scenario Planner.
 import { type FC, useEffect, useState } from "react";
-import { UI } from "./ui";
+import { UI, tint } from "./ui";
 
 export interface NextPhaseState {
   status: "idle" | "working" | "done" | "error";
@@ -51,12 +51,13 @@ const NextPhaseCard: FC<Props> = ({
         border: `1px solid ${UI.border}`,
         borderLeft: `3px solid ${UI.green}`,
         background: UI.bg1,
+        borderRadius: UI.radiusCard,
         padding: "14px 16px",
       }}
     >
       <div
         style={{
-          fontFamily: UI.fontMono,
+          fontFamily: UI.fontSans,
           fontSize: 10,
           color: UI.green,
           letterSpacing: 1.5,
@@ -100,10 +101,10 @@ const NextPhaseCard: FC<Props> = ({
             disabled={working || !!blockedReason}
             title={blockedReason ?? undefined}
             style={{
-              background: blockedReason ? UI.bg2 : `${UI.green}22`,
+              background: blockedReason ? UI.bg2 : tint(UI.green, 13),
               color: blockedReason ? UI.textFaint : UI.green,
               border: `1px solid ${blockedReason ? UI.border : UI.green}`,
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 11,
               padding: "6px 12px",
               cursor: working || blockedReason ? "default" : "pointer",
@@ -151,10 +152,10 @@ const NextPhaseCard: FC<Props> = ({
             onClick={onOpenPlanner}
             style={{
               marginTop: 8,
-              background: `${UI.green}22`,
+              background: tint(UI.green, 13),
               color: UI.green,
               border: `1px solid ${UI.green}`,
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 11,
               padding: "6px 12px",
               cursor: "pointer",

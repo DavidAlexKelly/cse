@@ -6,7 +6,7 @@
 // APP-6 symbols now, so affiliation and role are carried by the symbol rather
 // than by a colour this app invented.
 
-export { UI, forceColor } from "@/shared/hla/ui";
+export { MAP, UI, forceColor, tint } from "@/shared/hla/ui";
 
 /** Format epoch seconds as an absolute UTC clock time. */
 export function formatClock(epochSeconds: number): string {

@@ -82,7 +82,7 @@ export const MatchReview: FC<Props> = ({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-        <span style={{ fontFamily: UI.fontMono, fontSize: 10, letterSpacing: 1, color: UI.accent }}>
+        <span style={{ fontFamily: UI.fontSans, fontSize: 10, letterSpacing: 1, color: UI.accent }}>
           REVIEW MATCHES
         </span>
         <span style={{ color: UI.textDim }}>
@@ -187,7 +187,7 @@ const buttonStyle = {
   background: UI.bg2,
   color: UI.textDim,
   border: `1px solid ${UI.border}`,
-  fontFamily: UI.fontMono,
+  fontFamily: UI.fontSans,
   fontSize: 10,
   padding: "3px 8px",
   cursor: "pointer",

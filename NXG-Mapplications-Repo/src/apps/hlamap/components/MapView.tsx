@@ -15,11 +15,11 @@ import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import EntityMap from "@/shared/hla/EntityMap";
 import type { HlaEntity } from "@/shared/hla/types";
 import type { CommsZone, LatLon, ObstacleMarker, ObstacleType, PickMode } from "../types";
-import { UI } from "./ui";
+import { MAP } from "./ui";
 
 function buildObstacleIcon(type: ObstacleType): L.DivIcon {
   const glyph = type === "minefield" ? "✱" : type === "roadblock" ? "▧" : "≈";
-  const html = `<div style="width:20px;height:20px;border-radius:3px;background:${UI.amber};border:1px solid #7a5a1e;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1a1200;">${glyph}</div>`;
+  const html = `<div style="width:20px;height:20px;border-radius:3px;background:${MAP.amber};border:1px solid #7a5a1e;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1a1200;">${glyph}</div>`;
   return L.divIcon({ html, iconSize: [20, 20], iconAnchor: [10, 10], className: "" });
 }
 
@@ -108,11 +108,11 @@ const MapView: FC<Props> = ({
     commsLayerRef.current = commsZones.map((z) =>
       L.circle([z.lat, z.lon], {
         radius: z.radiusKm * 1000,
-        color: z.enabled ? UI.red : UI.green,
+        color: z.enabled ? MAP.red : MAP.green,
         weight: 1.5,
         dashArray: "6 4",
         fillOpacity: 0.08,
-        fillColor: z.enabled ? UI.red : UI.green,
+        fillColor: z.enabled ? MAP.red : MAP.green,
       })
         .addTo(map)
         .bindTooltip(z.enabled ? "COMMS DISRUPTED" : "COMMS RESTORED")
@@ -127,7 +127,7 @@ const MapView: FC<Props> = ({
     if (pickMode.kind === "patrol" && pickMode.waypoints.length > 0) {
       patrolLineRef.current = L.polyline(
         pickMode.waypoints.map((w): L.LatLngExpression => [w.lat, w.lon]),
-        { color: UI.amber, weight: 2, dashArray: "4 4" }
+        { color: MAP.amber, weight: 2, dashArray: "4 4" }
       ).addTo(map);
     }
   }, [pickMode, map]);

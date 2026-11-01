@@ -16,7 +16,7 @@ import type { Debrief } from "../lib/debriefNarrative";
 import type { RunStatistics } from "../lib/runStatistics";
 import NextPhaseCard from "./NextPhaseCard";
 import TrainingObjectivesSection from "./TrainingObjectivesSection";
-import { UI, formatClock } from "./ui";
+import { UI, formatClock, tint } from "./ui";
 
 interface Props {
   debrief: Debrief;
@@ -32,7 +32,7 @@ interface Props {
 }
 
 const KIND_STYLE: Record<RunEventKind, { colour: string; label: string }> = {
-  detection: { colour: UI.accent, label: "DETECTION" },
+  detection: { colour: UI.blue, label: "DETECTION" },
   engagement: { colour: UI.amber, label: "ENGAGEMENT" },
   loss: { colour: UI.red, label: "LOSS" },
   objective: { colour: UI.green, label: "OBJECTIVE" },
@@ -63,6 +63,7 @@ function Stat({
     <div
       style={{
         background: UI.bg1,
+        borderRadius: UI.radiusCard,
         border: `1px solid ${UI.border}`,
         padding: "8px 10px",
         minWidth: 0,
@@ -70,7 +71,7 @@ function Stat({
     >
       <div
         style={{
-          fontFamily: UI.fontMono,
+          fontFamily: UI.fontSans,
           fontSize: 9,
           color: UI.textFaint,
           letterSpacing: 1,
@@ -82,9 +83,9 @@ function Stat({
       >
         {label}
       </div>
-      <div style={{ fontFamily: UI.fontMono, fontSize: 17, color: tone ?? UI.text }}>{value}</div>
+      <div style={{ fontFamily: UI.fontSans, fontSize: 17, color: tone ?? UI.text }}>{value}</div>
       {hint && (
-        <div style={{ fontFamily: UI.fontMono, fontSize: 9, color: UI.textDim, marginTop: 3 }}>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 9, color: UI.textDim, marginTop: 3 }}>
           {hint}
         </div>
       )}
@@ -97,7 +98,7 @@ function SectionHeading({ children, note }: { children: string; note?: string })
     <div style={{ display: "flex", alignItems: "baseline", gap: 8, margin: "18px 0 8px" }}>
       <div
         style={{
-          fontFamily: UI.fontMono,
+          fontFamily: UI.fontSans,
           fontSize: 10,
           color: UI.accent,
           letterSpacing: 1.5,
@@ -107,7 +108,7 @@ function SectionHeading({ children, note }: { children: string; note?: string })
         {children.toUpperCase()}
       </div>
       {note && (
-        <div style={{ fontFamily: UI.fontMono, fontSize: 9, color: UI.textFaint }}>{note}</div>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 9, color: UI.textFaint }}>{note}</div>
       )}
     </div>
   );
@@ -151,6 +152,7 @@ const DebriefView: FC<Props> = ({
             border: `1px solid ${UI.border}`,
             borderLeft: `3px solid ${UI.accent}`,
             background: UI.bg1,
+            borderRadius: UI.radiusCard,
             padding: "14px 16px",
           }}
         >
@@ -164,18 +166,18 @@ const DebriefView: FC<Props> = ({
           >
             <span
               style={{
-                fontFamily: UI.fontMono,
+                fontFamily: UI.fontSans,
                 fontSize: 9,
                 letterSpacing: 1,
                 color: UI.amber,
-                border: `1px solid ${UI.amber}66`,
-                background: `${UI.amber}18`,
+                border: `1px solid ${tint(UI.amber, 40)}`,
+                background: tint(UI.amber, 9),
                 padding: "2px 6px",
               }}
             >
               SYNTHETIC WRITE-UP
             </span>
-            <span style={{ fontFamily: UI.fontMono, fontSize: 9, color: UI.textDim }}>
+            <span style={{ fontFamily: UI.fontSans, fontSize: 9, color: UI.textDim }}>
               {debrief.source === "local-template"
                 ? "composed in the browser from this run's data — not a language model"
                 : debrief.source}
@@ -431,7 +433,7 @@ const DebriefView: FC<Props> = ({
                   </span>
                   <span
                     style={{
-                      fontFamily: UI.fontMono,
+                      fontFamily: UI.fontSans,
                       fontSize: 9,
                       color: style.colour,
                       letterSpacing: 1,
@@ -442,13 +444,13 @@ const DebriefView: FC<Props> = ({
                   </span>
                   <span style={{ fontSize: 12, flex: 1 }}>{event.label}</span>
                   {event.losses && (event.losses.blue > 0 || event.losses.red > 0) && (
-                    <span style={{ fontFamily: UI.fontMono, fontSize: 10 }}>
+                    <span style={{ fontFamily: UI.fontSans, fontSize: 10 }}>
                       <span style={{ color: "#80C0FF" }}>−{event.losses.blue}</span>
                       <span style={{ color: UI.textFaint }}> / </span>
                       <span style={{ color: "#FF8080" }}>−{event.losses.red}</span>
                     </span>
                   )}
-                  <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textFaint }}>
+                  <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textFaint }}>
                     {isOpen ? "▾" : "▸"}
                   </span>
                 </button>
@@ -471,7 +473,7 @@ const DebriefView: FC<Props> = ({
                         display: "flex",
                         flexWrap: "wrap",
                         gap: 14,
-                        fontFamily: UI.fontMono,
+                        fontFamily: UI.fontSans,
                         fontSize: 10,
                         color: UI.textDim,
                         marginBottom: 8,
@@ -510,8 +512,8 @@ const DebriefView: FC<Props> = ({
                       style={{
                         background: UI.bg2,
                         color: UI.accent,
-                        border: `1px solid ${UI.accent}66`,
-                        fontFamily: UI.fontMono,
+                        border: `1px solid ${tint(UI.accent, 40)}`,
+                        fontFamily: UI.fontSans,
                         fontSize: 10,
                         padding: "4px 9px",
                         cursor: "pointer",

@@ -28,7 +28,7 @@ import {
   type OrderCompliance,
   type RunCompliance,
 } from "../lib/compliance";
-import { UI } from "./ui";
+import { MAP, UI } from "./ui";
 
 /** Which plan layers are showing. An overlay you cannot switch off buries the track. */
 export interface PlanLayerToggles {
@@ -46,10 +46,10 @@ export const DEFAULT_PLAN_LAYERS: PlanLayerToggles = {
 };
 
 const TONE_COLOUR: Record<ReturnType<typeof statusTone>, string> = {
-  good: UI.green,
-  warn: UI.amber,
-  bad: UI.red,
-  muted: UI.textFaint,
+  good: MAP.green,
+  warn: MAP.amber,
+  bad: MAP.red,
+  muted: MAP.textFaint,
 };
 
 function toLatLng(point: PlanPoint): L.LatLngExpression {
@@ -148,7 +148,7 @@ const AnalysisMap: FC<Props> = ({
       for (const order of plan.orders) {
         if (order.route.length < 2) continue;
         const result = complianceByOrderId.get(order.id);
-        const colour = result ? TONE_COLOUR[statusTone(result.status)] : UI.textDim;
+        const colour = result ? TONE_COLOUR[statusTone(result.status)] : MAP.textDim;
         const isSelected = selectedOrderId === order.id;
 
         const line = L.polyline(order.route.map(toLatLng), {
@@ -159,7 +159,7 @@ const AnalysisMap: FC<Props> = ({
         })
           .addTo(map)
           .bindTooltip(
-            `<div style="font-family:'Courier New';font-size:10px;line-height:1.45;">` +
+            `<div style="font-family:${MAP.font};font-size:10px;line-height:1.45;">` +
               `<div style="font-weight:700;">${escapeHtml(order.unitLabel)}</div>` +
               `<div>PLANNED — ${escapeHtml(order.taskLabel)}</div>` +
               `</div>`,
@@ -198,7 +198,7 @@ const AnalysisMap: FC<Props> = ({
                 `<div style="position:absolute;inset:0;border:2px solid ${objective.colour};` +
                 `transform:rotate(45deg);background:rgba(14,18,25,0.6);"></div>` +
                 `<div style="position:absolute;left:14px;top:-3px;white-space:nowrap;` +
-                `font-family:'Courier New';font-size:9px;letter-spacing:1px;` +
+                `font-family:${MAP.font};font-size:9px;letter-spacing:1px;` +
                 `color:${objective.colour};text-shadow:0 0 3px #0e1219;">` +
                 `${escapeHtml(objective.name)}</div></div>`,
             }),
@@ -212,16 +212,16 @@ const AnalysisMap: FC<Props> = ({
         added.push(
           L.circleMarker(toLatLng(predicted), {
             radius: 5,
-            color: UI.textDim,
+            color: MAP.textDim,
             weight: 1,
             dashArray: "2 2",
-            fillColor: UI.bg0,
+            fillColor: MAP.bg,
             fillOpacity: 0.35,
             interactive: true,
           })
             .addTo(map)
             .bindTooltip(
-              `<div style="font-family:'Courier New';font-size:10px;">` +
+              `<div style="font-family:${MAP.font};font-size:10px;">` +
                 `<div style="font-weight:700;">${escapeHtml(predicted.label)}</div>` +
                 `<div>PREDICTED END POSITION</div></div>`,
             ),
@@ -281,7 +281,7 @@ const AnalysisMap: FC<Props> = ({
       deviationRef.current.setTooltipContent(`${nearest.crossTrackKm.toFixed(1)} km off axis`);
     } else {
       deviationRef.current = L.polyline(coordinates, {
-        color: UI.amber,
+        color: MAP.amber,
         weight: 1.5,
         opacity: 0.9,
         dashArray: "3 4",
@@ -327,7 +327,7 @@ const AnalysisMap: FC<Props> = ({
         >
           <div
             style={{
-              fontFamily: UI.fontMono,
+              fontFamily: UI.fontSans,
               fontSize: 9,
               color: UI.textDim,
               letterSpacing: 1,
@@ -350,7 +350,7 @@ const AnalysisMap: FC<Props> = ({
                 display: "flex",
                 alignItems: "center",
                 gap: 5,
-                fontFamily: UI.fontMono,
+                fontFamily: UI.fontSans,
                 fontSize: 10,
                 color: layers[key] ? UI.text : UI.textDim,
                 cursor: "pointer",

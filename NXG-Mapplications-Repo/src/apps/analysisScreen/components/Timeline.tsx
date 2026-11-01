@@ -21,11 +21,11 @@ const SPEEDS = [1, 2, 5, 10, 30, 60] as const;
  * own colours so they are not mistaken for events the federation reported.
  */
 const EVENT_STYLE: Record<KeyEvent["kind"], { colour: string; glyph: string }> = {
-  engagement: { colour: UI.accent, glyph: "!" },
+  engagement: { colour: UI.blue, glyph: "!" },
   loss: { colour: UI.red, glyph: "!" },
-  detection: { colour: UI.accent, glyph: "!" },
+  detection: { colour: UI.blue, glyph: "!" },
   objective: { colour: UI.green, glyph: "◆" },
-  phase: { colour: UI.accent, glyph: "!" },
+  phase: { colour: UI.blue, glyph: "!" },
   plan: { colour: UI.textDim, glyph: "P" },
   arrival: { colour: UI.green, glyph: "A" },
   deviation: { colour: UI.amber, glyph: "~" },
@@ -114,7 +114,7 @@ const Timeline: FC<Props> = ({
     background: active ? UI.accent : UI.bg2,
     color: active ? "#0b1017" : UI.textDim,
     border: `1px solid ${active ? UI.accent : UI.border}`,
-    fontFamily: UI.fontMono,
+    fontFamily: UI.fontSans,
     fontSize: 10,
     padding: "3px 7px",
     cursor: "pointer",
@@ -163,24 +163,24 @@ const Timeline: FC<Props> = ({
           {formatClock(currentTs)}
         </div>
 
-        <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}>
           T+{formatDuration(currentTs - run.startS)} / {formatDuration(duration)}
         </div>
 
         {buffering && (
-          <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.amber, letterSpacing: 1 }}>
+          <div style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.amber, letterSpacing: 1 }}>
             ● LOADING…
           </div>
         )}
 
         <div style={{ flex: 1 }} />
 
-        <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
+        <div style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textDim }}>
           {entityCount} UNITS
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <span style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textFaint }}>SPEED</span>
+          <span style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textFaint }}>SPEED</span>
           {SPEEDS.map((s) => (
             <button key={s} onClick={() => onSpeedChange(s)} style={buttonStyle(speed === s)}>
               {s}×
@@ -190,7 +190,7 @@ const Timeline: FC<Props> = ({
 
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <span
-            style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textFaint }}
+            style={{ fontFamily: UI.fontSans, fontSize: 10, color: UI.textFaint }}
             title="Seconds between playback frames. Coarser resolution loads a longer span of the run per fetch."
           >
             RES
