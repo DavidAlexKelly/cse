@@ -1,0 +1,2639 @@
+{
+  "meta": {
+    "siso_ref_010": {
+      "title": "SISO-REF-010-v35",
+      "date": "2025-04-27",
+      "organisation": "Simulation Interoperability Standards Organization",
+      "description": "Enumerations for Simulation Interoperability"
+    },
+    "dis7_xml_source": "open-dis/dis-description DIS7.xml",
+    "generated_by": "build_dis_reference_transform.py (Foundry)"
+  },
+  "summary": {
+    "enum_tables": 436,
+    "enum_rows": 9661,
+    "bitfield_tables": 56,
+    "bitfield_rows": 318,
+    "record_definitions": 31,
+    "entity_type_rows": 20417,
+    "pdu_class_defs": 187,
+    "pdu_count": 67
+  },
+  "bitfields": [
+    {
+      "uid": "31",
+      "name": "Land Platform Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mobility Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fire Power Killed",
+          "length": null,
+          "description": "Describes whether it can fire weapons",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Trailing Dust Cloud",
+          "length": "2",
+          "description": "Describes the size of the dust cloud trailing effect",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Primary Hatch",
+          "length": "3",
+          "description": "Describes whether the primary hatch is open or closed and whether someone is visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Head Lights On",
+          "length": null,
+          "description": "Describes whether head lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Tail Lights On",
+          "length": null,
+          "description": "Describes whether tail lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Brake Lights On",
+          "length": null,
+          "description": "Describes whether brake lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Launcher/Operational",
+          "length": null,
+          "description": "Describes the status of the mechanism required for the platform to be operational, such as the elevated status of the primary launcher",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Camouflage Type",
+          "length": "2",
+          "description": "Describes the camouflage color",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Concealed Position",
+          "length": null,
+          "description": "Describes the type of concealment",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Tent Extended",
+          "length": null,
+          "description": "Describes whether or not the tent is extended",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Ramp Extended",
+          "length": null,
+          "description": "Describes whether or not the ramp is extended",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Blackout Lights On",
+          "length": null,
+          "description": "Describes whether blackout lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Blackout Brake Lights On",
+          "length": null,
+          "description": "Describes whether blackout brake lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Spot/Search Light #1 On",
+          "length": null,
+          "description": "Describes whether spot/search light #1 is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Interior Lights (Forward) On",
+          "length": null,
+          "description": "Describes whether interior lights (forward) are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Occupants Surrendered",
+          "length": null,
+          "description": "Describes whether or not the vehicle occupants have surrendered",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked / Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "32",
+      "name": "Air Platform Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Propulsion Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "NVG Mode",
+          "length": null,
+          "description": "Describes whether air platform lighting is in covert or overt mode",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Trailing Effects",
+          "length": "2",
+          "description": "Describes the size of the contrails or ionization trailing effects",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Canopy/Troop Door",
+          "length": "3",
+          "description": "Describes the state of the canopy/troop door",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Landing Lights On",
+          "length": null,
+          "description": "Describes whether landing lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Navigation Lights On",
+          "length": null,
+          "description": "Describes whether navigation lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Anti-Collision Lights On",
+          "length": null,
+          "description": "Describes whether Anti-Collision lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Afterburner On",
+          "length": null,
+          "description": "Describes if the air platform is in afterburner",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Lower Anti-Collision Light On",
+          "length": null,
+          "description": "Describes whether the lower Anti-Collision light is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Upper Anti-Collision Light On",
+          "length": null,
+          "description": "Describes whether the upper Anti-Collision light is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Anti-Collision Light Day/Night",
+          "length": null,
+          "description": "Describes the day/night status of the Anti-Collision lights",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Blinking",
+          "length": null,
+          "description": "Indicates whether any air platform lights are blinking or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Formation Lights On",
+          "length": null,
+          "description": "Describes whether formation lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Landing Gear Extended",
+          "length": null,
+          "description": "Describes whether the landing gear is wholly retracted or extended",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Cargo Doors Opened",
+          "length": null,
+          "description": "Describes whether the cargo doors (main door) are closed or open",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Navigation/Position Brightness",
+          "length": null,
+          "description": "Describes the brightness of the navigation/position lights",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Spot/Search Light #1 On",
+          "length": null,
+          "description": "Describes whether spot/search light #1 is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Interior Lights On",
+          "length": null,
+          "description": "Describes whether interior lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reverse Thrust Engaged",
+          "length": null,
+          "description": "Describes whether the air platform has engaged reverse thrust",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Weight-on-Wheels",
+          "length": null,
+          "description": "Describes whether the air platform has weight on its main landing gear",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "33",
+      "name": "Surface Platform Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mobility Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Wake Size",
+          "length": "2",
+          "description": "Describes the size of the wake trailing effect",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Running Lights On",
+          "length": null,
+          "description": "Describes whether running lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Accomodation Ladder Lowered",
+          "length": null,
+          "description": "Describes if the accomodation ladder is lowered or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Fence Raised",
+          "length": null,
+          "description": "Describes whether the safety fence around a helicopter landing deck is raised",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flag Raised",
+          "length": null,
+          "description": "Describes whether the national identification flag is raised",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Towed Array Sonar",
+          "length": null,
+          "description": "Describes whether the TAS is deployed or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Spot Lights On",
+          "length": null,
+          "description": "Describes whether spot lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Interior Lights On",
+          "length": null,
+          "description": "Describes whether interior lights are on or off",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "34",
+      "name": "Subsurface Platform Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mobility Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Hatch",
+          "length": "3",
+          "description": "Describes whether the hatch is open or closed",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Running Lights On",
+          "length": null,
+          "description": "Describes whether running lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Periscope",
+          "length": null,
+          "description": "Describes whether the periscope is extended or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Snorkel",
+          "length": null,
+          "description": "Describes whether the snorkel is extended or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Radar Mast",
+          "length": null,
+          "description": "Describes whether the radar mast is extended or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Comms Mast",
+          "length": null,
+          "description": "Describes whether the communication mast is extended or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "ESM Mast",
+          "length": null,
+          "description": "Describes whether the ESM mast is extended or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Torpedo Tubes",
+          "length": null,
+          "description": "Describes whether the torpedo tubes are open or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Missile Hatches",
+          "length": null,
+          "description": "Describes whether the missile hatches are open or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Towed Array Sonar",
+          "length": null,
+          "description": "Describes whether the TAS is deployed or not",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "35",
+      "name": "Space Platform Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mobility Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke/Vapor Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke or vapor is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "36",
+      "name": "Munition Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke/Vapor Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke or vapor is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Vapor Trail Size",
+          "length": "2",
+          "description": "Describes the size of the vapor trail",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Launch Flash Present",
+          "length": null,
+          "description": "Describes whether or not the guided munition's launch flash is present",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Cover/Shroud Status",
+          "length": "2",
+          "description": "Describes the status of the cover or shroud",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked / Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "37",
+      "name": "Life Forms Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Health",
+          "length": "2",
+          "description": "Describes the visual appearance of the severity of any injury",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Compliance Status",
+          "length": "4",
+          "description": "Describes the manner and degree to which the life form is complying",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Clothing IR Signature",
+          "length": "2",
+          "description": "Describes the general nature of the IR Signature due to clothing or covering.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Signal Smoke in Use",
+          "length": null,
+          "description": "Describes whether signal smoke is being used or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Flash Lights On",
+          "length": null,
+          "description": "Describes whether flash lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Signal Mirror in Use",
+          "length": null,
+          "description": "Describes whether a signal mirror is being used or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IR Strobe On",
+          "length": null,
+          "description": "Describes whether an IR strobe is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IR Illuminator On",
+          "length": null,
+          "description": "Describes whether an IR illuminator (flare) is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Life Form Posture",
+          "length": "4",
+          "description": "Describes the posture (position) of the life form",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoking Cigarette",
+          "length": null,
+          "description": "Describes whether the life form has a lit cigarette or not. The primary purpose is for IR signature generation, so it could be a cigar or other item.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mounted/Hoisted Status",
+          "length": null,
+          "description": "Describes whether or not the life form is mounted/hoisted on another platform, such as a troop transport or helicopter hoist",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Weapon/Implement 1",
+          "length": "2",
+          "description": "Describes the position of the life form's primary weapon/implement",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Weapon/Implement 2",
+          "length": "2",
+          "description": "Describes the position of the life form's secondary weapon/implement",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Camouflage Type",
+          "length": "2",
+          "description": "Describes the camouflage color",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Concealed Stationary",
+          "length": null,
+          "description": "Describes whether or not the life form is in a prepared concealed position",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Concealed Movement",
+          "length": null,
+          "description": "Describes whether or not the life form uses concealment during movement",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "38",
+      "name": "Environmental Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Density",
+          "length": "4",
+          "description": "Describes the density",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked / Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "39",
+      "name": "Cultural Feature Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Damage Area",
+          "length": "3",
+          "description": "Describes the damaged area",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Internal Heat On",
+          "length": null,
+          "description": "Describes whether the internal heat is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Exterior Lights On",
+          "length": null,
+          "description": "Describes whether the exterior lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Interior Lights On",
+          "length": null,
+          "description": "Describes whether the interior lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked / Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "40",
+      "name": "Supply Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Parachute Status",
+          "length": "2",
+          "description": "Describes the status of a supply's parachute",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Deployed Status",
+          "length": "2",
+          "description": "Describes the deployed status",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked/Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "41",
+      "name": "Radio Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "42",
+      "name": "Expendable Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Parachute Status",
+          "length": "2",
+          "description": "Describes the status of a flare's parachute",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Flare/Smoke Color",
+          "length": "3",
+          "description": "Describes the color of a flare's light output or the color of smoke emanating from a smoke expendable",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Launch Flash Present",
+          "length": null,
+          "description": "Describes whether or not launch flash is present",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Flare/Smoke Status",
+          "length": "2",
+          "description": "Describes the status of a flare or smoke expendable",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Spot Chaff Status",
+          "length": "2",
+          "description": "Describes the status of spot chaff",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Masked/Cloaked",
+          "length": null,
+          "description": "Describes whether or not the entity is masked or cloaked",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "43",
+      "name": "Sensor/Emitter Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": null,
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mobility Killed",
+          "length": null,
+          "description": "Describes whether it is capable of moving on its own power",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mission Killed",
+          "length": null,
+          "description": "Describes whether it is capable of carrying out its mission (e.g., damaged antenna)",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoke Emanating",
+          "length": null,
+          "description": "Describes whether or not smoke is emanating from the entity",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Engine Emitting Smoke",
+          "length": null,
+          "description": "Describes whether or not the engine is emitting smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Trailing Effects",
+          "length": "2",
+          "description": "Describes the size of the trailing effects",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Lights On",
+          "length": null,
+          "description": "Describes whether the lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the entity is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Antenna Raised",
+          "length": null,
+          "description": "Describes whether the antenna is raised or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Camouflage Type",
+          "length": "2",
+          "description": "Describes the camouflage color",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Concealed Position",
+          "length": null,
+          "description": "Describes the type of concealment",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Power Plant On",
+          "length": null,
+          "description": "Describes whether the power plant is on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Tent Extended",
+          "length": null,
+          "description": "Describes whether or not the tent is extended",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Blackout Lights On",
+          "length": null,
+          "description": "Describes whether blackout lights are on or off",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Interior Lights On",
+          "length": null,
+          "description": "Describes whether interior lights are on or off",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "68",
+      "name": "Stop/Freeze-Frozen Behavior",
+      "size_bits": "8",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Run Simulation Clock",
+          "length": null,
+          "description": "Describes whether a simulation application should run the internal simulation clock or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Transmit Updates",
+          "length": null,
+          "description": "Describes whether a simulation application should transmit updates and interactions or not",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Process Updates",
+          "length": null,
+          "description": "Describes whether a simulation application should update simulation models of other entities via received updates or interactions",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "149",
+      "name": "UA-Propulsion Plant Configuration",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Configuration",
+          "length": "7",
+          "description": "Describes the configuration of the power plant",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Hull Mounted Masker On",
+          "length": null,
+          "description": "Describes whether the hull-mounted masker is on or off",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "190",
+      "name": "Minefield State-Appearance Bit Map",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Minefield Type",
+          "length": "2",
+          "description": "Identifies the type of minefield",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Active Status",
+          "length": null,
+          "description": "Describes whether the minefield is active or inactive",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Lane",
+          "length": null,
+          "description": "Identifies whether the minefield has an active or inactive lane",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes the state of the minefield",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "192",
+      "name": "Minefield Data-Fusing",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Primary",
+          "length": "7",
+          "description": "Identifies the type of the primary fuse",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Secondary",
+          "length": "7",
+          "description": "Identifies the type of the secondary fuse",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Has Anti-Handling Device",
+          "length": null,
+          "description": "Describes whether the mine has an Anti-Handling device",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "202",
+      "name": "Minefield Data-Paint Scheme",
+      "size_bits": "8",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Algae",
+          "length": "2",
+          "description": "Identifies the algae build-up on the mine",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": "6",
+          "description": "Identifies the paint scheme of the mine",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "229",
+      "name": "Object State Appearance-General",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Percent Complete",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the percent completion of the object (0..100)",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Damage",
+          "length": "2",
+          "description": "Describes the damaged appearance",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Predistributed",
+          "length": null,
+          "description": "Describes whether the object was predistributed",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes the state of the object",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Smoking",
+          "length": null,
+          "description": "Describes whether or not there is a smoke plume",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Flaming",
+          "length": null,
+          "description": "Describes whether the object is burning and flames are visible",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Present",
+          "length": "2",
+          "description": "Describes whether the object has or contains an IED",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "230",
+      "name": "Point Object Appearance-Building/Structure",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Color",
+          "length": "8",
+          "description": "Describes the color of the building or structure",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Paint Scheme",
+          "length": "8",
+          "description": "Describes the visual paint design",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Aperture Open",
+          "length": null,
+          "description": "Describes whether the aperture (e.g., tent) is open or closed",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "231",
+      "name": "Point Object Appearance-Log crib, Abatis, Vehicle defilade, and Infantry fighting position",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Breach State",
+          "length": "2",
+          "description": "Describes the breached appearance of the object",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "232",
+      "name": "Point Object Appearance-Air/Ground Burst",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Opacity Percent",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the percent opacity of the smoke (0..100)",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Size",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the radius in meters of the cylinder which approximates an individual burst",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Height",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the height in meters of the cylinder which approximates an individual burst",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Number of Bursts",
+          "length": "6",
+          "description": "6-bit unsigned integer indicating the number of bursts in the instance of tactical smoke",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Chemical Type",
+          "length": "2",
+          "description": "Describes the chemical content of the smoke",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "233",
+      "name": "Point Object Appearance-Crater",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Diameter",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the diameter of the crater in meters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Depth",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the depth of the crater in centimeters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Height",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the height of the crater in centimeters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Breach State",
+          "length": "2",
+          "description": "Describes the breached appearance of the object",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "234",
+      "name": "Point Object Appearance-Ribbon Bridge",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Number of Segments",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the number of segments composing the ribbon bridge",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "235",
+      "name": "Linear Object Appearance-Tank Ditch and Concertina Wire",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Breach State",
+          "length": "2",
+          "description": "Describes the breached appearance of the object",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Breach Length",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the fixed length in meters of a breached segment",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Breach Location",
+          "length": "8",
+          "description": "8-bit record where each bit indicates whether its associated segment is breached or not, such that bit 0 of the record is the first segment",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "236",
+      "name": "Linear Object Appearance-Exhaust smoke",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Opacity Percent",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the percent opacity of the smoke (0..100)",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Smoke Is Attached",
+          "length": null,
+          "description": "Describes whether or not the smoke is attached to the vehicle",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Chemical Type",
+          "length": "2",
+          "description": "Describes the chemical content of the smoke",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "237",
+      "name": "Linear Object Appearance-Minefield Lane Marker",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Visible Side",
+          "length": "2",
+          "description": "Describes the visible side of the lane marker",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "238",
+      "name": "Linear Object Appearance-Breach",
+      "size_bits": "16",
+      "rows": []
+    },
+    {
+      "uid": "239",
+      "name": "Areal Object Appearance-Minefield",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Breach State",
+          "length": "2",
+          "description": "Describes the breached appearance of the object",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mine Count",
+          "length": "16",
+          "description": "16-bit unsigned integer indicating the number of mines in the minefield",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "240",
+      "name": "Object State-Modification-Point Object",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Location Modified",
+          "length": null,
+          "description": "Describes whether the point object location has been modified since the last update number",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Orientation Modified",
+          "length": null,
+          "description": "Describes whether the point object orientation has been modified since the last update number",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "241",
+      "name": "Object State-Modification-Linear Object",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Location Modified",
+          "length": null,
+          "description": "Describes whether the location of the linear segment has been modified since the last update number",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Orientation Modified",
+          "length": null,
+          "description": "Describes whether the orientation of the linear segment has been modified since the last update number",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "242",
+      "name": "Object State-Modification-Areal Object",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Location Modified",
+          "length": null,
+          "description": "Describes whether any locations of the areal object have been modified since the last update number",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "249",
+      "name": "Environmental Process-Environment Status",
+      "size_bits": "8",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Last",
+          "length": null,
+          "description": "Indicates that the current update shall be the last update for the specified process",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Active",
+          "length": null,
+          "description": "Describes whether the environmental process is active or not",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "313",
+      "name": "DE Fire-Flags",
+      "size_bits": "16",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Weapon On",
+          "length": null,
+          "description": "Identifies the State of the DE Weapon",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State/Update Flag",
+          "length": null,
+          "description": "Identifies a DE Weapon State Change",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "317",
+      "name": "DE Damage Description-Component Visual Damage Status",
+      "size_bits": "8",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Is Fire Present",
+          "length": null,
+          "description": "Describes presence of fire at the damage site",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Smoke",
+          "length": "2",
+          "description": "Describes presence of smoke emanating from the damage site",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Surface Damage",
+          "length": "2",
+          "description": "Describes general surface appearance at the damage site",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "450",
+      "name": "Land Platform Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": null,
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Task Organizable",
+          "length": null,
+          "description": "The Entity (normally a virtual manned module) can be task organized into an existing mixed mode unit (where mixed mode is intended to comprise a combination of computer-generated forces and virtual or even live forces).",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "451",
+      "name": "Air Platform Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "ADS-B",
+          "length": null,
+          "description": "Describes whether the entity is equipped with Automatic Dependent Surveillance - Broadcast (ADS-B)",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Load Carrier",
+          "length": null,
+          "description": "The Entity is able to carry a payload in a sling load. The extended appearance record (if available) will identify the current sling load status and entity association and/or entity offset records (if available) will provide additional sling load details (such as payload).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Task Organizable",
+          "length": null,
+          "description": "The Entity (normally a virtual manned module) can be task organized into an existing mixed mode unit (where mixed mode is intended to comprise a combination of computer-generated forces and virtual or even live forces).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "LAIRCM",
+          "length": null,
+          "description": "Describes whether the entity is equipped with Large Aircraft Infrared Countermeasures (LAIRCM)",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "452",
+      "name": "Surface Platform Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": null,
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Task Organizable",
+          "length": null,
+          "description": "The Entity (normally a virtual manned module) can be task organized into an existing mixed mode unit (where mixed mode is intended to comprise a combination of computer-generated forces and virtual or even live forces).",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "453",
+      "name": "Subsurface Platform Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": null,
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Task Organizable",
+          "length": null,
+          "description": "The Entity (normally a virtual manned module) can be task organized into an existing mixed mode unit (where mixed mode is intended to comprise a combination of computer-generated forces and virtual or even live forces).",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "454",
+      "name": "Space Platform Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": null,
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "455",
+      "name": "Munition Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "456",
+      "name": "Life Forms Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Recovery",
+          "length": null,
+          "description": "Describes whether the entity is able to provide recovery (e.g., towing) services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Repair",
+          "length": null,
+          "description": "Describes whether the entity is able to supply certain repair services in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": null,
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "457",
+      "name": "Environmental Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "458",
+      "name": "Cultural Feature Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "459",
+      "name": "Supply Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Ammunition Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of ammunition in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Fuel Supply",
+          "length": null,
+          "description": "Describes whether the entity is able to supply some type of fuel in response to an appropriate service request",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "3",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "460",
+      "name": "Radio Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "461",
+      "name": "Expendable Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "462",
+      "name": "Sensor/Emitter Capabilities",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Reserved",
+          "length": "5",
+          "description": "This entry is reserved for backward compatibility and may not be reused",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Sling Loadable",
+          "length": null,
+          "description": "The Entity is able to be carried as a sling load payload. The extended appearance record (if available) will identify if it is currently sling loaded and entity association and/or entity offset records (if available) will provide additional sling load details (such as carrier).",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "IED Presence Indicator",
+          "length": null,
+          "description": "The Entity is an IED or contains an IED. The extended appearance record (if available) will identify how well hidden the IED is on the Entity. An Attached Part (if applicable, for instance a jury-rigged munition does not apply here) will identify the IED explicitly.",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Task Organizable",
+          "length": null,
+          "description": "The Entity (normally a virtual manned module) can be task organized into an existing mixed mode unit (where mixed mode is intended to comprise a combination of computer-generated forces and virtual or even live forces).",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "480",
+      "name": "Non-Human Life Forms Appearance",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Health",
+          "length": "2",
+          "description": "Describes the visual appearance of the severity of any injury",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Frozen",
+          "length": null,
+          "description": "Describes whether the entity is frozen and should not be dead reckoned",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Mounted/Hoisted Status",
+          "length": null,
+          "description": "Describes whether or not the life form is mounted/hoisted on another platform, such as a troop transport or helicopter hoist",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "State",
+          "length": null,
+          "description": "Describes whether the entity is active or deactivated",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "483",
+      "name": "Point Object Appearance-Building Rubble",
+      "size_bits": "32",
+      "rows": []
+    },
+    {
+      "uid": "484",
+      "name": "Point Object Appearance-Stationary Bridge and AVLB",
+      "size_bits": "32",
+      "rows": []
+    },
+    {
+      "uid": "485",
+      "name": "Point Object Appearance-Disturbed Earth / Road",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Diameter",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the diameter in decimeters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Height",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the height in centimeters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Contrast",
+          "length": "4",
+          "description": "4-bit unsigned integer indicating 16 levels of contrast (low to high) distinguishing variation of object from surrounding surface",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "486",
+      "name": "Point Object Appearance-Pothole",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Diameter",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the diameter in decimeters",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Depth",
+          "length": "8",
+          "description": "8-bit unsigned integer indicating the depth in centimeters",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "487",
+      "name": "Point Object Appearance-Tree",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Season",
+          "length": "2",
+          "description": "Indicates the visually represented season",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Leaf Coverage",
+          "length": "2",
+          "description": "Indicates the leaf coverage",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "488",
+      "name": "Linear Object Appearance-Wire",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Color",
+          "length": "8",
+          "description": "8-bit enumeration indicating the color",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Contrast",
+          "length": "4",
+          "description": "4-bit unsigned integer indicating 16 levels of contrast (low to high) distinguishing variation of object from surrounding surface",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Is Buried",
+          "length": null,
+          "description": "Describes whether the wire is buried or not",
+          "sub_enum": []
+        }
+      ]
+    },
+    {
+      "uid": "489",
+      "name": "Linear Object Appearance-Speed Bump",
+      "size_bits": "32",
+      "rows": [
+        {
+          "bit": null,
+          "name": "Color",
+          "length": "8",
+          "description": "8-bit enumeration indicating the color",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Contrast",
+          "length": "4",
+          "description": "4-bit unsigned integer indicating 16 levels of contrast (low to high) distinguishing variation of object from surrounding surface",
+          "sub_enum": []
+        },
+        {
+          "bit": null,
+          "name": "Material",
+          "length": "4",
+          "description": "4-bit enumeration indicating the type of material",
+          "sub_enum": []
+        }
+      ]
+    }
+  ]
+}

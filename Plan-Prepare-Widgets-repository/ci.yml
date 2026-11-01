@@ -1,0 +1,47 @@
+# DO NOT MODIFY THIS FILE
+env:
+  NODE_DIST_URI:
+    uri-role: node-dist-uri
+  ARTIFACTS_API_URI:
+    uri-role: foundry-artifacts-api
+  API_GATEWAY_URI:
+    uri-role: api-gateway
+
+required-job-token-capabilities:
+  - osdk-widget
+
+java-version: JAVA_11
+
+jobs:
+  osdk-widget-publish:
+    timeout: 20 minutes
+    steps:
+      - |
+        set -euo pipefail
+        if [[ -n "${DEFAULT_CA_PATH:-}" ]]; then
+          export NODE_EXTRA_CA_CERTS="${NODE_EXTRA_CA_CERTS:-$DEFAULT_CA_PATH}"
+          export SSL_CERT_FILE="${SSL_CERT_FILE:-$DEFAULT_CA_PATH}"
+        fi
+
+        export NO_COLOR=1
+        export FOUNDRY_TOKEN="${JOB_TOKEN}"
+        . .jemma/settings.sh
+        . .jemma/install-node.sh
+
+        npm_registry=${ARTIFACTS_API_URI}/repositories/${REPOSITORY_RID}/contents/release/npm/
+        npm_registry_without_protocol=${npm_registry#https://}
+        npm config set --location project registry=${npm_registry}
+        npm config set --location project //${npm_registry_without_protocol}:_authToken=\${FOUNDRY_TOKEN}
+        git update-index --assume-unchanged .npmrc
+
+        npm install
+        npm run lint
+        npm run test
+        npm run build
+
+        if [[ -z "${JEMMA_TAG:-}" ]]; then
+          echo "No jemma tag found skipping publishing widget set"
+          exit 0
+        fi
+
+        npx @osdk/cli@latest widgetset deploy --foundryUrl "${API_GATEWAY_URI%/api}"

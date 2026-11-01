@@ -1,0 +1,12 @@
+{
+  "foundryUrl": "https://accenture.palantirfoundry.com",
+  "widgetSet": {
+    "rid": "ri.widgetregistry..widget-set.dcda86f7-09a6-4ca8-8d36-3f98e2dbe788",
+    "repository": "ri.stemma.main.repository.f8d57d24-dd89-460c-9c6e-ff079b72e9bc",
+    "directory": "./dist",
+    "autoVersion": {
+      "type": "git-describe",
+      "tagPrefix": ""
+    }
+  }
+}

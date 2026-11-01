@@ -1,0 +1,6107 @@
+{
+  "description": "Navigation index for the split DIS reference files.",
+  "summary": {
+    "enum_tables": 436,
+    "enum_rows": 9661,
+    "bitfield_tables": 56,
+    "bitfield_rows": 318,
+    "record_definitions": 31,
+    "entity_type_rows": 20417,
+    "pdu_class_defs": 187,
+    "pdu_count": 67
+  },
+  "files": {
+    "dis_enumerations.json": "Enumeration tables — kind/domain/country/category labels",
+    "dis_entity_types.json": "Entity type rows — subcategory labels and canonical names",
+    "dis_bitfields.json": "Bitfield definitions — appearance and capability bit fields",
+    "dis_pdu.json": "Record definitions and PDU class hierarchy"
+  },
+  "sections": [
+    {
+      "section": "enumerations",
+      "description": "SISO-REF-010 enumeration tables (uid → name → rows of value/description).",
+      "count": 436,
+      "file": "dis_enumerations.json",
+      "items": [
+        {
+          "index": 0,
+          "uid": "3",
+          "name": "DIS-Protocol Version",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[0]"
+        },
+        {
+          "index": 1,
+          "uid": "4",
+          "name": "DIS-PDU Type",
+          "size_bits": "8",
+          "row_count": 73,
+          "json_path": "enumerations[1]"
+        },
+        {
+          "index": 2,
+          "uid": "5",
+          "name": "DIS-Protocol Family",
+          "size_bits": "8",
+          "row_count": 14,
+          "json_path": "enumerations[2]"
+        },
+        {
+          "index": 3,
+          "uid": "6",
+          "name": "Force ID",
+          "size_bits": "8",
+          "row_count": 31,
+          "json_path": "enumerations[3]"
+        },
+        {
+          "index": 4,
+          "uid": "7",
+          "name": "Entity Kind",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[4]"
+        },
+        {
+          "index": 5,
+          "uid": "8",
+          "name": "Platform Domain",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[5]"
+        },
+        {
+          "index": 6,
+          "uid": "9",
+          "name": "Platform-Land Category",
+          "size_bits": "8",
+          "row_count": 59,
+          "json_path": "enumerations[6]"
+        },
+        {
+          "index": 7,
+          "uid": "10",
+          "name": "Platform-Air Category",
+          "size_bits": "8",
+          "row_count": 34,
+          "json_path": "enumerations[7]"
+        },
+        {
+          "index": 8,
+          "uid": "11",
+          "name": "Platform-Surface Category",
+          "size_bits": "8",
+          "row_count": 49,
+          "json_path": "enumerations[8]"
+        },
+        {
+          "index": 9,
+          "uid": "12",
+          "name": "Platform-Subsurface Category",
+          "size_bits": "8",
+          "row_count": 20,
+          "json_path": "enumerations[9]"
+        },
+        {
+          "index": 10,
+          "uid": "13",
+          "name": "Platform-Space Category",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[10]"
+        },
+        {
+          "index": 11,
+          "uid": "14",
+          "name": "Munition Domain",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[11]"
+        },
+        {
+          "index": 12,
+          "uid": "15",
+          "name": "Munition Category",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[12]"
+        },
+        {
+          "index": 13,
+          "uid": "16",
+          "name": "Life Forms-Subcategory-U.S. Weapons",
+          "size_bits": "8",
+          "row_count": 122,
+          "json_path": "enumerations[13]"
+        },
+        {
+          "index": 14,
+          "uid": "17",
+          "name": "Life Forms-Subcategory-C.I.S. Weapons",
+          "size_bits": "8",
+          "row_count": 52,
+          "json_path": "enumerations[14]"
+        },
+        {
+          "index": 15,
+          "uid": "18",
+          "name": "Life Forms-Subcategory-U.K. Weapons",
+          "size_bits": "8",
+          "row_count": 12,
+          "json_path": "enumerations[15]"
+        },
+        {
+          "index": 16,
+          "uid": "19",
+          "name": "Life Forms-Subcategory-French Weapons",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[16]"
+        },
+        {
+          "index": 17,
+          "uid": "20",
+          "name": "Life Forms-Subcategory-German Weapons",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[17]"
+        },
+        {
+          "index": 18,
+          "uid": "21",
+          "name": "Environmental Subcategory",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[18]"
+        },
+        {
+          "index": 19,
+          "uid": "22",
+          "name": "Radio Category",
+          "size_bits": "8",
+          "row_count": 44,
+          "json_path": "enumerations[19]"
+        },
+        {
+          "index": 20,
+          "uid": "23",
+          "name": "Radio Subcategory",
+          "size_bits": "8",
+          "row_count": 60,
+          "json_path": "enumerations[20]"
+        },
+        {
+          "index": 21,
+          "uid": "25",
+          "name": "Expendable-Air Category",
+          "size_bits": "8",
+          "row_count": 12,
+          "json_path": "enumerations[21]"
+        },
+        {
+          "index": 22,
+          "uid": "26",
+          "name": "Expendable-Surface Category",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[22]"
+        },
+        {
+          "index": 23,
+          "uid": "27",
+          "name": "Expendable-Subsurface Category",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[23]"
+        },
+        {
+          "index": 24,
+          "uid": "28",
+          "name": "Sensor/Emitter Category",
+          "size_bits": "8",
+          "row_count": 17,
+          "json_path": "enumerations[24]"
+        },
+        {
+          "index": 25,
+          "uid": "29",
+          "name": "Country",
+          "size_bits": "16",
+          "row_count": 279,
+          "json_path": "enumerations[25]"
+        },
+        {
+          "index": 26,
+          "uid": "44",
+          "name": "Dead Reckoning Algorithm",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[26]"
+        },
+        {
+          "index": 27,
+          "uid": "45",
+          "name": "Entity Marking-Character Set",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[27]"
+        },
+        {
+          "index": 28,
+          "uid": "55",
+          "name": "Entity Capabilities",
+          "size_bits": "32",
+          "row_count": 13,
+          "json_path": "enumerations[28]"
+        },
+        {
+          "index": 29,
+          "uid": "56",
+          "name": "Variable Parameter Record Type",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[29]"
+        },
+        {
+          "index": 30,
+          "uid": "57",
+          "name": "Attached Parts",
+          "size_bits": "32",
+          "row_count": 11,
+          "json_path": "enumerations[30]"
+        },
+        {
+          "index": 31,
+          "uid": "58",
+          "name": "Articulated Parts-Type Metric",
+          "size_bits": "5",
+          "row_count": 17,
+          "json_path": "enumerations[31]"
+        },
+        {
+          "index": 32,
+          "uid": "59",
+          "name": "Articulated Parts-Type Class",
+          "size_bits": "32",
+          "row_count": 263,
+          "json_path": "enumerations[32]"
+        },
+        {
+          "index": 33,
+          "uid": "60",
+          "name": "Munition Descriptor-Warhead",
+          "size_bits": "16",
+          "row_count": 96,
+          "json_path": "enumerations[33]"
+        },
+        {
+          "index": 34,
+          "uid": "61",
+          "name": "Munition Descriptor-Fuse",
+          "size_bits": "16",
+          "row_count": 107,
+          "json_path": "enumerations[34]"
+        },
+        {
+          "index": 35,
+          "uid": "62",
+          "name": "Detonation Result",
+          "size_bits": "8",
+          "row_count": 34,
+          "json_path": "enumerations[35]"
+        },
+        {
+          "index": 36,
+          "uid": "63",
+          "name": "Service Request-Service Type Requested",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[36]"
+        },
+        {
+          "index": 37,
+          "uid": "64",
+          "name": "Repair Complete-Repair",
+          "size_bits": "16",
+          "row_count": 84,
+          "json_path": "enumerations[37]"
+        },
+        {
+          "index": 38,
+          "uid": "65",
+          "name": "Repair Response-Repair Result",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[38]"
+        },
+        {
+          "index": 39,
+          "uid": "66",
+          "name": "Variable Record Types",
+          "size_bits": "32",
+          "row_count": 1267,
+          "json_path": "enumerations[39]"
+        },
+        {
+          "index": 40,
+          "uid": "67",
+          "name": "Stop/Freeze-Reason",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[40]"
+        },
+        {
+          "index": 41,
+          "uid": "69",
+          "name": "Acknowledge-Acknowledge Flag",
+          "size_bits": "16",
+          "row_count": 5,
+          "json_path": "enumerations[41]"
+        },
+        {
+          "index": 42,
+          "uid": "70",
+          "name": "Acknowledge-Response Flag",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "enumerations[42]"
+        },
+        {
+          "index": 43,
+          "uid": "71",
+          "name": "Action Request-Action ID",
+          "size_bits": "32",
+          "row_count": 52,
+          "json_path": "enumerations[43]"
+        },
+        {
+          "index": 44,
+          "uid": "72",
+          "name": "Action Response-Request Status",
+          "size_bits": "32",
+          "row_count": 14,
+          "json_path": "enumerations[44]"
+        },
+        {
+          "index": 45,
+          "uid": "73",
+          "name": "Event Report-Event Type",
+          "size_bits": "32",
+          "row_count": 19,
+          "json_path": "enumerations[45]"
+        },
+        {
+          "index": 46,
+          "uid": "74",
+          "name": "Required Reliability Service",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[46]"
+        },
+        {
+          "index": 47,
+          "uid": "75",
+          "name": "Emitter Name",
+          "size_bits": "16",
+          "row_count": 2854,
+          "json_path": "enumerations[47]"
+        },
+        {
+          "index": 48,
+          "uid": "76",
+          "name": "Emitter System Function",
+          "size_bits": "8",
+          "row_count": 82,
+          "json_path": "enumerations[48]"
+        },
+        {
+          "index": 49,
+          "uid": "77",
+          "name": "Electromagnetic Emission-State Update Indicator",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[49]"
+        },
+        {
+          "index": 50,
+          "uid": "78",
+          "name": "Electromagnetic Emission-Beam Function",
+          "size_bits": "8",
+          "row_count": 24,
+          "json_path": "enumerations[50]"
+        },
+        {
+          "index": 51,
+          "uid": "79",
+          "name": "High Density Track/Jam",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[51]"
+        },
+        {
+          "index": 52,
+          "uid": "80",
+          "name": "Designator System Name",
+          "size_bits": "16",
+          "row_count": 103,
+          "json_path": "enumerations[52]"
+        },
+        {
+          "index": 53,
+          "uid": "81",
+          "name": "Designator-Designator Code",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[53]"
+        },
+        {
+          "index": 54,
+          "uid": "82",
+          "name": "IFF-System Type",
+          "size_bits": "16",
+          "row_count": 15,
+          "json_path": "enumerations[54]"
+        },
+        {
+          "index": 55,
+          "uid": "83",
+          "name": "IFF-System Name",
+          "size_bits": "16",
+          "row_count": 19,
+          "json_path": "enumerations[55]"
+        },
+        {
+          "index": 56,
+          "uid": "84",
+          "name": "IFF-System Mode",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[56]"
+        },
+        {
+          "index": 57,
+          "uid": "87",
+          "name": "IFF-Layer Specific Information",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[57]"
+        },
+        {
+          "index": 58,
+          "uid": "96",
+          "name": "IFF-Alternate Mode 4 Challenge/Reply",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[58]"
+        },
+        {
+          "index": 59,
+          "uid": "97",
+          "name": "IFF-System Type 1-Operational Parameter 1",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[59]"
+        },
+        {
+          "index": 60,
+          "uid": "98",
+          "name": "IFF-System Type 1-Operational Parameter 2",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[60]"
+        },
+        {
+          "index": 61,
+          "uid": "100",
+          "name": "Subcategories for Land Category 200 - Mammal",
+          "size_bits": "8",
+          "row_count": 29,
+          "json_path": "enumerations[61]"
+        },
+        {
+          "index": 62,
+          "uid": "101",
+          "name": "Subcategories for Land Category 201 - Reptile",
+          "size_bits": "8",
+          "row_count": 23,
+          "json_path": "enumerations[62]"
+        },
+        {
+          "index": 63,
+          "uid": "102",
+          "name": "Subcategories for Land Category 202 - Amphibian",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[63]"
+        },
+        {
+          "index": 64,
+          "uid": "103",
+          "name": "Subcategories for Land Category 203 - Insect",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[64]"
+        },
+        {
+          "index": 65,
+          "uid": "104",
+          "name": "Subcategories for Land Category 204 - Arachnid",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[65]"
+        },
+        {
+          "index": 66,
+          "uid": "105",
+          "name": "Subcategories for Land Category 205 - Mollusk",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[66]"
+        },
+        {
+          "index": 67,
+          "uid": "106",
+          "name": "Subcategories for Land Category 206 - Marsupial",
+          "size_bits": "8",
+          "row_count": 12,
+          "json_path": "enumerations[67]"
+        },
+        {
+          "index": 68,
+          "uid": "110",
+          "name": "Subcategories for Air Category 200 - Bird",
+          "size_bits": "8",
+          "row_count": 27,
+          "json_path": "enumerations[68]"
+        },
+        {
+          "index": 69,
+          "uid": "111",
+          "name": "Subcategories for Air Category 201 - Insect",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[69]"
+        },
+        {
+          "index": 70,
+          "uid": "112",
+          "name": "Subcategories for Air Category 202 - Mammal",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[70]"
+        },
+        {
+          "index": 71,
+          "uid": "120",
+          "name": "Subcategories for Subsurface Category 200 - Fish",
+          "size_bits": "8",
+          "row_count": 27,
+          "json_path": "enumerations[71]"
+        },
+        {
+          "index": 72,
+          "uid": "121",
+          "name": "Subcategories for Subsurface Category 201 - Mammal",
+          "size_bits": "8",
+          "row_count": 59,
+          "json_path": "enumerations[72]"
+        },
+        {
+          "index": 73,
+          "uid": "122",
+          "name": "Subcategories for Subsurface Category 202 - Mollusk",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[73]"
+        },
+        {
+          "index": 74,
+          "uid": "123",
+          "name": "Subcategories for Subsurface Category 203 - Crustacean",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[74]"
+        },
+        {
+          "index": 75,
+          "uid": "124",
+          "name": "Subcategories for Subsurface Category 204 - Insect",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[75]"
+        },
+        {
+          "index": 76,
+          "uid": "130",
+          "name": "Animal Life Form Group Size Range Enumeration for all Domains",
+          "size_bits": "8",
+          "row_count": 14,
+          "json_path": "enumerations[76]"
+        },
+        {
+          "index": 77,
+          "uid": "131",
+          "name": "Specific Dimension Enumerations for Land Area Size",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[77]"
+        },
+        {
+          "index": 78,
+          "uid": "132",
+          "name": "Specific Dimension Enumerations for Air Area Size",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[78]"
+        },
+        {
+          "index": 79,
+          "uid": "133",
+          "name": "Add Specific Dimension Enumerations for Subsurface Area Size",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[79]"
+        },
+        {
+          "index": 80,
+          "uid": "134",
+          "name": "Add Variants for Land Category 200 - Mammal",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[80]"
+        },
+        {
+          "index": 81,
+          "uid": "135",
+          "name": "Variants for Land Categories Reptiles, Amphibians, Insects, and Arachnids",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[81]"
+        },
+        {
+          "index": 82,
+          "uid": "136",
+          "name": "Variants for Air Category 200 - Bird",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[82]"
+        },
+        {
+          "index": 83,
+          "uid": "137",
+          "name": "Add Variants for Air Category 201 - Insect",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[83]"
+        },
+        {
+          "index": 84,
+          "uid": "138",
+          "name": "Add Variants for Subsurface Categories Fish, Mollusk, Crustacean, and Insect",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[84]"
+        },
+        {
+          "index": 85,
+          "uid": "139",
+          "name": "Variants for Subsurface Category 201 - Mammal",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[85]"
+        },
+        {
+          "index": 86,
+          "uid": "143",
+          "name": "UA-State/Change Update Indicator",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[86]"
+        },
+        {
+          "index": 87,
+          "uid": "144",
+          "name": "UA-Acoustic System Name",
+          "size_bits": "16",
+          "row_count": 10,
+          "json_path": "enumerations[87]"
+        },
+        {
+          "index": 88,
+          "uid": "145",
+          "name": "UA-Acoustic Emitter System Function",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[88]"
+        },
+        {
+          "index": 89,
+          "uid": "146",
+          "name": "UA-Active Emission Parameter Index",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[89]"
+        },
+        {
+          "index": 90,
+          "uid": "147",
+          "name": "UA-Scan Pattern",
+          "size_bits": "16",
+          "row_count": 6,
+          "json_path": "enumerations[90]"
+        },
+        {
+          "index": 91,
+          "uid": "148",
+          "name": "UA-Passive Parameter Index",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[91]"
+        },
+        {
+          "index": 92,
+          "uid": "150",
+          "name": "UA-Additional Passive Activity Parameter Index",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[92]"
+        },
+        {
+          "index": 93,
+          "uid": "155",
+          "name": "Transmitter-Major Modulation",
+          "size_bits": "16",
+          "row_count": 9,
+          "json_path": "enumerations[93]"
+        },
+        {
+          "index": 94,
+          "uid": "156",
+          "name": "Transmitter-Detail-Amplitude Modulation",
+          "size_bits": "16",
+          "row_count": 11,
+          "json_path": "enumerations[94]"
+        },
+        {
+          "index": 95,
+          "uid": "157",
+          "name": "Transmitter-Detail-Amplitude and Angle Modulation",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "enumerations[95]"
+        },
+        {
+          "index": 96,
+          "uid": "158",
+          "name": "Transmitter-Detail-Angle modulation",
+          "size_bits": "16",
+          "row_count": 5,
+          "json_path": "enumerations[96]"
+        },
+        {
+          "index": 97,
+          "uid": "159",
+          "name": "Transmitter-Detail-Combination Modulation",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "enumerations[97]"
+        },
+        {
+          "index": 98,
+          "uid": "160",
+          "name": "Transmitter-Detail-Pulse Modulation",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "enumerations[98]"
+        },
+        {
+          "index": 99,
+          "uid": "161",
+          "name": "Transmitter-Detail-Unmodulated Modulation",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "enumerations[99]"
+        },
+        {
+          "index": 100,
+          "uid": "162",
+          "name": "Transmitter-Detail-Carrier Phase Shift Modulation",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[100]"
+        },
+        {
+          "index": 101,
+          "uid": "163",
+          "name": "Transmitter-Modulation Type System",
+          "size_bits": "16",
+          "row_count": 15,
+          "json_path": "enumerations[101]"
+        },
+        {
+          "index": 102,
+          "uid": "164",
+          "name": "Transmitter-Transmit State",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[102]"
+        },
+        {
+          "index": 103,
+          "uid": "165",
+          "name": "Transmitter-Input Source",
+          "size_bits": "8",
+          "row_count": 19,
+          "json_path": "enumerations[103]"
+        },
+        {
+          "index": 104,
+          "uid": "166",
+          "name": "Transmitter-Crypto System",
+          "size_bits": "16",
+          "row_count": 15,
+          "json_path": "enumerations[104]"
+        },
+        {
+          "index": 105,
+          "uid": "167",
+          "name": "Transmitter-Antenna Pattern Type",
+          "size_bits": "16",
+          "row_count": 6,
+          "json_path": "enumerations[105]"
+        },
+        {
+          "index": 106,
+          "uid": "168",
+          "name": "Transmitter-Antenna Pattern-Reference System",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[106]"
+        },
+        {
+          "index": 107,
+          "uid": "170",
+          "name": "CCTT SINCGARS-Start of Message",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[107]"
+        },
+        {
+          "index": 108,
+          "uid": "171",
+          "name": "CCTT SINCGARS-Clear Channel",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[108]"
+        },
+        {
+          "index": 109,
+          "uid": "172",
+          "name": "Time Slot Allocation Level",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[109]"
+        },
+        {
+          "index": 110,
+          "uid": "173",
+          "name": "JTIDS/MIDS Modulation Parameters-Transmitting Terminal Primary Mode",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[110]"
+        },
+        {
+          "index": 111,
+          "uid": "174",
+          "name": "JTIDS/MIDS Modulation Parameters-Transmitting Terminal Secondary Mode",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[111]"
+        },
+        {
+          "index": 112,
+          "uid": "175",
+          "name": "JTIDS/MIDS Modulation Parameters-Synchronization State",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[112]"
+        },
+        {
+          "index": 113,
+          "uid": "176",
+          "name": "Message Type Identifier",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[113]"
+        },
+        {
+          "index": 114,
+          "uid": "177",
+          "name": "Signal-User Protocol Identification Number",
+          "size_bits": "32",
+          "row_count": 36,
+          "json_path": "enumerations[114]"
+        },
+        {
+          "index": 115,
+          "uid": "178",
+          "name": "Signal-TDL Type",
+          "size_bits": "16",
+          "row_count": 97,
+          "json_path": "enumerations[115]"
+        },
+        {
+          "index": 116,
+          "uid": "179",
+          "name": "Receiver-Receiver State",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "enumerations[116]"
+        },
+        {
+          "index": 117,
+          "uid": "180",
+          "name": "Intercom Control-Control Type",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[117]"
+        },
+        {
+          "index": 118,
+          "uid": "181",
+          "name": "Intercom Control-Communications Type",
+          "size_bits": "7",
+          "row_count": 5,
+          "json_path": "enumerations[118]"
+        },
+        {
+          "index": 119,
+          "uid": "182",
+          "name": "Intercom Control-Command",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[119]"
+        },
+        {
+          "index": 120,
+          "uid": "183",
+          "name": "Intercom Control-Transmit Line State",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[120]"
+        },
+        {
+          "index": 121,
+          "uid": "184",
+          "name": "Intercom Control-Destination Line State Command",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[121]"
+        },
+        {
+          "index": 122,
+          "uid": "185",
+          "name": "Intercom Control-Record Type",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "enumerations[122]"
+        },
+        {
+          "index": 123,
+          "uid": "189",
+          "name": "Collision Type",
+          "size_bits": "8",
+          "row_count": 55,
+          "json_path": "enumerations[123]"
+        },
+        {
+          "index": 124,
+          "uid": "193",
+          "name": "Minefield-Sensor Types",
+          "size_bits": "4",
+          "row_count": 9,
+          "json_path": "enumerations[124]"
+        },
+        {
+          "index": 125,
+          "uid": "194",
+          "name": "Minefield-Sensor Types-Optical",
+          "size_bits": "12",
+          "row_count": 12,
+          "json_path": "enumerations[125]"
+        },
+        {
+          "index": 126,
+          "uid": "195",
+          "name": "Minefield-Sensor Types-FLIR",
+          "size_bits": "12",
+          "row_count": 10,
+          "json_path": "enumerations[126]"
+        },
+        {
+          "index": 127,
+          "uid": "196",
+          "name": "Minefield-Sensor Types-RADAR",
+          "size_bits": "12",
+          "row_count": 6,
+          "json_path": "enumerations[127]"
+        },
+        {
+          "index": 128,
+          "uid": "197",
+          "name": "Minefield-Sensor Types-Magnetic",
+          "size_bits": "12",
+          "row_count": 4,
+          "json_path": "enumerations[128]"
+        },
+        {
+          "index": 129,
+          "uid": "198",
+          "name": "Minefield-Sensor Types-Laser",
+          "size_bits": "12",
+          "row_count": 2,
+          "json_path": "enumerations[129]"
+        },
+        {
+          "index": 130,
+          "uid": "199",
+          "name": "Minefield-Sensor Types-SONAR",
+          "size_bits": "12",
+          "row_count": 1,
+          "json_path": "enumerations[130]"
+        },
+        {
+          "index": 131,
+          "uid": "200",
+          "name": "Minefield-Sensor Types-Physical",
+          "size_bits": "12",
+          "row_count": 3,
+          "json_path": "enumerations[131]"
+        },
+        {
+          "index": 132,
+          "uid": "201",
+          "name": "Minefield-Sensor Types-Multispectral",
+          "size_bits": "12",
+          "row_count": 1,
+          "json_path": "enumerations[132]"
+        },
+        {
+          "index": 133,
+          "uid": "204",
+          "name": "Aggregate State-Aggregate State",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[133]"
+        },
+        {
+          "index": 134,
+          "uid": "205",
+          "name": "Aggregate State-Formation",
+          "size_bits": "32",
+          "row_count": 6,
+          "json_path": "enumerations[134]"
+        },
+        {
+          "index": 135,
+          "uid": "206",
+          "name": "Aggregate State-Aggregate Kind",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[135]"
+        },
+        {
+          "index": 136,
+          "uid": "208",
+          "name": "Aggregate State-Subcategory",
+          "size_bits": "8",
+          "row_count": 23,
+          "json_path": "enumerations[136]"
+        },
+        {
+          "index": 137,
+          "uid": "209",
+          "name": "Aggregate State-Specific",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[137]"
+        },
+        {
+          "index": 138,
+          "uid": "210",
+          "name": "IsPartOf-Nature",
+          "size_bits": "16",
+          "row_count": 11,
+          "json_path": "enumerations[138]"
+        },
+        {
+          "index": 139,
+          "uid": "211",
+          "name": "IsPartOf-Position",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "enumerations[139]"
+        },
+        {
+          "index": 140,
+          "uid": "212",
+          "name": "IsPartOf-Station Name",
+          "size_bits": "16",
+          "row_count": 23,
+          "json_path": "enumerations[140]"
+        },
+        {
+          "index": 141,
+          "uid": "213",
+          "name": "IsGroupOf-Grouped Entity Category",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[141]"
+        },
+        {
+          "index": 142,
+          "uid": "214",
+          "name": "IsGroupOf-Rest Status",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[142]"
+        },
+        {
+          "index": 143,
+          "uid": "224",
+          "name": "Transfer Control-Transfer Type",
+          "size_bits": "8",
+          "row_count": 11,
+          "json_path": "enumerations[143]"
+        },
+        {
+          "index": 144,
+          "uid": "225",
+          "name": "Object Kind",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[144]"
+        },
+        {
+          "index": 145,
+          "uid": "243",
+          "name": "Gridded Data-Field Number",
+          "size_bits": "16",
+          "row_count": 0,
+          "json_path": "enumerations[145]"
+        },
+        {
+          "index": 146,
+          "uid": "244",
+          "name": "Gridded Data-Coordinate System",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "enumerations[146]"
+        },
+        {
+          "index": 147,
+          "uid": "245",
+          "name": "Gridded Data-Constant Grid",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[147]"
+        },
+        {
+          "index": 148,
+          "uid": "246",
+          "name": "Gridded Data-Sample Type",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[148]"
+        },
+        {
+          "index": 149,
+          "uid": "247",
+          "name": "Gridded Data-Data Representation",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "enumerations[149]"
+        },
+        {
+          "index": 150,
+          "uid": "248",
+          "name": "Environmental Process-Model Type",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[150]"
+        },
+        {
+          "index": 151,
+          "uid": "250",
+          "name": "Environmental Process-Record Type",
+          "size_bits": "32",
+          "row_count": 19,
+          "json_path": "enumerations[151]"
+        },
+        {
+          "index": 152,
+          "uid": "270",
+          "name": "Signal-Encoding Class",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[152]"
+        },
+        {
+          "index": 153,
+          "uid": "271",
+          "name": "Signal-Encoding Type",
+          "size_bits": "14",
+          "row_count": 14,
+          "json_path": "enumerations[153]"
+        },
+        {
+          "index": 154,
+          "uid": "272",
+          "name": "Repair Groups",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[154]"
+        },
+        {
+          "index": 155,
+          "uid": "273",
+          "name": "Environment Record Type Groups",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[155]"
+        },
+        {
+          "index": 156,
+          "uid": "274",
+          "name": "Platform-Air Civilian Ultralight Non-rigid Wing Aircraft Subcategories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[156]"
+        },
+        {
+          "index": 157,
+          "uid": "275",
+          "name": "Platform-Air Civilian Ultralight Rigid Wing Aircraft Subcategories",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[157]"
+        },
+        {
+          "index": 158,
+          "uid": "276",
+          "name": "Platform-Air Civilian Glider Subcategories",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[158]"
+        },
+        {
+          "index": 159,
+          "uid": "277",
+          "name": "Platform-Air Civilian Fixed Wing Aircraft Subcategories",
+          "size_bits": "8",
+          "row_count": 12,
+          "json_path": "enumerations[159]"
+        },
+        {
+          "index": 160,
+          "uid": "278",
+          "name": "Platform-Air Civilian Helicopter Subcategories",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[160]"
+        },
+        {
+          "index": 161,
+          "uid": "279",
+          "name": "Platform-Air Civilian Lighter than Air, Balloon Subcategories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[161]"
+        },
+        {
+          "index": 162,
+          "uid": "280",
+          "name": "Platform-Air Civilian Lighter than Air, Airship Subcategories",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[162]"
+        },
+        {
+          "index": 163,
+          "uid": "281",
+          "name": "APA Parameter Index-APA Status",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[163]"
+        },
+        {
+          "index": 164,
+          "uid": "282",
+          "name": "Separation VP-Reason for Separation",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[164]"
+        },
+        {
+          "index": 165,
+          "uid": "283",
+          "name": "Separation VP-Pre-Entity Indicator",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[165]"
+        },
+        {
+          "index": 166,
+          "uid": "285",
+          "name": "IO Action-IO Warfare Type",
+          "size_bits": "16",
+          "row_count": 7,
+          "json_path": "enumerations[166]"
+        },
+        {
+          "index": 167,
+          "uid": "286",
+          "name": "IO Action-IO Simulation Source",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[167]"
+        },
+        {
+          "index": 168,
+          "uid": "287",
+          "name": "IO Action-IO Action Type",
+          "size_bits": "16",
+          "row_count": 5,
+          "json_path": "enumerations[168]"
+        },
+        {
+          "index": 169,
+          "uid": "288",
+          "name": "IO Action-IO Action Phase",
+          "size_bits": "16",
+          "row_count": 7,
+          "json_path": "enumerations[169]"
+        },
+        {
+          "index": 170,
+          "uid": "289",
+          "name": "IO Report-IO Report Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[170]"
+        },
+        {
+          "index": 171,
+          "uid": "290",
+          "name": "IO Effects Record-IO Status",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[171]"
+        },
+        {
+          "index": 172,
+          "uid": "291",
+          "name": "IO Effects Record-IO Link Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[172]"
+        },
+        {
+          "index": 173,
+          "uid": "292",
+          "name": "IO Effects Record-IO Effect",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[173]"
+        },
+        {
+          "index": 174,
+          "uid": "293",
+          "name": "IO Effects Record-IO Process",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[174]"
+        },
+        {
+          "index": 175,
+          "uid": "294",
+          "name": "IO Comms Node Record-Comms Node Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[175]"
+        },
+        {
+          "index": 176,
+          "uid": "295",
+          "name": "DIS-Attribute-Action Code",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[176]"
+        },
+        {
+          "index": 177,
+          "uid": "296",
+          "name": "DR Parameters Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[177]"
+        },
+        {
+          "index": 178,
+          "uid": "297",
+          "name": "High Fidelity HAVE QUICK-TOD Transmit Indicator",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[178]"
+        },
+        {
+          "index": 179,
+          "uid": "298",
+          "name": "NET ID Record-Mode",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[179]"
+        },
+        {
+          "index": 180,
+          "uid": "299",
+          "name": "NET ID Record-Frequency Table",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[180]"
+        },
+        {
+          "index": 181,
+          "uid": "300",
+          "name": "State Indicator",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[181]"
+        },
+        {
+          "index": 182,
+          "uid": "301",
+          "name": "DIS-PDU Status-Transferred Entity Indicator (TEI)",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[182]"
+        },
+        {
+          "index": 183,
+          "uid": "302",
+          "name": "LVC Indicator",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[183]"
+        },
+        {
+          "index": 184,
+          "uid": "303",
+          "name": "DIS-PDU Status-Coupled Extension Indicator (CEI)",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[184]"
+        },
+        {
+          "index": 185,
+          "uid": "304",
+          "name": "DIS-PDU Status-Fire Type Indicator (FTI)",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[185]"
+        },
+        {
+          "index": 186,
+          "uid": "305",
+          "name": "DIS-PDU Status-Detonation Type Indicator (DTI)",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[186]"
+        },
+        {
+          "index": 187,
+          "uid": "306",
+          "name": "Radio Attached Indicator",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[187]"
+        },
+        {
+          "index": 188,
+          "uid": "307",
+          "name": "DIS-PDU Status-Intercom Attached Indicator (IAI)",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[188]"
+        },
+        {
+          "index": 189,
+          "uid": "308",
+          "name": "DIS-PDU Status-IFF Simulation Mode (ISM)",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[189]"
+        },
+        {
+          "index": 190,
+          "uid": "309",
+          "name": "Explosive Material Groups",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[190]"
+        },
+        {
+          "index": 191,
+          "uid": "310",
+          "name": "Explosive Material Categories",
+          "size_bits": "16",
+          "row_count": 45,
+          "json_path": "enumerations[191]"
+        },
+        {
+          "index": 192,
+          "uid": "311",
+          "name": "DE Precision Aimpoint-Beam Spot Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[192]"
+        },
+        {
+          "index": 193,
+          "uid": "312",
+          "name": "DE Fire-Pulse Shape",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[193]"
+        },
+        {
+          "index": 194,
+          "uid": "314",
+          "name": "Entity Damage Status-Component Identification",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[194]"
+        },
+        {
+          "index": 195,
+          "uid": "315",
+          "name": "DE Damage Description-Component Damage Status",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[195]"
+        },
+        {
+          "index": 196,
+          "uid": "316",
+          "name": "DE Damage Description-Component Visual Smoke Color",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[196]"
+        },
+        {
+          "index": 197,
+          "uid": "318",
+          "name": "Beam Status-Beam State",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[197]"
+        },
+        {
+          "index": 198,
+          "uid": "319",
+          "name": "Entity Association-Association Status",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[198]"
+        },
+        {
+          "index": 199,
+          "uid": "320",
+          "name": "Entity VP Record-Change Indicator",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[199]"
+        },
+        {
+          "index": 200,
+          "uid": "321",
+          "name": "Entity Association-Group Member Type",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[200]"
+        },
+        {
+          "index": 201,
+          "uid": "322",
+          "name": "Physical Association Type Groups",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[201]"
+        },
+        {
+          "index": 202,
+          "uid": "323",
+          "name": "Entity Association-Physical Association Type",
+          "size_bits": "8",
+          "row_count": 28,
+          "json_path": "enumerations[202]"
+        },
+        {
+          "index": 203,
+          "uid": "324",
+          "name": "Entity Association-Physical Connection Type",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[203]"
+        },
+        {
+          "index": 204,
+          "uid": "325",
+          "name": "Sensor Record-Sensor Type-Other Active Sensors",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[204]"
+        },
+        {
+          "index": 205,
+          "uid": "326",
+          "name": "Sensor Record-Sensor Type-Passive Sensors",
+          "size_bits": "16",
+          "row_count": 69,
+          "json_path": "enumerations[205]"
+        },
+        {
+          "index": 206,
+          "uid": "327",
+          "name": "Munition/Expendable Status",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[206]"
+        },
+        {
+          "index": 207,
+          "uid": "328",
+          "name": "Fuel Measurement Units",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[207]"
+        },
+        {
+          "index": 208,
+          "uid": "329",
+          "name": "Fuel Location",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[208]"
+        },
+        {
+          "index": 209,
+          "uid": "330",
+          "name": "Entity Association-Association Type",
+          "size_bits": "8",
+          "row_count": 15,
+          "json_path": "enumerations[209]"
+        },
+        {
+          "index": 210,
+          "uid": "331",
+          "name": "Sensor On/Off Status",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[210]"
+        },
+        {
+          "index": 211,
+          "uid": "332",
+          "name": "Ownership Status",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[211]"
+        },
+        {
+          "index": 212,
+          "uid": "333",
+          "name": "Record-R-Event Type",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "enumerations[212]"
+        },
+        {
+          "index": 213,
+          "uid": "334",
+          "name": "Record Query-R-Event Type",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "enumerations[213]"
+        },
+        {
+          "index": 214,
+          "uid": "335",
+          "name": "UA Propulsion Plant Configuration-Configuration",
+          "size_bits": "7",
+          "row_count": 7,
+          "json_path": "enumerations[214]"
+        },
+        {
+          "index": 215,
+          "uid": "336",
+          "name": "Minefield State-Protocol Mode",
+          "size_bits": "2",
+          "row_count": 2,
+          "json_path": "enumerations[215]"
+        },
+        {
+          "index": 216,
+          "uid": "337",
+          "name": "Transponder/Interrogator Indicator",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[216]"
+        },
+        {
+          "index": 217,
+          "uid": "338",
+          "name": "IFF Simulation Mode",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[217]"
+        },
+        {
+          "index": 218,
+          "uid": "339",
+          "name": "IFF Applicable Modes",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[218]"
+        },
+        {
+          "index": 219,
+          "uid": "340",
+          "name": "Mode C Altitude Indicator",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[219]"
+        },
+        {
+          "index": 220,
+          "uid": "341",
+          "name": "TCAS/ACAS Basic/Advanced Indicator",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[220]"
+        },
+        {
+          "index": 221,
+          "uid": "342",
+          "name": "TCAS/ACAS Indicator",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[221]"
+        },
+        {
+          "index": 222,
+          "uid": "343",
+          "name": "TCAS/ACAS Software Version",
+          "size_bits": "3",
+          "row_count": 3,
+          "json_path": "enumerations[222]"
+        },
+        {
+          "index": 223,
+          "uid": "344",
+          "name": "TCAS/ACAS Type",
+          "size_bits": "3",
+          "row_count": 3,
+          "json_path": "enumerations[223]"
+        },
+        {
+          "index": 224,
+          "uid": "345",
+          "name": "TCAS I/II Type",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[224]"
+        },
+        {
+          "index": 225,
+          "uid": "346",
+          "name": "Mode 5 IFF Mission",
+          "size_bits": "3",
+          "row_count": 7,
+          "json_path": "enumerations[225]"
+        },
+        {
+          "index": 226,
+          "uid": "347",
+          "name": "Mode S Interrogator Status Transmit State",
+          "size_bits": "3",
+          "row_count": 6,
+          "json_path": "enumerations[226]"
+        },
+        {
+          "index": 227,
+          "uid": "348",
+          "name": "Mode S Interrogator Identifier IC Type",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[227]"
+        },
+        {
+          "index": 228,
+          "uid": "349",
+          "name": "ISLS Antenna Type",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[228]"
+        },
+        {
+          "index": 229,
+          "uid": "350",
+          "name": "Mode 5 Reply",
+          "size_bits": "3",
+          "row_count": 4,
+          "json_path": "enumerations[229]"
+        },
+        {
+          "index": 230,
+          "uid": "351",
+          "name": "Antenna Selection",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[230]"
+        },
+        {
+          "index": 231,
+          "uid": "352",
+          "name": "Mode 5 Squitter Type",
+          "size_bits": "3",
+          "row_count": 3,
+          "json_path": "enumerations[231]"
+        },
+        {
+          "index": 232,
+          "uid": "353",
+          "name": "Level 2 Squitter Status",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[232]"
+        },
+        {
+          "index": 233,
+          "uid": "354",
+          "name": "Mode S Squitter Type",
+          "size_bits": "3",
+          "row_count": 4,
+          "json_path": "enumerations[233]"
+        },
+        {
+          "index": 234,
+          "uid": "355",
+          "name": "Mode S Squitter Record Source",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[234]"
+        },
+        {
+          "index": 235,
+          "uid": "356",
+          "name": "Aircraft Present Domain",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[235]"
+        },
+        {
+          "index": 236,
+          "uid": "357",
+          "name": "Aircraft Identification Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[236]"
+        },
+        {
+          "index": 237,
+          "uid": "358",
+          "name": "Capability Report",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[237]"
+        },
+        {
+          "index": 238,
+          "uid": "359",
+          "name": "Navigation Source",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[238]"
+        },
+        {
+          "index": 239,
+          "uid": "360",
+          "name": "IFF Data Record Available",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[239]"
+        },
+        {
+          "index": 240,
+          "uid": "361",
+          "name": "Mode 5/S Altitude Resolution",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[240]"
+        },
+        {
+          "index": 241,
+          "uid": "362",
+          "name": "Delta Mode 5/S Altitude Positive/Negative Indicator",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[241]"
+        },
+        {
+          "index": 242,
+          "uid": "363",
+          "name": "Format Type",
+          "size_bits": "5",
+          "row_count": 14,
+          "json_path": "enumerations[242]"
+        },
+        {
+          "index": 243,
+          "uid": "364",
+          "name": "Aircraft Address Source",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[243]"
+        },
+        {
+          "index": 244,
+          "uid": "365",
+          "name": "Surveillance/Status",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[244]"
+        },
+        {
+          "index": 245,
+          "uid": "366",
+          "name": "Turn Rate Source",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[245]"
+        },
+        {
+          "index": 246,
+          "uid": "367",
+          "name": "Time Type Source",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[246]"
+        },
+        {
+          "index": 247,
+          "uid": "368",
+          "name": "Aircraft Type/Wake",
+          "size_bits": "3",
+          "row_count": 1,
+          "json_path": "enumerations[247]"
+        },
+        {
+          "index": 248,
+          "uid": "369",
+          "name": "Data Category",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[248]"
+        },
+        {
+          "index": 249,
+          "uid": "370",
+          "name": "T/I Link Type",
+          "size_bits": "16",
+          "row_count": 13,
+          "json_path": "enumerations[249]"
+        },
+        {
+          "index": 250,
+          "uid": "371",
+          "name": "Antenna Status",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[250]"
+        },
+        {
+          "index": 251,
+          "uid": "372",
+          "name": "Transmission Indicator",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[251]"
+        },
+        {
+          "index": 252,
+          "uid": "373",
+          "name": "Reply Amplification",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[252]"
+        },
+        {
+          "index": 253,
+          "uid": "374",
+          "name": "DE Fire-Flags-State/Update Flag",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[253]"
+        },
+        {
+          "index": 254,
+          "uid": "375",
+          "name": "Component Visual Damage Status-Smoke",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[254]"
+        },
+        {
+          "index": 255,
+          "uid": "376",
+          "name": "Component Visual Damage Status-Surface Damage",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[255]"
+        },
+        {
+          "index": 256,
+          "uid": "377",
+          "name": "Grid Axis Descriptor-Axis Type",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[256]"
+        },
+        {
+          "index": 257,
+          "uid": "378",
+          "name": "Appearance-Paint Scheme",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[257]"
+        },
+        {
+          "index": 258,
+          "uid": "379",
+          "name": "Appearance-Damage",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[258]"
+        },
+        {
+          "index": 259,
+          "uid": "380",
+          "name": "Mode 5 Message Formats Status",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[259]"
+        },
+        {
+          "index": 260,
+          "uid": "381",
+          "name": "Appearance-Trailing Effects",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[260]"
+        },
+        {
+          "index": 261,
+          "uid": "382",
+          "name": "Appearance-Hatch",
+          "size_bits": "3",
+          "row_count": 6,
+          "json_path": "enumerations[261]"
+        },
+        {
+          "index": 262,
+          "uid": "383",
+          "name": "Appearance-Launcher/Operational",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[262]"
+        },
+        {
+          "index": 263,
+          "uid": "384",
+          "name": "Appearance-Camouflage Type",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[263]"
+        },
+        {
+          "index": 264,
+          "uid": "385",
+          "name": "Appearance-Concealed Position",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[264]"
+        },
+        {
+          "index": 265,
+          "uid": "386",
+          "name": "Appearance-Entity or Object State",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[265]"
+        },
+        {
+          "index": 266,
+          "uid": "387",
+          "name": "Appearance-Canopy",
+          "size_bits": "3",
+          "row_count": 7,
+          "json_path": "enumerations[266]"
+        },
+        {
+          "index": 267,
+          "uid": "388",
+          "name": "Appearance-Subsurface Hatch",
+          "size_bits": "3",
+          "row_count": 3,
+          "json_path": "enumerations[267]"
+        },
+        {
+          "index": 268,
+          "uid": "389",
+          "name": "DIS-PDU Status-Active Interrogation Indicator (AII)",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[268]"
+        },
+        {
+          "index": 269,
+          "uid": "390",
+          "name": "Appearance-Life Form Health",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[269]"
+        },
+        {
+          "index": 270,
+          "uid": "391",
+          "name": "Appearance-Life Form Compliance Status",
+          "size_bits": "4",
+          "row_count": 16,
+          "json_path": "enumerations[270]"
+        },
+        {
+          "index": 271,
+          "uid": "392",
+          "name": "Appearance-Life Form Posture",
+          "size_bits": "4",
+          "row_count": 16,
+          "json_path": "enumerations[271]"
+        },
+        {
+          "index": 272,
+          "uid": "393",
+          "name": "Appearance-Life Form Weapon/Implement",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[272]"
+        },
+        {
+          "index": 273,
+          "uid": "394",
+          "name": "Appearance-Concealed Movement",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[273]"
+        },
+        {
+          "index": 274,
+          "uid": "395",
+          "name": "Appearance-Environmental Density",
+          "size_bits": "4",
+          "row_count": 5,
+          "json_path": "enumerations[274]"
+        },
+        {
+          "index": 275,
+          "uid": "396",
+          "name": "Mode 5 Platform Type",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[275]"
+        },
+        {
+          "index": 276,
+          "uid": "397",
+          "name": "Appearance-Anti-Collision Day/Night",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[276]"
+        },
+        {
+          "index": 277,
+          "uid": "398",
+          "name": "Appearance-Navigation/Position Brightness",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[277]"
+        },
+        {
+          "index": 278,
+          "uid": "399",
+          "name": "Appearance-Supply Deployed",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[278]"
+        },
+        {
+          "index": 279,
+          "uid": "400",
+          "name": "Appearance-NVG Mode",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[279]"
+        },
+        {
+          "index": 280,
+          "uid": "401",
+          "name": "Parachute",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[280]"
+        },
+        {
+          "index": 281,
+          "uid": "402",
+          "name": "Flare/Smoke Color",
+          "size_bits": "3",
+          "row_count": 4,
+          "json_path": "enumerations[281]"
+        },
+        {
+          "index": 282,
+          "uid": "403",
+          "name": "Flare/Smoke Status",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[282]"
+        },
+        {
+          "index": 283,
+          "uid": "404",
+          "name": "Spot Chaff Status",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[283]"
+        },
+        {
+          "index": 284,
+          "uid": "405",
+          "name": "Appearance-Object General-Damage",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[284]"
+        },
+        {
+          "index": 285,
+          "uid": "406",
+          "name": "Appearance-Object General-Predistributed",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[285]"
+        },
+        {
+          "index": 286,
+          "uid": "407",
+          "name": "Appearance-Object Specific-Breach State",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[286]"
+        },
+        {
+          "index": 287,
+          "uid": "408",
+          "name": "Appearance-Object Specific-Chemical Type",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[287]"
+        },
+        {
+          "index": 288,
+          "uid": "409",
+          "name": "Appearance-Linear Object Tank Ditch Breach",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[288]"
+        },
+        {
+          "index": 289,
+          "uid": "410",
+          "name": "Appearance-Linear Object Lane Marker Visible",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[289]"
+        },
+        {
+          "index": 290,
+          "uid": "411",
+          "name": "Appearance-Object General-IED Present",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[290]"
+        },
+        {
+          "index": 291,
+          "uid": "412",
+          "name": "Mode 5 Level Selection",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[291]"
+        },
+        {
+          "index": 292,
+          "uid": "413",
+          "name": "Supply-Fuel Type",
+          "size_bits": "8",
+          "row_count": 11,
+          "json_path": "enumerations[292]"
+        },
+        {
+          "index": 293,
+          "uid": "414",
+          "name": "Sensor Type Source",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[293]"
+        },
+        {
+          "index": 294,
+          "uid": "415",
+          "name": "Attached Part-Detached Indicator",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[294]"
+        },
+        {
+          "index": 295,
+          "uid": "416",
+          "name": "Intercom Control-Communications Class",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[295]"
+        },
+        {
+          "index": 296,
+          "uid": "417",
+          "name": "DIS-Live Entity-Subprotocol Number",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[296]"
+        },
+        {
+          "index": 297,
+          "uid": "418",
+          "name": "Minefield Appearance-Minefield Type",
+          "size_bits": "2",
+          "row_count": 3,
+          "json_path": "enumerations[297]"
+        },
+        {
+          "index": 298,
+          "uid": "419",
+          "name": "Minefield Appearance-Active Status",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[298]"
+        },
+        {
+          "index": 299,
+          "uid": "420",
+          "name": "Minefield Appearance-Lane",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[299]"
+        },
+        {
+          "index": 300,
+          "uid": "421",
+          "name": "Minefield Appearance-State",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[300]"
+        },
+        {
+          "index": 301,
+          "uid": "422",
+          "name": "Minefield Fusing-Fuse Type",
+          "size_bits": "7",
+          "row_count": 7,
+          "json_path": "enumerations[301]"
+        },
+        {
+          "index": 302,
+          "uid": "423",
+          "name": "Mode 5 Location Errors",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[302]"
+        },
+        {
+          "index": 303,
+          "uid": "424",
+          "name": "Minefield Paint Scheme-Algae",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[303]"
+        },
+        {
+          "index": 304,
+          "uid": "425",
+          "name": "Minefield Paint Scheme-Paint Scheme",
+          "size_bits": "6",
+          "row_count": 19,
+          "json_path": "enumerations[304]"
+        },
+        {
+          "index": 305,
+          "uid": "426",
+          "name": "Cover/Shroud Status",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[305]"
+        },
+        {
+          "index": 306,
+          "uid": "427",
+          "name": "Platform-Land-Motorcycle Subcategories",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[306]"
+        },
+        {
+          "index": 307,
+          "uid": "428",
+          "name": "Platform-Land-Car Subcategories",
+          "size_bits": "8",
+          "row_count": 44,
+          "json_path": "enumerations[307]"
+        },
+        {
+          "index": 308,
+          "uid": "429",
+          "name": "Platform-Land-Bus Subcategories",
+          "size_bits": "8",
+          "row_count": 19,
+          "json_path": "enumerations[308]"
+        },
+        {
+          "index": 309,
+          "uid": "430",
+          "name": "Platform-Land-Single Unit Cargo Truck Subcategories",
+          "size_bits": "8",
+          "row_count": 32,
+          "json_path": "enumerations[309]"
+        },
+        {
+          "index": 310,
+          "uid": "431",
+          "name": "Platform-Land-Single Unit Utility Emergency Truck Subcategories",
+          "size_bits": "8",
+          "row_count": 45,
+          "json_path": "enumerations[310]"
+        },
+        {
+          "index": 311,
+          "uid": "432",
+          "name": "Platform-Land-Multiple Unit Cargo Truck Subcategories",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[311]"
+        },
+        {
+          "index": 312,
+          "uid": "433",
+          "name": "Platform-Land-Multiple Unit Utility Emergency Truck Subcategories",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[312]"
+        },
+        {
+          "index": 313,
+          "uid": "434",
+          "name": "Platform-Land-Construction Specialty Vehicle Subcategories",
+          "size_bits": "8",
+          "row_count": 56,
+          "json_path": "enumerations[313]"
+        },
+        {
+          "index": 314,
+          "uid": "435",
+          "name": "Platform-Land-Farm Specialty Vehicle Subcategories",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[314]"
+        },
+        {
+          "index": 315,
+          "uid": "436",
+          "name": "Platform-Land-Trailer Subcategories",
+          "size_bits": "8",
+          "row_count": 28,
+          "json_path": "enumerations[315]"
+        },
+        {
+          "index": 316,
+          "uid": "437",
+          "name": "Platform-Land-Recreational Subcategories",
+          "size_bits": "8",
+          "row_count": 15,
+          "json_path": "enumerations[316]"
+        },
+        {
+          "index": 317,
+          "uid": "438",
+          "name": "Platform-Land-Non-motorized Subcategories",
+          "size_bits": "8",
+          "row_count": 25,
+          "json_path": "enumerations[317]"
+        },
+        {
+          "index": 318,
+          "uid": "439",
+          "name": "Platform-Land-Trains Subcategories",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[318]"
+        },
+        {
+          "index": 319,
+          "uid": "440",
+          "name": "Platform-Land-Utility Emergency Car Subcategories",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[319]"
+        },
+        {
+          "index": 320,
+          "uid": "441",
+          "name": "Platform-Surface-Passenger Vessel Subcategories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[320]"
+        },
+        {
+          "index": 321,
+          "uid": "442",
+          "name": "Platform-Surface-Dry Cargo Ship Subcategories",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[321]"
+        },
+        {
+          "index": 322,
+          "uid": "443",
+          "name": "Platform-Surface Tanker Subcategories",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[322]"
+        },
+        {
+          "index": 323,
+          "uid": "444",
+          "name": "Platform-Surface Support Vessel Subcategories",
+          "size_bits": "8",
+          "row_count": 9,
+          "json_path": "enumerations[323]"
+        },
+        {
+          "index": 324,
+          "uid": "445",
+          "name": "Platform-Surface Private Motorboat Subcategories",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[324]"
+        },
+        {
+          "index": 325,
+          "uid": "446",
+          "name": "Platform-Surface Private Sailboat Subcategories",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[325]"
+        },
+        {
+          "index": 326,
+          "uid": "447",
+          "name": "Platform-Surface Fishing Vessel Subcategories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[326]"
+        },
+        {
+          "index": 327,
+          "uid": "448",
+          "name": "Platform-Surface Other Vessels Subcategories",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[327]"
+        },
+        {
+          "index": 328,
+          "uid": "449",
+          "name": "Crypto Key ID-Crypto Mode",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[328]"
+        },
+        {
+          "index": 329,
+          "uid": "463",
+          "name": "Color",
+          "size_bits": "8",
+          "row_count": 160,
+          "json_path": "enumerations[329]"
+        },
+        {
+          "index": 330,
+          "uid": "464",
+          "name": "Building Paint Scheme",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[330]"
+        },
+        {
+          "index": 331,
+          "uid": "465",
+          "name": "Season",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[331]"
+        },
+        {
+          "index": 332,
+          "uid": "466",
+          "name": "Material",
+          "size_bits": "4",
+          "row_count": 4,
+          "json_path": "enumerations[332]"
+        },
+        {
+          "index": 333,
+          "uid": "467",
+          "name": "Link 11/11B Fidelity Level",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[333]"
+        },
+        {
+          "index": 334,
+          "uid": "468",
+          "name": "Link 11 Terminal Mode",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[334]"
+        },
+        {
+          "index": 335,
+          "uid": "469",
+          "name": "Link 11 Data Terminal Set Indicator",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[335]"
+        },
+        {
+          "index": 336,
+          "uid": "470",
+          "name": "Link 11 Mode of Operation",
+          "size_bits": "16",
+          "row_count": 6,
+          "json_path": "enumerations[336]"
+        },
+        {
+          "index": 337,
+          "uid": "471",
+          "name": "Life Forms-Subcategory-Iranian Weapons",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[337]"
+        },
+        {
+          "index": 338,
+          "uid": "472",
+          "name": "Life Form Land Categories",
+          "size_bits": "8",
+          "row_count": 27,
+          "json_path": "enumerations[338]"
+        },
+        {
+          "index": 339,
+          "uid": "473",
+          "name": "Life Form-Human-Subcategory-Equipment Class",
+          "size_bits": "8",
+          "row_count": 30,
+          "json_path": "enumerations[339]"
+        },
+        {
+          "index": 340,
+          "uid": "474",
+          "name": "Life Form-Human-Specific-Assault Rifles",
+          "size_bits": "8",
+          "row_count": 80,
+          "json_path": "enumerations[340]"
+        },
+        {
+          "index": 341,
+          "uid": "475",
+          "name": "Life Form-Human-Specific-High Power Rifles",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[341]"
+        },
+        {
+          "index": 342,
+          "uid": "476",
+          "name": "Life Form Categories-U.S.",
+          "size_bits": "8",
+          "row_count": 23,
+          "json_path": "enumerations[342]"
+        },
+        {
+          "index": 343,
+          "uid": "477",
+          "name": "Life Form Extra-Personal Data",
+          "size_bits": "8",
+          "row_count": 38,
+          "json_path": "enumerations[343]"
+        },
+        {
+          "index": 344,
+          "uid": "478",
+          "name": "Life Form Air Categories",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[344]"
+        },
+        {
+          "index": 345,
+          "uid": "479",
+          "name": "Life Form Subsurface Categories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[345]"
+        },
+        {
+          "index": 346,
+          "uid": "481",
+          "name": "Life Form-Human-Specific-Sniper",
+          "size_bits": "8",
+          "row_count": 48,
+          "json_path": "enumerations[346]"
+        },
+        {
+          "index": 347,
+          "uid": "482",
+          "name": "Life Form-Human-Specific-Sub Machine Gun",
+          "size_bits": "8",
+          "row_count": 17,
+          "json_path": "enumerations[347]"
+        },
+        {
+          "index": 348,
+          "uid": "500",
+          "name": "Australian Category Overlay",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[348]"
+        },
+        {
+          "index": 349,
+          "uid": "501",
+          "name": "Life Form Categories-Afghanistan",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[349]"
+        },
+        {
+          "index": 350,
+          "uid": "505",
+          "name": "Life Form-Human-Specific-Equipment Class",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[350]"
+        },
+        {
+          "index": 351,
+          "uid": "506",
+          "name": "Platform-Subsurface-Civilian Submarine-Subcategories",
+          "size_bits": "8",
+          "row_count": 0,
+          "json_path": "enumerations[351]"
+        },
+        {
+          "index": 352,
+          "uid": "507",
+          "name": "Platform-Subsurface-Civilian Submersible-Subcategories",
+          "size_bits": "8",
+          "row_count": 0,
+          "json_path": "enumerations[352]"
+        },
+        {
+          "index": 353,
+          "uid": "508",
+          "name": "Platform-Subsurface-Civilian Semi-Submersibles-Subcategories",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[353]"
+        },
+        {
+          "index": 354,
+          "uid": "509",
+          "name": "Leaf Coverage",
+          "size_bits": "2",
+          "row_count": 2,
+          "json_path": "enumerations[354]"
+        },
+        {
+          "index": 355,
+          "uid": "510",
+          "name": "Life Form-Human-Specific-Anti-Materiel Rifles",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[355]"
+        },
+        {
+          "index": 356,
+          "uid": "511",
+          "name": "Life Form-Human-Specific-Shot Guns",
+          "size_bits": "8",
+          "row_count": 139,
+          "json_path": "enumerations[356]"
+        },
+        {
+          "index": 357,
+          "uid": "512",
+          "name": "Life Form-Human-Specific-Mortars",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[357]"
+        },
+        {
+          "index": 358,
+          "uid": "513",
+          "name": "Life Form-Human-Specific-Hand Guns",
+          "size_bits": "8",
+          "row_count": 26,
+          "json_path": "enumerations[358]"
+        },
+        {
+          "index": 359,
+          "uid": "514",
+          "name": "Life Form-Human-Specific-Weapon Non-specific",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[359]"
+        },
+        {
+          "index": 360,
+          "uid": "515",
+          "name": "Life Form-Human-Specific-Grenade Launchers",
+          "size_bits": "8",
+          "row_count": 45,
+          "json_path": "enumerations[360]"
+        },
+        {
+          "index": 361,
+          "uid": "516",
+          "name": "Life Form-Human-Specific-Machine Guns",
+          "size_bits": "8",
+          "row_count": 89,
+          "json_path": "enumerations[361]"
+        },
+        {
+          "index": 362,
+          "uid": "517",
+          "name": "Life Form-Human-Specific-Grenade Launching Machine Gun",
+          "size_bits": "8",
+          "row_count": 20,
+          "json_path": "enumerations[362]"
+        },
+        {
+          "index": 363,
+          "uid": "518",
+          "name": "Life Form-Human-Specific-Anti Tank Rockets",
+          "size_bits": "8",
+          "row_count": 73,
+          "json_path": "enumerations[363]"
+        },
+        {
+          "index": 364,
+          "uid": "519",
+          "name": "Life Form-Human-Specific-Anti Tank Missiles",
+          "size_bits": "8",
+          "row_count": 75,
+          "json_path": "enumerations[364]"
+        },
+        {
+          "index": 365,
+          "uid": "520",
+          "name": "Life Form-Human-Specific-Man-Portable Air Defense System",
+          "size_bits": "8",
+          "row_count": 27,
+          "json_path": "enumerations[365]"
+        },
+        {
+          "index": 366,
+          "uid": "521",
+          "name": "Life Form-Human-Specific-Recoilless Rifles",
+          "size_bits": "8",
+          "row_count": 33,
+          "json_path": "enumerations[366]"
+        },
+        {
+          "index": 367,
+          "uid": "522",
+          "name": "Life Form-Human-Specific-Flame Rockets",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[367]"
+        },
+        {
+          "index": 368,
+          "uid": "523",
+          "name": "Life Form-Human-Specific-Flame Throwers",
+          "size_bits": "8",
+          "row_count": 15,
+          "json_path": "enumerations[368]"
+        },
+        {
+          "index": 369,
+          "uid": "524",
+          "name": "Life Form-Human-Specific-Drone Guns",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[369]"
+        },
+        {
+          "index": 370,
+          "uid": "525",
+          "name": "Life Form-Human-Specific-Logistics EQ Class",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[370]"
+        },
+        {
+          "index": 371,
+          "uid": "526",
+          "name": "Life Form-Human-Specific-Personal Electronics Class",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[371]"
+        },
+        {
+          "index": 372,
+          "uid": "527",
+          "name": "Life Form-Human-Specific-Lasers Class",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[372]"
+        },
+        {
+          "index": 373,
+          "uid": "528",
+          "name": "Life Form-Human-Specific-Rocket Launchers",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[373]"
+        },
+        {
+          "index": 374,
+          "uid": "529",
+          "name": "Life Form-Human-Specific-Equipment, Non-specific",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[374]"
+        },
+        {
+          "index": 375,
+          "uid": "530",
+          "name": "Life Form-Human-Specific-Medical Equipment",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[375]"
+        },
+        {
+          "index": 376,
+          "uid": "531",
+          "name": "Life Form-Human-Specific-Animal Companions",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[376]"
+        },
+        {
+          "index": 377,
+          "uid": "589",
+          "name": "Transmitter-Detail-SATCOM-Modulation",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "enumerations[377]"
+        },
+        {
+          "index": 378,
+          "uid": "600",
+          "name": "Supply Domain",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[378]"
+        },
+        {
+          "index": 379,
+          "uid": "601",
+          "name": "Class 1 Supply Category - Subsistence",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[379]"
+        },
+        {
+          "index": 380,
+          "uid": "602",
+          "name": "Class 2 Supply Category - Clothing, Individual Equipment, Tools, Admin. Supplies",
+          "size_bits": "8",
+          "row_count": 8,
+          "json_path": "enumerations[380]"
+        },
+        {
+          "index": 381,
+          "uid": "603",
+          "name": "Class 3 Supply Category - Petroleum, Oils, Lubricants",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[381]"
+        },
+        {
+          "index": 382,
+          "uid": "604",
+          "name": "Class 4 Supply Category - Construction Materials",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[382]"
+        },
+        {
+          "index": 383,
+          "uid": "606",
+          "name": "Class 6 Supply Category - Personnel Demand Items",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[383]"
+        },
+        {
+          "index": 384,
+          "uid": "607",
+          "name": "Class 7 Supply Category - Major Items",
+          "size_bits": "8",
+          "row_count": 25,
+          "json_path": "enumerations[384]"
+        },
+        {
+          "index": 385,
+          "uid": "608",
+          "name": "Class 8 Supply Category - Medical Material",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[385]"
+        },
+        {
+          "index": 386,
+          "uid": "609",
+          "name": "Class 9 Supply Category - Repair Parts and Components",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[386]"
+        },
+        {
+          "index": 387,
+          "uid": "610",
+          "name": "Class 10 Supply Category - Material to Support Non-Military Programs",
+          "size_bits": "8",
+          "row_count": 1,
+          "json_path": "enumerations[387]"
+        },
+        {
+          "index": 388,
+          "uid": "611",
+          "name": "Class 11 Supply Category - Supplies (Non Doctrinal)",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[388]"
+        },
+        {
+          "index": 389,
+          "uid": "612",
+          "name": "Class 12 Supply Category - Sling Loads (Non Doctrinal)",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[389]"
+        },
+        {
+          "index": 390,
+          "uid": "633",
+          "name": "Life-Saving Equipment",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[390]"
+        },
+        {
+          "index": 391,
+          "uid": "677",
+          "name": "Cyber Acknowledge Response Type",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[391]"
+        },
+        {
+          "index": 392,
+          "uid": "678",
+          "name": "Cyber Admin Type",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[392]"
+        },
+        {
+          "index": 393,
+          "uid": "679",
+          "name": "Cyber Cyber Event Phase Type",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[393]"
+        },
+        {
+          "index": 394,
+          "uid": "680",
+          "name": "Cyber Data Link Protocol Type",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[394]"
+        },
+        {
+          "index": 395,
+          "uid": "681",
+          "name": "Cyber Data Status Type",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[395]"
+        },
+        {
+          "index": 396,
+          "uid": "682",
+          "name": "Cyber Data Type",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[396]"
+        },
+        {
+          "index": 397,
+          "uid": "683",
+          "name": "Cyber Device Type",
+          "size_bits": "8",
+          "row_count": 14,
+          "json_path": "enumerations[397]"
+        },
+        {
+          "index": 398,
+          "uid": "684",
+          "name": "Cyber Encryption Type",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[398]"
+        },
+        {
+          "index": 399,
+          "uid": "685",
+          "name": "Cyber Hardware Damage Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[399]"
+        },
+        {
+          "index": 400,
+          "uid": "686",
+          "name": "Cyber Hardware Degrade Type",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[400]"
+        },
+        {
+          "index": 401,
+          "uid": "687",
+          "name": "Cyber Load Rate Type",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[401]"
+        },
+        {
+          "index": 402,
+          "uid": "688",
+          "name": "Cyber Manipulation Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[402]"
+        },
+        {
+          "index": 403,
+          "uid": "689",
+          "name": "Cyber Message Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[403]"
+        },
+        {
+          "index": 404,
+          "uid": "690",
+          "name": "Cyber Network Protocol Type",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[404]"
+        },
+        {
+          "index": 405,
+          "uid": "691",
+          "name": "Cyber Operating System Type",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[405]"
+        },
+        {
+          "index": 406,
+          "uid": "692",
+          "name": "Cyber Packet Manipulation Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[406]"
+        },
+        {
+          "index": 407,
+          "uid": "693",
+          "name": "Cyber Physical Layer Type",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[407]"
+        },
+        {
+          "index": 408,
+          "uid": "694",
+          "name": "Cyber Recon Type",
+          "size_bits": "8",
+          "row_count": 75,
+          "json_path": "enumerations[408]"
+        },
+        {
+          "index": 409,
+          "uid": "695",
+          "name": "Cyber Relationship Type",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[409]"
+        },
+        {
+          "index": 410,
+          "uid": "696",
+          "name": "Cyber Sensitivity Type",
+          "size_bits": "8",
+          "row_count": 18,
+          "json_path": "enumerations[410]"
+        },
+        {
+          "index": 411,
+          "uid": "697",
+          "name": "Cyber Service Type",
+          "size_bits": "8",
+          "row_count": 11,
+          "json_path": "enumerations[411]"
+        },
+        {
+          "index": 412,
+          "uid": "698",
+          "name": "Cyber System Type",
+          "size_bits": "8",
+          "row_count": 4,
+          "json_path": "enumerations[412]"
+        },
+        {
+          "index": 413,
+          "uid": "715",
+          "name": "Island Subcategory",
+          "size_bits": "16",
+          "row_count": 7,
+          "json_path": "enumerations[413]"
+        },
+        {
+          "index": 414,
+          "uid": "730",
+          "name": "Link 11 Message Sub Type",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[414]"
+        },
+        {
+          "index": 415,
+          "uid": "731",
+          "name": "Link 11 Message Type Identifier",
+          "size_bits": "8",
+          "row_count": 7,
+          "json_path": "enumerations[415]"
+        },
+        {
+          "index": 416,
+          "uid": "732",
+          "name": "Link 11 Data Signalling Rate",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[416]"
+        },
+        {
+          "index": 417,
+          "uid": "733",
+          "name": "Link 11 Signal Integration Interval",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[417]"
+        },
+        {
+          "index": 418,
+          "uid": "734",
+          "name": "Link 11 Signal Waveform",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[418]"
+        },
+        {
+          "index": 419,
+          "uid": "735",
+          "name": "Link 11/11B Encryption Flag",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[419]"
+        },
+        {
+          "index": 420,
+          "uid": "736",
+          "name": "SISO-STD-002 Version",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[420]"
+        },
+        {
+          "index": 421,
+          "uid": "737",
+          "name": "Link 11B Link State",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[421]"
+        },
+        {
+          "index": 422,
+          "uid": "738",
+          "name": "Link 11B Mode of Operation",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "enumerations[422]"
+        },
+        {
+          "index": 423,
+          "uid": "739",
+          "name": "Link 11B Message Sub Type",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "enumerations[423]"
+        },
+        {
+          "index": 424,
+          "uid": "740",
+          "name": "Link 11B Data Signaling Rate",
+          "size_bits": "8",
+          "row_count": 6,
+          "json_path": "enumerations[424]"
+        },
+        {
+          "index": 425,
+          "uid": "741",
+          "name": "Link 11B Modulation Standard",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "enumerations[425]"
+        },
+        {
+          "index": 426,
+          "uid": "780",
+          "name": "CIGI Extension Packet ID",
+          "size_bits": "16",
+          "row_count": 5,
+          "json_path": "enumerations[426]"
+        },
+        {
+          "index": 427,
+          "uid": "800",
+          "name": "Link 16 Version",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[427]"
+        },
+        {
+          "index": 428,
+          "uid": "801",
+          "name": "Aircraft ID Source",
+          "size_bits": "1",
+          "row_count": 2,
+          "json_path": "enumerations[428]"
+        },
+        {
+          "index": 429,
+          "uid": "802",
+          "name": "Clothing IR Signature",
+          "size_bits": "2",
+          "row_count": 4,
+          "json_path": "enumerations[429]"
+        },
+        {
+          "index": 430,
+          "uid": "889",
+          "name": "Damage Area",
+          "size_bits": "3",
+          "row_count": 8,
+          "json_path": "enumerations[430]"
+        },
+        {
+          "index": 431,
+          "uid": "890",
+          "name": "Surface Categories",
+          "size_bits": "8",
+          "row_count": 10,
+          "json_path": "enumerations[431]"
+        },
+        {
+          "index": 432,
+          "uid": "891",
+          "name": "Seamark Type",
+          "size_bits": "8",
+          "row_count": 18,
+          "json_path": "enumerations[432]"
+        },
+        {
+          "index": 433,
+          "uid": "892",
+          "name": "Seamark Category and Color",
+          "size_bits": "8",
+          "row_count": 13,
+          "json_path": "enumerations[433]"
+        },
+        {
+          "index": 434,
+          "uid": "893",
+          "name": "Seamark Topmark",
+          "size_bits": "8",
+          "row_count": 34,
+          "json_path": "enumerations[434]"
+        },
+        {
+          "index": 435,
+          "uid": "897",
+          "name": "Platform-Surface Human-Powered Watercraft Subcategories",
+          "size_bits": "8",
+          "row_count": 5,
+          "json_path": "enumerations[435]"
+        }
+      ]
+    },
+    {
+      "section": "bitfields",
+      "description": "SISO-REF-010 bitfield definitions.",
+      "count": 56,
+      "file": "dis_bitfields.json",
+      "items": [
+        {
+          "index": 0,
+          "uid": "31",
+          "name": "Land Platform Appearance",
+          "size_bits": "32",
+          "row_count": 26,
+          "json_path": "bitfields[0]"
+        },
+        {
+          "index": 1,
+          "uid": "32",
+          "name": "Air Platform Appearance",
+          "size_bits": "32",
+          "row_count": 28,
+          "json_path": "bitfields[1]"
+        },
+        {
+          "index": 2,
+          "uid": "33",
+          "name": "Surface Platform Appearance",
+          "size_bits": "32",
+          "row_count": 17,
+          "json_path": "bitfields[2]"
+        },
+        {
+          "index": 3,
+          "uid": "34",
+          "name": "Subsurface Platform Appearance",
+          "size_bits": "32",
+          "row_count": 19,
+          "json_path": "bitfields[3]"
+        },
+        {
+          "index": 4,
+          "uid": "35",
+          "name": "Space Platform Appearance",
+          "size_bits": "32",
+          "row_count": 9,
+          "json_path": "bitfields[4]"
+        },
+        {
+          "index": 5,
+          "uid": "36",
+          "name": "Munition Appearance",
+          "size_bits": "32",
+          "row_count": 11,
+          "json_path": "bitfields[5]"
+        },
+        {
+          "index": 6,
+          "uid": "37",
+          "name": "Life Forms Appearance",
+          "size_bits": "32",
+          "row_count": 19,
+          "json_path": "bitfields[6]"
+        },
+        {
+          "index": 7,
+          "uid": "38",
+          "name": "Environmental Appearance",
+          "size_bits": "32",
+          "row_count": 4,
+          "json_path": "bitfields[7]"
+        },
+        {
+          "index": 8,
+          "uid": "39",
+          "name": "Cultural Feature Appearance",
+          "size_bits": "32",
+          "row_count": 10,
+          "json_path": "bitfields[8]"
+        },
+        {
+          "index": 9,
+          "uid": "40",
+          "name": "Supply Appearance",
+          "size_bits": "32",
+          "row_count": 8,
+          "json_path": "bitfields[9]"
+        },
+        {
+          "index": 10,
+          "uid": "41",
+          "name": "Radio Appearance",
+          "size_bits": "32",
+          "row_count": 2,
+          "json_path": "bitfields[10]"
+        },
+        {
+          "index": 11,
+          "uid": "42",
+          "name": "Expendable Appearance",
+          "size_bits": "32",
+          "row_count": 12,
+          "json_path": "bitfields[11]"
+        },
+        {
+          "index": 12,
+          "uid": "43",
+          "name": "Sensor/Emitter Appearance",
+          "size_bits": "32",
+          "row_count": 18,
+          "json_path": "bitfields[12]"
+        },
+        {
+          "index": 13,
+          "uid": "68",
+          "name": "Stop/Freeze-Frozen Behavior",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "bitfields[13]"
+        },
+        {
+          "index": 14,
+          "uid": "149",
+          "name": "UA-Propulsion Plant Configuration",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "bitfields[14]"
+        },
+        {
+          "index": 15,
+          "uid": "190",
+          "name": "Minefield State-Appearance Bit Map",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "bitfields[15]"
+        },
+        {
+          "index": 16,
+          "uid": "192",
+          "name": "Minefield Data-Fusing",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "bitfields[16]"
+        },
+        {
+          "index": 17,
+          "uid": "202",
+          "name": "Minefield Data-Paint Scheme",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "bitfields[17]"
+        },
+        {
+          "index": 18,
+          "uid": "229",
+          "name": "Object State Appearance-General",
+          "size_bits": "16",
+          "row_count": 7,
+          "json_path": "bitfields[18]"
+        },
+        {
+          "index": 19,
+          "uid": "230",
+          "name": "Point Object Appearance-Building/Structure",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "bitfields[19]"
+        },
+        {
+          "index": 20,
+          "uid": "231",
+          "name": "Point Object Appearance-Log crib, Abatis, Vehicle defilade, and Infantry fighting position",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "bitfields[20]"
+        },
+        {
+          "index": 21,
+          "uid": "232",
+          "name": "Point Object Appearance-Air/Ground Burst",
+          "size_bits": "16",
+          "row_count": 5,
+          "json_path": "bitfields[21]"
+        },
+        {
+          "index": 22,
+          "uid": "233",
+          "name": "Point Object Appearance-Crater",
+          "size_bits": "16",
+          "row_count": 4,
+          "json_path": "bitfields[22]"
+        },
+        {
+          "index": 23,
+          "uid": "234",
+          "name": "Point Object Appearance-Ribbon Bridge",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "bitfields[23]"
+        },
+        {
+          "index": 24,
+          "uid": "235",
+          "name": "Linear Object Appearance-Tank Ditch and Concertina Wire",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "bitfields[24]"
+        },
+        {
+          "index": 25,
+          "uid": "236",
+          "name": "Linear Object Appearance-Exhaust smoke",
+          "size_bits": "16",
+          "row_count": 3,
+          "json_path": "bitfields[25]"
+        },
+        {
+          "index": 26,
+          "uid": "237",
+          "name": "Linear Object Appearance-Minefield Lane Marker",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "bitfields[26]"
+        },
+        {
+          "index": 27,
+          "uid": "238",
+          "name": "Linear Object Appearance-Breach",
+          "size_bits": "16",
+          "row_count": 0,
+          "json_path": "bitfields[27]"
+        },
+        {
+          "index": 28,
+          "uid": "239",
+          "name": "Areal Object Appearance-Minefield",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "bitfields[28]"
+        },
+        {
+          "index": 29,
+          "uid": "240",
+          "name": "Object State-Modification-Point Object",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "bitfields[29]"
+        },
+        {
+          "index": 30,
+          "uid": "241",
+          "name": "Object State-Modification-Linear Object",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "bitfields[30]"
+        },
+        {
+          "index": 31,
+          "uid": "242",
+          "name": "Object State-Modification-Areal Object",
+          "size_bits": "16",
+          "row_count": 1,
+          "json_path": "bitfields[31]"
+        },
+        {
+          "index": 32,
+          "uid": "249",
+          "name": "Environmental Process-Environment Status",
+          "size_bits": "8",
+          "row_count": 2,
+          "json_path": "bitfields[32]"
+        },
+        {
+          "index": 33,
+          "uid": "313",
+          "name": "DE Fire-Flags",
+          "size_bits": "16",
+          "row_count": 2,
+          "json_path": "bitfields[33]"
+        },
+        {
+          "index": 34,
+          "uid": "317",
+          "name": "DE Damage Description-Component Visual Damage Status",
+          "size_bits": "8",
+          "row_count": 3,
+          "json_path": "bitfields[34]"
+        },
+        {
+          "index": 35,
+          "uid": "450",
+          "name": "Land Platform Capabilities",
+          "size_bits": "32",
+          "row_count": 8,
+          "json_path": "bitfields[35]"
+        },
+        {
+          "index": 36,
+          "uid": "451",
+          "name": "Air Platform Capabilities",
+          "size_bits": "32",
+          "row_count": 10,
+          "json_path": "bitfields[36]"
+        },
+        {
+          "index": 37,
+          "uid": "452",
+          "name": "Surface Platform Capabilities",
+          "size_bits": "32",
+          "row_count": 8,
+          "json_path": "bitfields[37]"
+        },
+        {
+          "index": 38,
+          "uid": "453",
+          "name": "Subsurface Platform Capabilities",
+          "size_bits": "32",
+          "row_count": 8,
+          "json_path": "bitfields[38]"
+        },
+        {
+          "index": 39,
+          "uid": "454",
+          "name": "Space Platform Capabilities",
+          "size_bits": "32",
+          "row_count": 5,
+          "json_path": "bitfields[39]"
+        },
+        {
+          "index": 40,
+          "uid": "455",
+          "name": "Munition Capabilities",
+          "size_bits": "32",
+          "row_count": 2,
+          "json_path": "bitfields[40]"
+        },
+        {
+          "index": 41,
+          "uid": "456",
+          "name": "Life Forms Capabilities",
+          "size_bits": "32",
+          "row_count": 5,
+          "json_path": "bitfields[41]"
+        },
+        {
+          "index": 42,
+          "uid": "457",
+          "name": "Environmental Capabilities",
+          "size_bits": "32",
+          "row_count": 2,
+          "json_path": "bitfields[42]"
+        },
+        {
+          "index": 43,
+          "uid": "458",
+          "name": "Cultural Feature Capabilities",
+          "size_bits": "32",
+          "row_count": 3,
+          "json_path": "bitfields[43]"
+        },
+        {
+          "index": 44,
+          "uid": "459",
+          "name": "Supply Capabilities",
+          "size_bits": "32",
+          "row_count": 5,
+          "json_path": "bitfields[44]"
+        },
+        {
+          "index": 45,
+          "uid": "460",
+          "name": "Radio Capabilities",
+          "size_bits": "32",
+          "row_count": 1,
+          "json_path": "bitfields[45]"
+        },
+        {
+          "index": 46,
+          "uid": "461",
+          "name": "Expendable Capabilities",
+          "size_bits": "32",
+          "row_count": 1,
+          "json_path": "bitfields[46]"
+        },
+        {
+          "index": 47,
+          "uid": "462",
+          "name": "Sensor/Emitter Capabilities",
+          "size_bits": "32",
+          "row_count": 4,
+          "json_path": "bitfields[47]"
+        },
+        {
+          "index": 48,
+          "uid": "480",
+          "name": "Non-Human Life Forms Appearance",
+          "size_bits": "32",
+          "row_count": 4,
+          "json_path": "bitfields[48]"
+        },
+        {
+          "index": 49,
+          "uid": "483",
+          "name": "Point Object Appearance-Building Rubble",
+          "size_bits": "32",
+          "row_count": 0,
+          "json_path": "bitfields[49]"
+        },
+        {
+          "index": 50,
+          "uid": "484",
+          "name": "Point Object Appearance-Stationary Bridge and AVLB",
+          "size_bits": "32",
+          "row_count": 0,
+          "json_path": "bitfields[50]"
+        },
+        {
+          "index": 51,
+          "uid": "485",
+          "name": "Point Object Appearance-Disturbed Earth / Road",
+          "size_bits": "32",
+          "row_count": 3,
+          "json_path": "bitfields[51]"
+        },
+        {
+          "index": 52,
+          "uid": "486",
+          "name": "Point Object Appearance-Pothole",
+          "size_bits": "32",
+          "row_count": 2,
+          "json_path": "bitfields[52]"
+        },
+        {
+          "index": 53,
+          "uid": "487",
+          "name": "Point Object Appearance-Tree",
+          "size_bits": "32",
+          "row_count": 2,
+          "json_path": "bitfields[53]"
+        },
+        {
+          "index": 54,
+          "uid": "488",
+          "name": "Linear Object Appearance-Wire",
+          "size_bits": "32",
+          "row_count": 3,
+          "json_path": "bitfields[54]"
+        },
+        {
+          "index": 55,
+          "uid": "489",
+          "name": "Linear Object Appearance-Speed Bump",
+          "size_bits": "32",
+          "row_count": 3,
+          "json_path": "bitfields[55]"
+        }
+      ]
+    },
+    {
+      "section": "records",
+      "description": "SISO-REF-010 structured record definitions.",
+      "count": 31,
+      "file": "dis_pdu.json",
+      "items": [
+        {
+          "index": 0,
+          "uid": "186",
+          "name": "Intercom Control-Specific Destination record",
+          "size_bits": null,
+          "field_count": 8,
+          "json_path": "records[0]"
+        },
+        {
+          "index": 1,
+          "uid": "187",
+          "name": "Intercom Control-Group Destination record",
+          "size_bits": null,
+          "field_count": 6,
+          "json_path": "records[1]"
+        },
+        {
+          "index": 2,
+          "uid": "188",
+          "name": "Intercom Control-Group Assignment record",
+          "size_bits": null,
+          "field_count": 8,
+          "json_path": "records[2]"
+        },
+        {
+          "index": 3,
+          "uid": "215",
+          "name": "IsGroupOf-GED Record 1",
+          "size_bits": null,
+          "field_count": 9,
+          "json_path": "records[3]"
+        },
+        {
+          "index": 4,
+          "uid": "216",
+          "name": "IsGroupOf-GED Record 2",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[4]"
+        },
+        {
+          "index": 5,
+          "uid": "217",
+          "name": "IsGroupOf-GED Record 3",
+          "size_bits": null,
+          "field_count": 9,
+          "json_path": "records[5]"
+        },
+        {
+          "index": 6,
+          "uid": "218",
+          "name": "IsGroupOf-GED Record 4",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[6]"
+        },
+        {
+          "index": 7,
+          "uid": "219",
+          "name": "IsGroupOf-GED Record 5",
+          "size_bits": null,
+          "field_count": 11,
+          "json_path": "records[7]"
+        },
+        {
+          "index": 8,
+          "uid": "220",
+          "name": "IsGroupOf-GED Record 6",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[8]"
+        },
+        {
+          "index": 9,
+          "uid": "221",
+          "name": "IsGroupOf-GED Record 7",
+          "size_bits": null,
+          "field_count": 7,
+          "json_path": "records[9]"
+        },
+        {
+          "index": 10,
+          "uid": "222",
+          "name": "IsGroupOf-GED Record 8",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[10]"
+        },
+        {
+          "index": 11,
+          "uid": "223",
+          "name": "IsGroupOf-GED Record 9",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[11]"
+        },
+        {
+          "index": 12,
+          "uid": "251",
+          "name": "Environmental Process-Geometry-Point Record 1",
+          "size_bits": null,
+          "field_count": 1,
+          "json_path": "records[12]"
+        },
+        {
+          "index": 13,
+          "uid": "252",
+          "name": "Environmental Process-Geometry-Point Record 2",
+          "size_bits": null,
+          "field_count": 2,
+          "json_path": "records[13]"
+        },
+        {
+          "index": 14,
+          "uid": "253",
+          "name": "Environmental Process-Geometry-Line Record 1",
+          "size_bits": null,
+          "field_count": 2,
+          "json_path": "records[14]"
+        },
+        {
+          "index": 15,
+          "uid": "254",
+          "name": "Environmental Process-Geometry-Line Record 2",
+          "size_bits": null,
+          "field_count": 4,
+          "json_path": "records[15]"
+        },
+        {
+          "index": 16,
+          "uid": "255",
+          "name": "Environmental Process-Geometry-Bounding Sphere Record",
+          "size_bits": null,
+          "field_count": 2,
+          "json_path": "records[16]"
+        },
+        {
+          "index": 17,
+          "uid": "256",
+          "name": "Environmental Process-Geometry-Sphere Record 1",
+          "size_bits": null,
+          "field_count": 2,
+          "json_path": "records[17]"
+        },
+        {
+          "index": 18,
+          "uid": "257",
+          "name": "Environmental Process-Geometry-Sphere Record 2",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[18]"
+        },
+        {
+          "index": 19,
+          "uid": "258",
+          "name": "Environmental Process-Geometry-Ellipsoid Record 1",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[19]"
+        },
+        {
+          "index": 20,
+          "uid": "259",
+          "name": "Environmental Process-Geometry-Ellipsoid Record 2",
+          "size_bits": null,
+          "field_count": 10,
+          "json_path": "records[20]"
+        },
+        {
+          "index": 21,
+          "uid": "260",
+          "name": "Environmental Process-Geometry-Cone Record 1",
+          "size_bits": null,
+          "field_count": 4,
+          "json_path": "records[21]"
+        },
+        {
+          "index": 22,
+          "uid": "261",
+          "name": "Environmental Process-Geometry-Cone Record 2",
+          "size_bits": null,
+          "field_count": 8,
+          "json_path": "records[22]"
+        },
+        {
+          "index": 23,
+          "uid": "262",
+          "name": "Environmental Process-Geometry-Rectangular Record 1",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[23]"
+        },
+        {
+          "index": 24,
+          "uid": "263",
+          "name": "Environmental Process-Geometry-Rectangular Record 2",
+          "size_bits": null,
+          "field_count": 10,
+          "json_path": "records[24]"
+        },
+        {
+          "index": 25,
+          "uid": "264",
+          "name": "Environmental Process-Geometry-Gaussian Plume Record",
+          "size_bits": null,
+          "field_count": 10,
+          "json_path": "records[25]"
+        },
+        {
+          "index": 26,
+          "uid": "265",
+          "name": "Environmental Process-Geometry-Gaussian Puff Record",
+          "size_bits": null,
+          "field_count": 12,
+          "json_path": "records[26]"
+        },
+        {
+          "index": 27,
+          "uid": "266",
+          "name": "Environmental Process-Geometry-Uniform Geometry Record",
+          "size_bits": null,
+          "field_count": 1,
+          "json_path": "records[27]"
+        },
+        {
+          "index": 28,
+          "uid": "267",
+          "name": "Environmental Process-Geometry-Rectangular Record 3",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[28]"
+        },
+        {
+          "index": 29,
+          "uid": "268",
+          "name": "Environmental Process-State-COMBIC State",
+          "size_bits": null,
+          "field_count": 11,
+          "json_path": "records[29]"
+        },
+        {
+          "index": 30,
+          "uid": "269",
+          "name": "Environmental Process-State-Flare State",
+          "size_bits": null,
+          "field_count": 5,
+          "json_path": "records[30]"
+        }
+      ]
+    },
+    {
+      "section": "entity_types",
+      "description": "Flat list of all DIS entity type tuples with descriptions. Full data in dis_entity_types.json.",
+      "total_rows": 20417,
+      "file": "dis_entity_types.json",
+      "kind_groups": [
+        {
+          "kind": "1 (Platform)",
+          "domain_groups": [
+            {
+              "domain": "1 (Land)",
+              "row_count": 4696,
+              "first_json_index": 0,
+              "last_json_index": 20416,
+              "json_path_range": "entity_types_flat[0..20416]"
+            },
+            {
+              "domain": "2 (Air)",
+              "row_count": 2775,
+              "first_json_index": 52,
+              "last_json_index": 15459,
+              "json_path_range": "entity_types_flat[52..15459]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 7130,
+              "first_json_index": 1,
+              "last_json_index": 15464,
+              "json_path_range": "entity_types_flat[1..15464]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 682,
+              "first_json_index": 46,
+              "last_json_index": 15360,
+              "json_path_range": "entity_types_flat[46..15360]"
+            },
+            {
+              "domain": "5 (Space)",
+              "row_count": 193,
+              "first_json_index": 2383,
+              "last_json_index": 15412,
+              "json_path_range": "entity_types_flat[2383..15412]"
+            }
+          ],
+          "total_rows": 15476
+        },
+        {
+          "kind": "2 (Munition)",
+          "domain_groups": [
+            {
+              "domain": "0 (Other)",
+              "row_count": 3,
+              "first_json_index": 17808,
+              "last_json_index": 17810,
+              "json_path_range": "entity_types_flat[17808..17810]"
+            },
+            {
+              "domain": "1 (Anti-Air)",
+              "row_count": 515,
+              "first_json_index": 15502,
+              "last_json_index": 18840,
+              "json_path_range": "entity_types_flat[15502..18840]"
+            },
+            {
+              "domain": "2 (Anti-Armor)",
+              "row_count": 497,
+              "first_json_index": 15505,
+              "last_json_index": 18848,
+              "json_path_range": "entity_types_flat[15505..18848]"
+            },
+            {
+              "domain": "3 (Anti-Guided Weapon)",
+              "row_count": 23,
+              "first_json_index": 15653,
+              "last_json_index": 18129,
+              "json_path_range": "entity_types_flat[15653..18129]"
+            },
+            {
+              "domain": "4 (Anti-Radar)",
+              "row_count": 40,
+              "first_json_index": 15659,
+              "last_json_index": 18142,
+              "json_path_range": "entity_types_flat[15659..18142]"
+            },
+            {
+              "domain": "5 (Anti-Satellite)",
+              "row_count": 2,
+              "first_json_index": 16980,
+              "last_json_index": 18143,
+              "json_path_range": "entity_types_flat[16980..18143]"
+            },
+            {
+              "domain": "6 (Anti-Ship)",
+              "row_count": 355,
+              "first_json_index": 15465,
+              "last_json_index": 18849,
+              "json_path_range": "entity_types_flat[15465..18849]"
+            },
+            {
+              "domain": "7 (Anti-Submarine)",
+              "row_count": 114,
+              "first_json_index": 15721,
+              "last_json_index": 18255,
+              "json_path_range": "entity_types_flat[15721..18255]"
+            },
+            {
+              "domain": "8 (Anti-Personnel)",
+              "row_count": 279,
+              "first_json_index": 15730,
+              "last_json_index": 18834,
+              "json_path_range": "entity_types_flat[15730..18834]"
+            },
+            {
+              "domain": "9 (Battlefield Support)",
+              "row_count": 1114,
+              "first_json_index": 15466,
+              "last_json_index": 18837,
+              "json_path_range": "entity_types_flat[15466..18837]"
+            },
+            {
+              "domain": "10 (Strategic)",
+              "row_count": 289,
+              "first_json_index": 15866,
+              "last_json_index": 18825,
+              "json_path_range": "entity_types_flat[15866..18825]"
+            },
+            {
+              "domain": "11 (Tactical)",
+              "row_count": 152,
+              "first_json_index": 15978,
+              "last_json_index": 18839,
+              "json_path_range": "entity_types_flat[15978..18839]"
+            },
+            {
+              "domain": "12 (Directed Energy (DE) Weapon)",
+              "row_count": 2,
+              "first_json_index": 18826,
+              "last_json_index": 18827,
+              "json_path_range": "entity_types_flat[18826..18827]"
+            }
+          ],
+          "total_rows": 3385
+        },
+        {
+          "kind": "4 (Environmental)",
+          "domain_groups": [
+            {
+              "domain": "1 (Land)",
+              "row_count": 4,
+              "first_json_index": 18850,
+              "last_json_index": 18853,
+              "json_path_range": "entity_types_flat[18850..18853]"
+            },
+            {
+              "domain": "2 (Air)",
+              "row_count": 9,
+              "first_json_index": 18854,
+              "last_json_index": 18862,
+              "json_path_range": "entity_types_flat[18854..18862]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 10,
+              "first_json_index": 18863,
+              "last_json_index": 18872,
+              "json_path_range": "entity_types_flat[18863..18872]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 10,
+              "first_json_index": 18873,
+              "last_json_index": 18882,
+              "json_path_range": "entity_types_flat[18873..18882]"
+            },
+            {
+              "domain": "5 (Space)",
+              "row_count": 1,
+              "first_json_index": 18883,
+              "last_json_index": 18883,
+              "json_path_range": "entity_types_flat[18883..18883]"
+            }
+          ],
+          "total_rows": 34
+        },
+        {
+          "kind": "5 (Cultural feature)",
+          "domain_groups": [
+            {
+              "domain": "1 (Land)",
+              "row_count": 395,
+              "first_json_index": 18884,
+              "last_json_index": 19278,
+              "json_path_range": "entity_types_flat[18884..19278]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 84,
+              "first_json_index": 19279,
+              "last_json_index": 19362,
+              "json_path_range": "entity_types_flat[19279..19362]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 11,
+              "first_json_index": 19363,
+              "last_json_index": 19373,
+              "json_path_range": "entity_types_flat[19363..19373]"
+            }
+          ],
+          "total_rows": 490
+        },
+        {
+          "kind": "6 (Supply)",
+          "domain_groups": [
+            {
+              "domain": "0 (Other)",
+              "row_count": 170,
+              "first_json_index": 19374,
+              "last_json_index": 19543,
+              "json_path_range": "entity_types_flat[19374..19543]"
+            },
+            {
+              "domain": "1 (Land)",
+              "row_count": 8,
+              "first_json_index": 19544,
+              "last_json_index": 19551,
+              "json_path_range": "entity_types_flat[19544..19551]"
+            },
+            {
+              "domain": "2 (Air)",
+              "row_count": 13,
+              "first_json_index": 19552,
+              "last_json_index": 19564,
+              "json_path_range": "entity_types_flat[19552..19564]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 10,
+              "first_json_index": 19565,
+              "last_json_index": 19574,
+              "json_path_range": "entity_types_flat[19565..19574]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 2,
+              "first_json_index": 19575,
+              "last_json_index": 19576,
+              "json_path_range": "entity_types_flat[19575..19576]"
+            },
+            {
+              "domain": "7 ()",
+              "row_count": 184,
+              "first_json_index": 19577,
+              "last_json_index": 19760,
+              "json_path_range": "entity_types_flat[19577..19760]"
+            },
+            {
+              "domain": "9 ()",
+              "row_count": 9,
+              "first_json_index": 19761,
+              "last_json_index": 19769,
+              "json_path_range": "entity_types_flat[19761..19769]"
+            },
+            {
+              "domain": "11 ()",
+              "row_count": 17,
+              "first_json_index": 19770,
+              "last_json_index": 19786,
+              "json_path_range": "entity_types_flat[19770..19786]"
+            },
+            {
+              "domain": "12 ()",
+              "row_count": 45,
+              "first_json_index": 19787,
+              "last_json_index": 19831,
+              "json_path_range": "entity_types_flat[19787..19831]"
+            }
+          ],
+          "total_rows": 458
+        },
+        {
+          "kind": "7 (Radio)",
+          "domain_groups": [
+            {
+              "domain": "1 (Land)",
+              "row_count": 11,
+              "first_json_index": 19832,
+              "last_json_index": 19860,
+              "json_path_range": "entity_types_flat[19832..19860]"
+            },
+            {
+              "domain": "2 (Air)",
+              "row_count": 18,
+              "first_json_index": 19842,
+              "last_json_index": 19859,
+              "json_path_range": "entity_types_flat[19842..19859]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 1,
+              "first_json_index": 19861,
+              "last_json_index": 19861,
+              "json_path_range": "entity_types_flat[19861..19861]"
+            }
+          ],
+          "total_rows": 30
+        },
+        {
+          "kind": "8 (Expendable)",
+          "domain_groups": [
+            {
+              "domain": "2 (Air)",
+              "row_count": 164,
+              "first_json_index": 19862,
+              "last_json_index": 20059,
+              "json_path_range": "entity_types_flat[19862..20059]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 15,
+              "first_json_index": 19863,
+              "last_json_index": 20057,
+              "json_path_range": "entity_types_flat[19863..20057]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 19,
+              "first_json_index": 19877,
+              "last_json_index": 20017,
+              "json_path_range": "entity_types_flat[19877..20017]"
+            }
+          ],
+          "total_rows": 198
+        },
+        {
+          "kind": "9 (Sensor/Emitter)",
+          "domain_groups": [
+            {
+              "domain": "1 (Land)",
+              "row_count": 282,
+              "first_json_index": 20063,
+              "last_json_index": 20405,
+              "json_path_range": "entity_types_flat[20063..20405]"
+            },
+            {
+              "domain": "2 (Air)",
+              "row_count": 5,
+              "first_json_index": 20355,
+              "last_json_index": 20359,
+              "json_path_range": "entity_types_flat[20355..20359]"
+            },
+            {
+              "domain": "3 (Surface)",
+              "row_count": 17,
+              "first_json_index": 20230,
+              "last_json_index": 20361,
+              "json_path_range": "entity_types_flat[20230..20361]"
+            },
+            {
+              "domain": "4 (Subsurface)",
+              "row_count": 42,
+              "first_json_index": 20060,
+              "last_json_index": 20391,
+              "json_path_range": "entity_types_flat[20060..20391]"
+            }
+          ],
+          "total_rows": 346
+        }
+      ]
+    },
+    {
+      "section": "pdu_classes",
+      "description": "DIS7 PDU and supporting class definitions. Full data in dis_pdu.json.",
+      "pdu_count": 67,
+      "support_class_count": 120,
+      "file": "dis_pdu.json",
+      "pdu_classes": [
+        {
+          "index": 144,
+          "name": "AcknowledgePdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 3,
+          "comment": "Section 7.5.6. Acknowledge the receipt of a start/resume, stop/freeze, or RemoveEntityPDU. COMPLETE",
+          "json_path": "pdu_classes[144]"
+        },
+        {
+          "index": 177,
+          "name": "AcknowledgeReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 3,
+          "comment": "Section 5.3.12.5: Ack receipt of a start-resume, stop-freeze, create-entity or remove enitty (reliable) pdus. COMPLETE",
+          "json_path": "pdu_classes[177]"
+        },
+        {
+          "index": 145,
+          "name": "ActionRequestPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 7.5.7. Request from simulation manager to a managed entity to perform a specified action. COMPLETE",
+          "json_path": "pdu_classes[145]"
+        },
+        {
+          "index": 178,
+          "name": "ActionRequestReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 9,
+          "comment": "Section 5.3.12.6: request from a simulation manager to a managed entity to perform a specified action. COMPLETE",
+          "json_path": "pdu_classes[178]"
+        },
+        {
+          "index": 146,
+          "name": "ActionResponsePdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 7.5.8. response to an action request PDU. COMPLETE",
+          "json_path": "pdu_classes[146]"
+        },
+        {
+          "index": 179,
+          "name": "ActionResponseReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 5.3.12.7: Response from an entity to an action request PDU. COMPLETE",
+          "json_path": "pdu_classes[179]"
+        },
+        {
+          "index": 171,
+          "name": "ArealObjectStatePdu",
+          "inheritsFrom": "SyntheticEnvironmentFamilyPdu",
+          "attribute_count": 12,
+          "comment": "Information about the addition/modification of an oobject that is geometrically anchored to the terrain with a set of th",
+          "json_path": "pdu_classes[171]"
+        },
+        {
+          "index": 127,
+          "name": "AttributePdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 9,
+          "comment": "Information about individual attributes for a particular entity, other object, or event may be communicated using an Att",
+          "json_path": "pdu_classes[127]"
+        },
+        {
+          "index": 125,
+          "name": "CollisionElasticPdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 15,
+          "comment": "Information about elastic collisions in a DIS exercise shall be communicated using a Collision-Elastic PDU. Section 7.2.",
+          "json_path": "pdu_classes[125]"
+        },
+        {
+          "index": 124,
+          "name": "CollisionPdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 8,
+          "comment": "Section 7.2.3 Collisions between entities shall be communicated by issuing a Collision PDU. COMPLETE",
+          "json_path": "pdu_classes[124]"
+        },
+        {
+          "index": 151,
+          "name": "CommentPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 4,
+          "comment": " Arbitrary messages can be entered into the data stream via use of this PDU. Section 7.5.13 COMPLETE",
+          "json_path": "pdu_classes[151]"
+        },
+        {
+          "index": 184,
+          "name": "CommentReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 4,
+          "comment": "Section 5.3.12.12: Arbitrary messages. Only reliable this time. Neds manual intervention     to fix padding in variable ",
+          "json_path": "pdu_classes[184]"
+        },
+        {
+          "index": 140,
+          "name": "CreateEntityPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 1,
+          "comment": "Section 7.5.2. Create a new entity. COMPLETE",
+          "json_path": "pdu_classes[140]"
+        },
+        {
+          "index": 173,
+          "name": "CreateEntityReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 4,
+          "comment": "Section 5.3.12.1: creation of an entity , reliable. COMPLETE",
+          "json_path": "pdu_classes[173]"
+        },
+        {
+          "index": 149,
+          "name": "DataPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": " Information issued in response to a data query pdu or a set data pdu is communicated using a data pdu. Section 7.5.11 C",
+          "json_path": "pdu_classes[149]"
+        },
+        {
+          "index": 147,
+          "name": "DataQueryPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 7.5.9. Request for data from an entity. COMPLETE",
+          "json_path": "pdu_classes[147]"
+        },
+        {
+          "index": 180,
+          "name": "DataQueryReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 9,
+          "comment": "Section 5.3.12.8: request for data from an entity. COMPLETE",
+          "json_path": "pdu_classes[180]"
+        },
+        {
+          "index": 182,
+          "name": "DataReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 8,
+          "comment": "Section 5.3.12.10: issued in response to a data query R or set dataR pdu. Needs manual intervention      to fix padding ",
+          "json_path": "pdu_classes[182]"
+        },
+        {
+          "index": 154,
+          "name": "DesignatorPdu",
+          "inheritsFrom": "DistributedEmissionsFamilyPdu",
+          "attribute_count": 12,
+          "comment": "Section 5.3.7.2. Handles designating operations. COMPLETE",
+          "json_path": "pdu_classes[154]"
+        },
+        {
+          "index": 130,
+          "name": "DetonationPdu",
+          "inheritsFrom": "WarfareFamilyPdu",
+          "attribute_count": 10,
+          "comment": "Detonation or impact of munitions, as well as, non-munition explosions, the burst or initial bloom of chaff, and the ign",
+          "json_path": "pdu_classes[130]"
+        },
+        {
+          "index": 131,
+          "name": "DirectedEnergyFirePdu",
+          "inheritsFrom": "WarfareFamilyPdu",
+          "attribute_count": 16,
+          "comment": "Firing of a directed energy weapon shall be communicated by issuing a Directed Energy Fire PDU Section 7.3.4  COMPLETE",
+          "json_path": "pdu_classes[131]"
+        },
+        {
+          "index": 152,
+          "name": "DistributedEmissionsFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": "Section 5.3.7. Electronic Emissions. Abstract superclass for distributed emissions PDU",
+          "json_path": "pdu_classes[152]"
+        },
+        {
+          "index": 153,
+          "name": "ElectronicEmissionsPdu",
+          "inheritsFrom": "DistributedEmissionsFamilyPdu",
+          "attribute_count": 10,
+          "comment": "Section 5.3.7.1. Information about active electronic warfare (EW) emissions and active EW countermeasures shall be commu",
+          "json_path": "pdu_classes[153]"
+        },
+        {
+          "index": 132,
+          "name": "EntityDamageStatusPdu",
+          "inheritsFrom": "WarfareFamilyPdu",
+          "attribute_count": 5,
+          "comment": "shall be used to communicate detailed damage information sustained by an entity regardless of the source of the damage S",
+          "json_path": "pdu_classes[132]"
+        },
+        {
+          "index": 121,
+          "name": "EntityInformationFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": "Section 5.3.3. Common superclass for EntityState, Collision, collision-elastic, and entity state update PDUs. This shoul",
+          "json_path": "pdu_classes[121]"
+        },
+        {
+          "index": 163,
+          "name": "EntityManagementFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": " Managment of grouping of PDUs, and more. Section 7.8",
+          "json_path": "pdu_classes[163]"
+        },
+        {
+          "index": 122,
+          "name": "EntityStatePdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 13,
+          "comment": "Represents the postion and state of one entity in the world. Section 7.2.2. COMPLETE",
+          "json_path": "pdu_classes[122]"
+        },
+        {
+          "index": 126,
+          "name": "EntityStateUpdatePdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 8,
+          "comment": "Nonstatic information about a particular entity may be communicated by issuing an Entity State Update PDU. Section 7.2.5",
+          "json_path": "pdu_classes[126]"
+        },
+        {
+          "index": 150,
+          "name": "EventReportPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": " Reports occurance of a significant event to the simulation manager. Section 7.5.12. COMPLETE",
+          "json_path": "pdu_classes[150]"
+        },
+        {
+          "index": 183,
+          "name": "EventReportReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 5.3.12.11: reports the occurance of a significatnt event to the simulation manager. Needs manual     interventio",
+          "json_path": "pdu_classes[183]"
+        },
+        {
+          "index": 123,
+          "name": "FastEntityStatePdu",
+          "inheritsFrom": "EntityInformationFamilyPdu",
+          "attribute_count": 40,
+          "comment": "Represents the postion and state of one entity in the world. This is identical in function to entity state pdu, but gene",
+          "json_path": "pdu_classes[123]"
+        },
+        {
+          "index": 129,
+          "name": "FirePdu",
+          "inheritsFrom": "WarfareFamilyPdu",
+          "attribute_count": 7,
+          "comment": " The firing of a weapon or expendable shall be communicated by issuing a Fire PDU. Sectioin 7.3.2. COMPLETE",
+          "json_path": "pdu_classes[129]"
+        },
+        {
+          "index": 162,
+          "name": "IntercomControlPdu",
+          "inheritsFrom": "RadioCommunicationsFamilyPdu",
+          "attribute_count": 12,
+          "comment": " Detailed inofrmation about the state of an intercom device and the actions it is requestion         of another intercom",
+          "json_path": "pdu_classes[162]"
+        },
+        {
+          "index": 158,
+          "name": "IntercomSignalPdu",
+          "inheritsFrom": "RadioCommunicationsFamilyPdu",
+          "attribute_count": 8,
+          "comment": " Actual transmission of intercome voice data. Section 7.7.5. COMPLETE",
+          "json_path": "pdu_classes[158]"
+        },
+        {
+          "index": 164,
+          "name": "IsPartOfPdu",
+          "inheritsFrom": "EntityManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": " The joining of two or more simulation entities is communicated by this PDU. Section 7.8.5 COMPLETE",
+          "json_path": "pdu_classes[164]"
+        },
+        {
+          "index": 170,
+          "name": "LinearObjectStatePdu",
+          "inheritsFrom": "SyntheticEnvironmentFamilyPdu",
+          "attribute_count": 9,
+          "comment": ": Information abut the addition or modification of a synthecic enviroment object that      is anchored to the terrain wi",
+          "json_path": "pdu_classes[170]"
+        },
+        {
+          "index": 120,
+          "name": "LiveEntityPdu",
+          "inheritsFrom": "PduSuperclass",
+          "attribute_count": 2,
+          "comment": "The live entity PDUs have a header with some different field names, but the same length. Section 9.3.2",
+          "json_path": "pdu_classes[120]"
+        },
+        {
+          "index": 133,
+          "name": "LogisticsFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": " Abstract superclass for logistics PDUs. Section 7.4 COMPLETE",
+          "json_path": "pdu_classes[133]"
+        },
+        {
+          "index": 165,
+          "name": "MinefieldFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": " Abstract superclass for PDUs relating to minefields. Section 7.9",
+          "json_path": "pdu_classes[165]"
+        },
+        {
+          "index": 167,
+          "name": "MinefieldResponseNackPdu",
+          "inheritsFrom": "MinefieldFamilyPdu",
+          "attribute_count": 5,
+          "comment": "proivde the means to request a retransmit of a minefield data pdu. Section 7.9.5 COMPLETE",
+          "json_path": "pdu_classes[167]"
+        },
+        {
+          "index": 166,
+          "name": "MinefieldStatePdu",
+          "inheritsFrom": "MinefieldFamilyPdu",
+          "attribute_count": 12,
+          "comment": "information about the complete minefield. The minefield presence, perimiter, etc. Section 7.9.2 COMPLETE",
+          "json_path": "pdu_classes[166]"
+        },
+        {
+          "index": 119,
+          "name": "Pdu",
+          "inheritsFrom": "PduSuperclass",
+          "attribute_count": 2,
+          "comment": "Adds some fields to the the classic PDU",
+          "json_path": "pdu_classes[119]"
+        },
+        {
+          "index": 169,
+          "name": "PointObjectStatePdu",
+          "inheritsFrom": "SyntheticEnvironmentFamilyPdu",
+          "attribute_count": 12,
+          "comment": ": Inormation abut the addition or modification of a synthecic enviroment object that is anchored to the terrain with a s",
+          "json_path": "pdu_classes[169]"
+        },
+        {
+          "index": 157,
+          "name": "RadioCommunicationsFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": " Abstract superclass for radio communications PDUs. Section 7.7",
+          "json_path": "pdu_classes[157]"
+        },
+        {
+          "index": 161,
+          "name": "ReceiverPdu",
+          "inheritsFrom": "RadioCommunicationsFamilyPdu",
+          "attribute_count": 5,
+          "comment": " Communication of a receiver state. Section 7.7.4 COMPLETE",
+          "json_path": "pdu_classes[161]"
+        },
+        {
+          "index": 185,
+          "name": "RecordQueryReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 8,
+          "comment": "Section 5.3.12.13: A request for one or more records of data from an entity. COMPLETE",
+          "json_path": "pdu_classes[185]"
+        },
+        {
+          "index": 141,
+          "name": "RemoveEntityPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 1,
+          "comment": "Section 7.5.3 The removal of an entity from an exercise shall be communicated with a Remove Entity PDU. COMPLETE",
+          "json_path": "pdu_classes[141]"
+        },
+        {
+          "index": 174,
+          "name": "RemoveEntityReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 4,
+          "comment": "Section 5.3.12.2: Removal of an entity , reliable. COMPLETE",
+          "json_path": "pdu_classes[174]"
+        },
+        {
+          "index": 137,
+          "name": "RepairCompletePdu",
+          "inheritsFrom": "LogisticsFamilyPdu",
+          "attribute_count": 4,
+          "comment": "Section 7.4.6. Service Request PDU is received and repair is complete. COMPLETE",
+          "json_path": "pdu_classes[137]"
+        },
+        {
+          "index": 138,
+          "name": "RepairResponsePdu",
+          "inheritsFrom": "LogisticsFamilyPdu",
+          "attribute_count": 5,
+          "comment": "Section 7.4.7. Sent after repair complete PDU. COMPLETE",
+          "json_path": "pdu_classes[138]"
+        },
+        {
+          "index": 135,
+          "name": "ResupplyOfferPdu",
+          "inheritsFrom": "LogisticsFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Information used to communicate the offer of supplies by a supplying entity to a receiving entity. Section 7.4.3 COMPLET",
+          "json_path": "pdu_classes[135]"
+        },
+        {
+          "index": 136,
+          "name": "ResupplyReceivedPdu",
+          "inheritsFrom": "LogisticsFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 7.4.4. Receipt of supplies is communicated by issuing Resupply Received PDU. COMPLETE",
+          "json_path": "pdu_classes[136]"
+        },
+        {
+          "index": 156,
+          "name": "SeesPdu",
+          "inheritsFrom": "DistributedEmissionsFamilyPdu",
+          "attribute_count": 8,
+          "comment": " SEES PDU, supplemental emissions entity state information. Section 7.6.6 COMPLETE",
+          "json_path": "pdu_classes[156]"
+        },
+        {
+          "index": 134,
+          "name": "ServiceRequestPdu",
+          "inheritsFrom": "LogisticsFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Service Request PDU shall be used to communicate information associated with                            one entity reque",
+          "json_path": "pdu_classes[134]"
+        },
+        {
+          "index": 148,
+          "name": "SetDataPdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 7.5.10. Change state information with the data contained in this. COMPLETE",
+          "json_path": "pdu_classes[148]"
+        },
+        {
+          "index": 181,
+          "name": "SetDataReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 8,
+          "comment": "Section 5.3.12.9: initializing or chaning internal state information, reliable. Needs manual intervention to fix     pad",
+          "json_path": "pdu_classes[181]"
+        },
+        {
+          "index": 160,
+          "name": "SignalPdu",
+          "inheritsFrom": "RadioCommunicationsFamilyPdu",
+          "attribute_count": 6,
+          "comment": " Detailed information about a radio transmitter. This PDU requires manually written code to complete. The encodingScheme",
+          "json_path": "pdu_classes[160]"
+        },
+        {
+          "index": 139,
+          "name": "SimulationManagementFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 2,
+          "comment": "Section 7.5 Abstract superclass for PDUs relating to the simulation itself. COMPLETE",
+          "json_path": "pdu_classes[139]"
+        },
+        {
+          "index": 172,
+          "name": "SimulationManagementWithReliabilityFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 2,
+          "comment": "Section 5.3.12: Abstract superclass for reliable simulation management PDUs",
+          "json_path": "pdu_classes[172]"
+        },
+        {
+          "index": 142,
+          "name": "StartResumePdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 3,
+          "comment": "Section 7.5.4. Start or resume an exercise. COMPLETE",
+          "json_path": "pdu_classes[142]"
+        },
+        {
+          "index": 175,
+          "name": "StartResumeReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 5.3.12.3: Start resume simulation, relaible. COMPLETE",
+          "json_path": "pdu_classes[175]"
+        },
+        {
+          "index": 143,
+          "name": "StopFreezePdu",
+          "inheritsFrom": "SimulationManagementFamilyPdu",
+          "attribute_count": 5,
+          "comment": "Section 7.5.5. Stop or freeze an enity (or exercise). COMPLETE",
+          "json_path": "pdu_classes[143]"
+        },
+        {
+          "index": 176,
+          "name": "StopFreezeReliablePdu",
+          "inheritsFrom": "SimulationManagementWithReliabilityFamilyPdu",
+          "attribute_count": 6,
+          "comment": "Section 5.3.12.4: Stop freeze simulation, relaible. COMPLETE",
+          "json_path": "pdu_classes[176]"
+        },
+        {
+          "index": 168,
+          "name": "SyntheticEnvironmentFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 0,
+          "comment": "Section 5.3.11: Abstract superclass for synthetic environment PDUs",
+          "json_path": "pdu_classes[168]"
+        },
+        {
+          "index": 159,
+          "name": "TransmitterPdu",
+          "inheritsFrom": "RadioCommunicationsFamilyPdu",
+          "attribute_count": 21,
+          "comment": "Detailed information about a radio transmitter. This PDU requires manually written code to complete, since the modulatio",
+          "json_path": "pdu_classes[159]"
+        },
+        {
+          "index": 155,
+          "name": "UaPdu",
+          "inheritsFrom": "DistributedEmissionsFamilyPdu",
+          "attribute_count": 12,
+          "comment": " Information about underwater acoustic emmissions. This requires manual cleanup.  The beam data records should ALL be a ",
+          "json_path": "pdu_classes[155]"
+        },
+        {
+          "index": 128,
+          "name": "WarfareFamilyPdu",
+          "inheritsFrom": "Pdu",
+          "attribute_count": 2,
+          "comment": "abstract superclass for fire and detonation pdus that have shared information. Section 7.3 COMPLETE",
+          "json_path": "pdu_classes[128]"
+        }
+      ],
+      "support_classes": [
+        {
+          "index": 0,
+          "name": "AcousticEmitter",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": " information about a specific UA emitter. Section 6.2.2.",
+          "json_path": "pdu_classes[0]"
+        },
+        {
+          "index": 1,
+          "name": "AggregateIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of each aggrgate in an exercise is specified by an aggregate identifier record. The aggregate ID ",
+          "json_path": "pdu_classes[1]"
+        },
+        {
+          "index": 2,
+          "name": "AggregateMarking",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Specifies the character set used in the first byte, followed by up to 31 characters of text data. Section 6.2.4. ",
+          "json_path": "pdu_classes[2]"
+        },
+        {
+          "index": 3,
+          "name": "AggregateType",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Identifies the type and organization of an aggregate. Section 6.2.5",
+          "json_path": "pdu_classes[3]"
+        },
+        {
+          "index": 25,
+          "name": "AngleDeception",
+          "inheritsFrom": "root",
+          "attribute_count": 16,
+          "comment": "The Angle Deception attribute record may be used to communicate discrete values that are associated with angle deception",
+          "json_path": "pdu_classes[25]"
+        },
+        {
+          "index": 4,
+          "name": "AngularVelocityVector",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Angular velocity measured in radians per second out each of the entity's own coordinate axes. Order of measurement is an",
+          "json_path": "pdu_classes[4]"
+        },
+        {
+          "index": 5,
+          "name": "AntennaLocation",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Location of the radiating portion of the antenna, specified in world coordinates and entity coordinates. Section 6.2.8",
+          "json_path": "pdu_classes[5]"
+        },
+        {
+          "index": 102,
+          "name": "ArticulatedParts",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": " articulated parts for movable parts and a combination of moveable/attached parts of an entity. Section 6.2.94.2",
+          "json_path": "pdu_classes[102]"
+        },
+        {
+          "index": 7,
+          "name": "Association",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "An entity's associations with other entities and/or locations. For each association, this record shall specify the type ",
+          "json_path": "pdu_classes[7]"
+        },
+        {
+          "index": 103,
+          "name": "AttachedParts",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Removable parts that may be attached to an entity.  Section 6.2.93.3",
+          "json_path": "pdu_classes[103]"
+        },
+        {
+          "index": 8,
+          "name": "Attribute",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Used to convey information for one or more attributes. Attributes conform to the standard variable record format of 6.2.",
+          "json_path": "pdu_classes[8]"
+        },
+        {
+          "index": 6,
+          "name": "BeamAntennaPattern",
+          "inheritsFrom": "root",
+          "attribute_count": 10,
+          "comment": "Used when the antenna pattern type field has a value of 1. Specifies the direction, pattern, and polarization of radiati",
+          "json_path": "pdu_classes[6]"
+        },
+        {
+          "index": 9,
+          "name": "BeamData",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Describes the scan volue of an emitter beam. Section 6.2.11.",
+          "json_path": "pdu_classes[9]"
+        },
+        {
+          "index": 11,
+          "name": "BeamStatus",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "Information related to the status of a beam. This is contained in the beam status field of the electromagnitec emission ",
+          "json_path": "pdu_classes[11]"
+        },
+        {
+          "index": 24,
+          "name": "BlankingSector",
+          "inheritsFrom": "root",
+          "attribute_count": 14,
+          "comment": "The Blanking Sector attribute record may be used to convey persistent areas within a scan volume where emitter power for",
+          "json_path": "pdu_classes[24]"
+        },
+        {
+          "index": 10,
+          "name": "ChangeOptions",
+          "inheritsFrom": "",
+          "attribute_count": 0,
+          "comment": "This is wrong and breaks serialization. See section 6.2.13 aka B.2.41",
+          "json_path": "pdu_classes[10]"
+        },
+        {
+          "index": 12,
+          "name": "ClockTime",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Time measurements that exceed one hour are represented by this record. The first field is the hours since the unix epoch",
+          "json_path": "pdu_classes[12]"
+        },
+        {
+          "index": 55,
+          "name": "CommunicationsNodeID",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Identity of a communications node. Section 6.2.48.4",
+          "json_path": "pdu_classes[55]"
+        },
+        {
+          "index": 14,
+          "name": "DataFilterRecord",
+          "inheritsFrom": "",
+          "attribute_count": 1,
+          "comment": "identify which of the optional data fields are contained in the Minefield Data PDU or requested in the Minefield Query P",
+          "json_path": "pdu_classes[14]"
+        },
+        {
+          "index": 16,
+          "name": "DataQueryDatumSpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "List of fixed and variable datum ID records. Section 6.2.17 ",
+          "json_path": "pdu_classes[16]"
+        },
+        {
+          "index": 17,
+          "name": "DatumSpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "List of fixed and variable datum records. Section 6.2.18 ",
+          "json_path": "pdu_classes[17]"
+        },
+        {
+          "index": 112,
+          "name": "DeadReckoningParameters",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Not specified in the standard. This is used by the ESPDU",
+          "json_path": "pdu_classes[112]"
+        },
+        {
+          "index": 21,
+          "name": "DirectedEnergyAreaAimpoint",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "DE Precision Aimpoint Record. NOT COMPLETE. Section 6.2.20.2",
+          "json_path": "pdu_classes[21]"
+        },
+        {
+          "index": 13,
+          "name": "DirectedEnergyDamage",
+          "inheritsFrom": "root",
+          "attribute_count": 12,
+          "comment": "Damage sustained by an entity due to directed energy. Location of the damage based on a relative x,y,z location from the",
+          "json_path": "pdu_classes[13]"
+        },
+        {
+          "index": 22,
+          "name": "DirectedEnergyPrecisionAimpoint",
+          "inheritsFrom": "root",
+          "attribute_count": 15,
+          "comment": "DE Precision Aimpoint Record. Section 6.2.20.3",
+          "json_path": "pdu_classes[22]"
+        },
+        {
+          "index": 23,
+          "name": "DirectedEnergyTargetEnergyDeposition",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "DE energy depostion properties for a target entity. Section 6.2.20.4",
+          "json_path": "pdu_classes[23]"
+        },
+        {
+          "index": 27,
+          "name": "EEFundamentalParameterData",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Contains electromagnetic emmission regeneration parameters that are variable throught a scenario. Section 6.2.22.",
+          "json_path": "pdu_classes[27]"
+        },
+        {
+          "index": 113,
+          "name": "EightByteChunk",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "64 bit piece of data",
+          "json_path": "pdu_classes[113]"
+        },
+        {
+          "index": 28,
+          "name": "EmitterSystem",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "This field shall specify information about a particular emitter system. Section 6.2.23.",
+          "json_path": "pdu_classes[28]"
+        },
+        {
+          "index": 29,
+          "name": "EngineFuel",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Information about an entity's engine fuel. Section 6.2.24.",
+          "json_path": "pdu_classes[29]"
+        },
+        {
+          "index": 30,
+          "name": "EngineFuelReload",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "For each type or location of engine fuell, this record specifies the type, location, fuel measurement units, and reload ",
+          "json_path": "pdu_classes[30]"
+        },
+        {
+          "index": 104,
+          "name": "EntityAssociation",
+          "inheritsFrom": "root",
+          "attribute_count": 9,
+          "comment": "Association or disassociation of two entities.  Section 6.2.94.4.3",
+          "json_path": "pdu_classes[104]"
+        },
+        {
+          "index": 32,
+          "name": "EntityID",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "more laconically named EntityIdentifier",
+          "json_path": "pdu_classes[32]"
+        },
+        {
+          "index": 31,
+          "name": "EntityIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Entity Identifier. Unique ID for entities in the world. Consists of an simulation address and a entity number. Section 6",
+          "json_path": "pdu_classes[31]"
+        },
+        {
+          "index": 33,
+          "name": "EntityMarking",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Specifies the character set used inthe first byte, followed by 11 characters of text data. Section 6.29",
+          "json_path": "pdu_classes[33]"
+        },
+        {
+          "index": 34,
+          "name": "EntityType",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Identifies the type of Entity",
+          "json_path": "pdu_classes[34]"
+        },
+        {
+          "index": 105,
+          "name": "EntityTypeVP",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Association or disassociation of two entities.  Section 6.2.94.5",
+          "json_path": "pdu_classes[105]"
+        },
+        {
+          "index": 36,
+          "name": "Environment",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Incomplete environment record; requires hand coding to fix. Section 6.2.31.1",
+          "json_path": "pdu_classes[36]"
+        },
+        {
+          "index": 35,
+          "name": "EnvironmentGeneral",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": " Information about a geometry, a state associated with a geometry, a bounding volume, or an associated entity ID. NOTE: ",
+          "json_path": "pdu_classes[35]"
+        },
+        {
+          "index": 37,
+          "name": "EnvironmentType",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Description of environmental data in environmental process and gridded data PDUs. Section 6.2.32",
+          "json_path": "pdu_classes[37]"
+        },
+        {
+          "index": 38,
+          "name": "EulerAngles",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Three floating point values representing an orientation, psi, theta, and phi, aka the euler angles, in radians. Section ",
+          "json_path": "pdu_classes[38]"
+        },
+        {
+          "index": 39,
+          "name": "EventIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Identifies an event in the world. Use this format for every PDU EXCEPT the LiveEntityPdu. Section 6.2.34.",
+          "json_path": "pdu_classes[39]"
+        },
+        {
+          "index": 40,
+          "name": "EventIdentifierLiveEntity",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Identifies an event in the world. Use this format for ONLY the LiveEntityPdu. Section 6.2.34.",
+          "json_path": "pdu_classes[40]"
+        },
+        {
+          "index": 41,
+          "name": "Expendable",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "An entity's expendable (chaff, flares, etc) information. Section 6.2.36",
+          "json_path": "pdu_classes[41]"
+        },
+        {
+          "index": 20,
+          "name": "ExpendableDescriptor",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Burst of chaff or expendible device. Section 6.2.19.4",
+          "json_path": "pdu_classes[20]"
+        },
+        {
+          "index": 42,
+          "name": "ExpendableReload",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "An entity's expendable (chaff, flares, etc) information. Section 6.2.37",
+          "json_path": "pdu_classes[42]"
+        },
+        {
+          "index": 19,
+          "name": "ExplosionDescriptor",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Explosion of a non-munition. Section 6.2.19.3",
+          "json_path": "pdu_classes[19]"
+        },
+        {
+          "index": 26,
+          "name": "FalseTargetsAttribute",
+          "inheritsFrom": "root",
+          "attribute_count": 13,
+          "comment": "The False Targets attribute record shall be used to communicate discrete values that are associated with false targets j",
+          "json_path": "pdu_classes[26]"
+        },
+        {
+          "index": 43,
+          "name": "FixedDatum",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Fixed Datum Record. Section 6.2.38",
+          "json_path": "pdu_classes[43]"
+        },
+        {
+          "index": 116,
+          "name": "FourByteChunk",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "32 bit piece of data",
+          "json_path": "pdu_classes[116]"
+        },
+        {
+          "index": 44,
+          "name": "FundamentalOperationalData",
+          "inheritsFrom": "root",
+          "attribute_count": 10,
+          "comment": "Basic operational data for IFF. Section 6.2.40.",
+          "json_path": "pdu_classes[44]"
+        },
+        {
+          "index": 45,
+          "name": "GridAxis",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Grid axis record for fixed data. Section 6.2.41",
+          "json_path": "pdu_classes[45]"
+        },
+        {
+          "index": 46,
+          "name": "GridAxisDescriptorVariable",
+          "inheritsFrom": "root",
+          "attribute_count": 10,
+          "comment": "Grid axis descriptor fo variable spacing axis data. NOT COMPLETE. Need padding to 64 bit boundary.",
+          "json_path": "pdu_classes[46]"
+        },
+        {
+          "index": 47,
+          "name": "GroupID",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Unique designation of a group of entities contained in the isGroupOfPdu. Represents a group of entities rather than a si",
+          "json_path": "pdu_classes[47]"
+        },
+        {
+          "index": 48,
+          "name": "IFFData",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "repeating element if IFF Data specification record",
+          "json_path": "pdu_classes[48]"
+        },
+        {
+          "index": 50,
+          "name": "IFFFundamentalParameterData",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Fundamental IFF atc data. Section 6.2.45",
+          "json_path": "pdu_classes[50]"
+        },
+        {
+          "index": 53,
+          "name": "IOCommunicationsNode",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "A communications node that is part of a simulted communcations network. Section 6.2.49.2",
+          "json_path": "pdu_classes[53]"
+        },
+        {
+          "index": 54,
+          "name": "IOEffect",
+          "inheritsFrom": "root",
+          "attribute_count": 9,
+          "comment": "Effect of IO on an entity. Section 6.2.49.3",
+          "json_path": "pdu_classes[54]"
+        },
+        {
+          "index": 49,
+          "name": "IffDataSpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Requires hand coding to be useful. Section 6.2.43",
+          "json_path": "pdu_classes[49]"
+        },
+        {
+          "index": 51,
+          "name": "IntercomCommunicationsParameters",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Intercom communcations parameters. Section 6.2.47.  This requires hand coding",
+          "json_path": "pdu_classes[51]"
+        },
+        {
+          "index": 52,
+          "name": "IntercomIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Unique designation of an attached or unattached intercom in an event or exercirse. Section 6.2.48",
+          "json_path": "pdu_classes[52]"
+        },
+        {
+          "index": 56,
+          "name": "JammingTechnique",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Jamming technique. Section 6.2.49",
+          "json_path": "pdu_classes[56]"
+        },
+        {
+          "index": 57,
+          "name": "LaunchedMunitionRecord",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Identity of a communications node. Section 6.2.50",
+          "json_path": "pdu_classes[57]"
+        },
+        {
+          "index": 58,
+          "name": "LayerHeader",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "The identification of the additional information layer number, layer-specific information, and the length of the layer. ",
+          "json_path": "pdu_classes[58]"
+        },
+        {
+          "index": 59,
+          "name": "LinearSegmentParameter",
+          "inheritsFrom": "root",
+          "attribute_count": 11,
+          "comment": "The specification of an individual segment of a linear segment synthetic environment object in a Linear Object State PDU",
+          "json_path": "pdu_classes[59]"
+        },
+        {
+          "index": 60,
+          "name": "LiveEntityIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of each entity in an event or exercise that is contained in a Live Entity PDU. Section 6.2.54 ",
+          "json_path": "pdu_classes[60]"
+        },
+        {
+          "index": 61,
+          "name": "LiveSimulationAddress",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "A simulation's designation associated with all Live Entity IDs contained in Live Entity PDUs. Section 6.2.55 ",
+          "json_path": "pdu_classes[61]"
+        },
+        {
+          "index": 62,
+          "name": "MineEntityIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of a mine contained in the Minefield Data PDU. No espdus are issued for mine entities.  Section 6",
+          "json_path": "pdu_classes[62]"
+        },
+        {
+          "index": 63,
+          "name": "MinefieldIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of a minefield Section 6.2.56 ",
+          "json_path": "pdu_classes[63]"
+        },
+        {
+          "index": 64,
+          "name": "MinefieldSensorType",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "Information about a minefield sensor. Section 6.2.57",
+          "json_path": "pdu_classes[64]"
+        },
+        {
+          "index": 65,
+          "name": "ModulationParameters",
+          "inheritsFrom": "root",
+          "attribute_count": 0,
+          "comment": "Modulation parameters associated with a specific radio system. INCOMPLETE. 6.2.58 ",
+          "json_path": "pdu_classes[65]"
+        },
+        {
+          "index": 66,
+          "name": "ModulationType",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Information about the type of modulation used for radio transmission. 6.2.59 ",
+          "json_path": "pdu_classes[66]"
+        },
+        {
+          "index": 67,
+          "name": "Munition",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "An entity's munition (e.g., bomb, missile) information shall be represented by one or more Munition records. For each ty",
+          "json_path": "pdu_classes[67]"
+        },
+        {
+          "index": 18,
+          "name": "MunitionDescriptor",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Represents the firing or detonation of a munition. Section 6.2.19.2",
+          "json_path": "pdu_classes[18]"
+        },
+        {
+          "index": 68,
+          "name": "MunitionReload",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "indicate weapons (munitions) previously communicated via the Munition record. Section 6.2.61 ",
+          "json_path": "pdu_classes[68]"
+        },
+        {
+          "index": 69,
+          "name": "NamedLocationIdentification",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Information about the discrete positional relationship of the part entity with respect to the its host entity Section 6.",
+          "json_path": "pdu_classes[69]"
+        },
+        {
+          "index": 70,
+          "name": "ObjectIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of an environmental object. Section 6.2.63",
+          "json_path": "pdu_classes[70]"
+        },
+        {
+          "index": 71,
+          "name": "ObjectType",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "The unique designation of an environmental object. Section 6.2.64",
+          "json_path": "pdu_classes[71]"
+        },
+        {
+          "index": 114,
+          "name": "OneByteChunk",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "8 bit piece of data",
+          "json_path": "pdu_classes[114]"
+        },
+        {
+          "index": 72,
+          "name": "OwnershipStatus",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "used to convey entity and conflict status information associated with transferring ownership of an entity. Section 6.2.6",
+          "json_path": "pdu_classes[72]"
+        },
+        {
+          "index": 186,
+          "name": "PduContainer",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Used for XML compatability. A container that holds PDUs",
+          "json_path": "pdu_classes[186]"
+        },
+        {
+          "index": 73,
+          "name": "PduHeader",
+          "inheritsFrom": "root",
+          "attribute_count": 8,
+          "comment": "Not used. The PDU Header Record is directly incoroporated into the PDU class. Here for completness only. Section 6.2.66",
+          "json_path": "pdu_classes[73]"
+        },
+        {
+          "index": 74,
+          "name": "PduStatus",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "PDU Status. These are a series of bit fields. Represented here as just a byte. Section 6.2.67",
+          "json_path": "pdu_classes[74]"
+        },
+        {
+          "index": 117,
+          "name": "PduStream",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "Non-DIS class, used on SQL databases. This is not in the DIS standard but can be helpful when saving DIS to a SQL databa",
+          "json_path": "pdu_classes[117]"
+        },
+        {
+          "index": 118,
+          "name": "PduSuperclass",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "The superclass for all PDUs, including classic and Live Entity (LE) PDUs. This incorporates the PduHeader record, sectio",
+          "json_path": "pdu_classes[118]"
+        },
+        {
+          "index": 75,
+          "name": "PropulsionSystemData",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "contains information describing the propulsion systems of the entity. This information shall be provided for each active",
+          "json_path": "pdu_classes[75]"
+        },
+        {
+          "index": 76,
+          "name": "ProtocolMode",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "Bit field used to identify minefield data. bits 14-15 are a 2-bit enum, other bits unused. Section 6.2.69",
+          "json_path": "pdu_classes[76]"
+        },
+        {
+          "index": 77,
+          "name": "RadioIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "The unique designation of an attached or unattached radio in an event or exercise Section 6.2.70",
+          "json_path": "pdu_classes[77]"
+        },
+        {
+          "index": 78,
+          "name": "RadioType",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Identifies the type of radio. Section 6.2.71",
+          "json_path": "pdu_classes[78]"
+        },
+        {
+          "index": 79,
+          "name": "RecordQuerySpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The identification of the records being queried 6.2.72",
+          "json_path": "pdu_classes[79]"
+        },
+        {
+          "index": 81,
+          "name": "RecordSpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "This record shall specify the number of record sets contained in the Record Specification record and the record details.",
+          "json_path": "pdu_classes[81]"
+        },
+        {
+          "index": 80,
+          "name": "RecordSpecificationElement",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "Synthetic record, made up from section 6.2.72. This is used to acheive a repeating variable list element.",
+          "json_path": "pdu_classes[80]"
+        },
+        {
+          "index": 82,
+          "name": "Relationship",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The relationship of the part entity to its host entity. Section 6.2.74.",
+          "json_path": "pdu_classes[82]"
+        },
+        {
+          "index": 83,
+          "name": "RequestID",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "A monotonically increasing number inserted into all simulation managment PDUs. This should be a hand-coded thingie, mayb",
+          "json_path": "pdu_classes[83]"
+        },
+        {
+          "index": 84,
+          "name": "SecondaryOperationalData",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Additional operational data for an IFF emitting system and the number of IFF Fundamental Parameter Data records Section ",
+          "json_path": "pdu_classes[84]"
+        },
+        {
+          "index": 85,
+          "name": "Sensor",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "An entity's sensor information.  Section 6.2.77.",
+          "json_path": "pdu_classes[85]"
+        },
+        {
+          "index": 106,
+          "name": "SeparationVP",
+          "inheritsFrom": "root",
+          "attribute_count": 7,
+          "comment": "Physical separation of an entity from another entity.  Section 6.2.94.6",
+          "json_path": "pdu_classes[106]"
+        },
+        {
+          "index": 86,
+          "name": "SilentEntitySystem",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "information abou an enitity not producing espdus. Section 6.2.79",
+          "json_path": "pdu_classes[86]"
+        },
+        {
+          "index": 87,
+          "name": "SimulationAddress",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "A Simulation Address record shall consist of the Site Identification number and the Application Identification number. S",
+          "json_path": "pdu_classes[87]"
+        },
+        {
+          "index": 88,
+          "name": "SimulationIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of a simulation when using the 48-bit identifier format shall be specified by the Sim- ulation Id",
+          "json_path": "pdu_classes[88]"
+        },
+        {
+          "index": 89,
+          "name": "SimulationManagementPduHeader",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "First part of a simulation management (SIMAN) PDU and SIMAN-Reliability (SIMAN-R) PDU. Sectionn 6.2.81",
+          "json_path": "pdu_classes[89]"
+        },
+        {
+          "index": 90,
+          "name": "StandardVariableSpecification",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Does not work, and causes failure in anything it is embedded in. Section 6.2.83",
+          "json_path": "pdu_classes[90]"
+        },
+        {
+          "index": 91,
+          "name": "StorageFuel",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "Information about an entity's engine fuel. Section 6.2.84.",
+          "json_path": "pdu_classes[91]"
+        },
+        {
+          "index": 92,
+          "name": "StorageFuelReload",
+          "inheritsFrom": "root",
+          "attribute_count": 8,
+          "comment": "For each type or location of Storage Fuel, this record shall specify the type, location, fuel measure- ment units, reloa",
+          "json_path": "pdu_classes[92]"
+        },
+        {
+          "index": 93,
+          "name": "SupplyQuantity",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": " A supply, and the amount of that supply. Section 6.2.86",
+          "json_path": "pdu_classes[93]"
+        },
+        {
+          "index": 94,
+          "name": "SystemIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 4,
+          "comment": "The ID of the IFF emitting system. NOT COMPLETE. Section 6.2.87",
+          "json_path": "pdu_classes[94]"
+        },
+        {
+          "index": 95,
+          "name": "Timestamp",
+          "inheritsFrom": "",
+          "attribute_count": 1,
+          "comment": "LSB is absolute or relative timestamp. Scale is 2^31 - 1 divided into one hour.",
+          "json_path": "pdu_classes[95]"
+        },
+        {
+          "index": 96,
+          "name": "TotalRecordSets",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Total number of record sets contained in a logical set of one or more PDUs. Used to transfer ownership, etc Section 6.2.",
+          "json_path": "pdu_classes[96]"
+        },
+        {
+          "index": 97,
+          "name": "TrackJamData",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": " Track-Jam data Section 6.2.89",
+          "json_path": "pdu_classes[97]"
+        },
+        {
+          "index": 115,
+          "name": "TwoByteChunk",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "16 bit piece of data",
+          "json_path": "pdu_classes[115]"
+        },
+        {
+          "index": 98,
+          "name": "UAFundamentalParameter",
+          "inheritsFrom": "root",
+          "attribute_count": 6,
+          "comment": "Regeneration parameters for active emission systems that are variable throughout a scenario. Section 6.2.91",
+          "json_path": "pdu_classes[98]"
+        },
+        {
+          "index": 99,
+          "name": "UnattachedIdentifier",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "The unique designation of one or more unattached radios in an event or exercise Section 6.2.91",
+          "json_path": "pdu_classes[99]"
+        },
+        {
+          "index": 15,
+          "name": "UnsignedDISInteger",
+          "inheritsFrom": "root",
+          "attribute_count": 1,
+          "comment": "container class not in specification",
+          "json_path": "pdu_classes[15]"
+        },
+        {
+          "index": 100,
+          "name": "VariableDatum",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "the variable datum type, the datum length, and the value for that variable datum type. NOT COMPLETE. Section 6.2.93",
+          "json_path": "pdu_classes[100]"
+        },
+        {
+          "index": 101,
+          "name": "VariableParameter",
+          "inheritsFrom": "root",
+          "attribute_count": 5,
+          "comment": "specification of additional information associated with an entity or detonation, not otherwise accounted for in a PDU 6.",
+          "json_path": "pdu_classes[101]"
+        },
+        {
+          "index": 107,
+          "name": "VariableTransmitterParameters",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Relates to radios. NOT COMPLETE. Section 6.2.94",
+          "json_path": "pdu_classes[107]"
+        },
+        {
+          "index": 109,
+          "name": "Vector2Float",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Two floating point values, x, y",
+          "json_path": "pdu_classes[109]"
+        },
+        {
+          "index": 111,
+          "name": "Vector3Double",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Three double precision floating point values, x, y, and z. Used for world coordinates Section 6.2.97.",
+          "json_path": "pdu_classes[111]"
+        },
+        {
+          "index": 108,
+          "name": "Vector3Float",
+          "inheritsFrom": "root",
+          "attribute_count": 3,
+          "comment": "Three floating point values, x, y, and z. Section 6.2.95",
+          "json_path": "pdu_classes[108]"
+        },
+        {
+          "index": 110,
+          "name": "VectoringNozzleSystem",
+          "inheritsFrom": "root",
+          "attribute_count": 2,
+          "comment": "Operational data for describing the vectoring nozzle systems Section 6.2.96",
+          "json_path": "pdu_classes[110]"
+        }
+      ]
+    }
+  ]
+}
