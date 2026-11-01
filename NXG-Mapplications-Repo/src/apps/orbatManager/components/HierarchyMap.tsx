@@ -1463,7 +1463,7 @@ function UnitDetailPanel({
   );
 }
 
-// ── CSE Validation section ────────────────────────────────────────────────────
+// ── Preflight section (Translator nxgPreflightOrbatFromPhase) ────────────────────────────────────────────────────
 
 function CseValidationSection({ cseErrors, cseStatus }: { cseErrors: CseValidationError[]; cseStatus: CseValidationStatus }) {
   const [collapsed, setCollapsed] = React.useState(false);
@@ -1492,7 +1492,7 @@ function CseValidationSection({ cseErrors, cseStatus }: { cseErrors: CseValidati
           {collapsed ? "▶" : "▼"}
         </button>
         <span style={{ fontSize: 9, fontWeight: 700, color: "#607d8b", textTransform: "uppercase", letterSpacing: "0.08em", flex: 1 }}>
-          CSE Validation
+          Preflight · same check as Execute
         </span>
         <span style={{ fontSize: 9, color: headerColor, fontFamily: "monospace", flexShrink: 0 }}>{statusLabel}</span>
       </div>
@@ -1500,10 +1500,10 @@ function CseValidationSection({ cseErrors, cseStatus }: { cseErrors: CseValidati
       {!collapsed && (
         <div style={{ maxHeight: 240, overflowY: "auto" }}>
           {cseStatus === "running" && (
-            <div style={{ padding: "8px 12px", color: "#607d8b", fontSize: 10, fontStyle: "italic" }}>Validating…</div>
+            <div style={{ padding: "8px 12px", color: "#607d8b", fontSize: 10, fontStyle: "italic" }}>Checking the saved phase ORBAT…</div>
           )}
           {cseStatus === "error" && (
-            <div style={{ padding: "8px 12px", color: "#ffa198", fontSize: 10 }}>Validation call failed. Check console.</div>
+            <div style={{ padding: "8px 12px", color: "#ffa198", fontSize: 10 }}>Preflight could not run — the Translator function may not be available to this app.</div>
           )}
           {cseStatus === "done" && cseErrors.length === 0 && (
             <div style={{ padding: "8px 12px", color: "#56d364", fontSize: 10 }}>All checks passed</div>

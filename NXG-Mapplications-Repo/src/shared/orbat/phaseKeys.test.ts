@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   isNativeToPhase,
+  parsePhaseHierarchyKey,
   newPhaseUnitKey,
   partitionPhasePlacements,
   phaseHierarchyKey,
@@ -51,5 +52,19 @@ describe("partitionPhasePlacements", () => {
     expect(out.native.map((p) => p.id)).toEqual(["a"]);
     expect(out.foreign.map((p) => p.id)).toEqual(["b", "c"]);
     expect(out.missing.map((p) => p.id)).toEqual(["d"]);
+  });
+});
+
+describe("parsePhaseHierarchyKey", () => {
+  it("inverts phaseHierarchyKey", () => {
+    expect(parsePhaseHierarchyKey(phaseHierarchyKey("scenario_x", "obs_phase_01"))).toEqual({
+      scenarioId: "scenario_x",
+      phaseId: "obs_phase_01",
+    });
+  });
+  it("rejects keys that are not phase hierarchies", () => {
+    expect(parsePhaseHierarchyKey("hier-scenario_x")).toBeNull();
+    expect(parsePhaseHierarchyKey("OP-NEXGEN-2026-FRIENDLY")).toBeNull();
+    expect(parsePhaseHierarchyKey(null)).toBeNull();
   });
 });

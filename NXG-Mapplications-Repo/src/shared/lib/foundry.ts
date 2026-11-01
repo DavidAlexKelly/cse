@@ -51,7 +51,6 @@ import {
   NxgOTemplateOrbatGraph,
 
   // ── Functions ─────────────────────────────────────────────────────────
-  cseValidateOrbat,
 } from "@nxg-simulation-execution-testing/sdk";
 
 import type {
@@ -78,7 +77,7 @@ import {
 } from "../orbat/swordFormations";
 
 import { cachedLoad, invalidatePrefix } from "./ontologyCache";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "../orbat/model";
+import { ontologyDate } from "../orbat/model";
 
 // ─── Auth token ────────────────────────────────────────────────────────────
 
@@ -1134,124 +1133,7 @@ export async function callGenerateOrbat(
   throw new Error(`generate${target === "vbs4" ? "Vbs4" : "Sword"}Orbat not yet exported by SDK.`);
 }
 
-// ─── Function: CSE validate ORBAT ──────────────────────────────────────────
-
-export interface CseValidationError {
-  type?: string;
-  message?: string;
-  description?: string;
-  isWarning?: boolean;
-  path?: string;
-}
-
-export interface CseValidationResult {
-  errors: CseValidationError[];
-  valid: boolean;
-}
-
-/**
- * Translates the ontology ORBAT data into the JSON payload expected by
- * cseValidateOrbat (VBS4 target) and returns the validation result.
- *
- * The payload shape mirrors what csePrep uses for its textarea-based flow:
- *   { units: [...], hierarchy: [...] }
- */
-export async function callCseValidateOrbat(
-  projectName: string,
-  units: Map<string, OUnit>,
-  edges: OEdge[],
-  symbols: Map<string, OSymbol>,
-): Promise<CseValidationResult> {
-  // Build the orbat JSON payload
-  const orbatPayload = buildVbs4OrbatPayload(units, edges, symbols);
-  const orbatContent = JSON.stringify(orbatPayload);
-
-  const raw = await (client(cseValidateOrbat as any) as any).executeFunction({
-    projectName,
-    orbatContent,
-  });
-
-  const result = typeof raw === "string" ? JSON.parse(raw) : raw;
-  const errors: CseValidationError[] = result?.errors ?? [];
-  return {
-    errors,
-    valid: errors.filter((e) => !e.isWarning).length === 0,
-  };
-}
-
-/**
- * Builds the VBS4 ORBAT JSON payload from ontology data.
- */
-export function buildVbs4OrbatPayload(
-  units: Map<string, OUnit>,
-  edges: OEdge[],
-  symbols: Map<string, OSymbol>,
-) {
-  const unitList = [...units.values()].map((u) => {
-    const symbol = symbols.get(u.primaryKey);
-    return {
-      id: u.primaryKey,
-      identifier: u.unitIdentifier,
-      sidc: u.sidc,
-      entityType: u.entityType,
-      simulatorIdentifierCode: u.simulatorIdentifierCode ?? null,
-      owningSimulator: u.owningSimulator,
-      dis: u.dis,
-      echelon: u.echelon,
-      militaryService: u.militaryService,
-      affiliation: u.affiliation,
-      latitude: symbol?.latitude ?? u.latitude ?? null,
-      longitude: symbol?.longitude ?? u.longitude ?? null,
-    };
-  });
-
-  const hierarchy = edges.map((e) => ({
-    parentId: e.parentUnitKey,
-    childId: e.childUnitKey,
-    relationshipType: e.relationshipType,
-  }));
-
-  return { units: unitList, hierarchy };
-}
-
-/**
- * Translates a CompositionNode tree (used in the Composition Builder) into
- * the same VBS4 ORBAT payload shape, so the builder can also call
- * cseValidateOrbat without first persisting to the ontology.
- */
-export function buildVbs4OrbatPayloadFromComposition(
-  root: CompositionNode,
-): { units: object[]; hierarchy: object[] } {
-  const unitList: object[] = [];
-  const hierarchy: object[] = [];
-
-  function walk(node: CompositionNode, parentId: string | null) {
-    for (let i = 0; i < Math.max(1, node.quantity); i++) {
-      const id = `${node.id}${node.quantity > 1 ? `-${i}` : ""}`;
-      unitList.push({
-        id,
-        identifier: node.quantity > 1 ? `${node.unitIdentifier} ${i + 1}` : node.unitIdentifier,
-        sidc: node.sidc,
-        entityType: node.entityType,
-        simulatorIdentifierCode: null, // not yet persisted
-        owningSimulator: node.owningSimulator,
-        dis: "0.0.0.0.0.0.0",
-        echelon: node.echelon,
-        militaryService: node.militaryService,
-        affiliation: node.affiliation,
-        latitude: null,
-        longitude: null,
-      });
-      if (parentId !== null) {
-        // Matches what planComposition writes to the ontology.
-        hierarchy.push({ parentId, childId: id, relationshipType: ORGANIC_RELATIONSHIP_KEY });
-      }
-      for (const child of node.children) {
-        walk(child, id);
-      }
-    }
-  }
-
-  walk(root, null);
-  return { units: unitList, hierarchy };
-}
+// ─── CSE validation ────────────────────────────────────────────────────────
+// The old in-browser route (VBS4 JSON payload → the SDK's cseValidateOrbat)
+// was removed: ORBATs are validated as the phase export, by the Translator's
+// preflight and CSE-Prep's nxgCse* functions (docs/ORBAT_PIPELINE_PLAN.md).

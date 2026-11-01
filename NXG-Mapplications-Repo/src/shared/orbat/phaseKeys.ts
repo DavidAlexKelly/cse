@@ -33,6 +33,22 @@ export function phaseHierarchyKey(scenarioId: string, phaseId: string): string {
 }
 
 /** Display name for that hierarchy. */
+/**
+ * The scenario and phase a phase hierarchy key names, or null for any other
+ * hierarchy (scenario-wide, legacy per-side, operation templates).
+ * Inverse of phaseHierarchyKey. Scenario ids never contain the separator;
+ * phase ids may, so the split is at the FIRST separator.
+ */
+export function parsePhaseHierarchyKey(
+  key: string | null | undefined,
+): { scenarioId: string; phaseId: string } | null {
+  if (!key || !key.startsWith("hier-")) return null;
+  const rest = key.slice("hier-".length);
+  const at = rest.indexOf(PHASE_KEY_SEPARATOR);
+  if (at <= 0 || at + PHASE_KEY_SEPARATOR.length >= rest.length) return null;
+  return { scenarioId: rest.slice(0, at), phaseId: rest.slice(at + PHASE_KEY_SEPARATOR.length) };
+}
+
 export function phaseHierarchyName(scenarioName: string, phaseName: string): string {
   return `${scenarioName} — ${phaseName} ORBAT`;
 }

@@ -29,6 +29,7 @@ import { buildOrbatSkeleton } from "../../shared/orbat/skeleton";
 import {
   DEFAULT_OPERATION_KEY,
   commitOrbatForPlacement,
+  operationKeyForScenario,
   describeActionError,
 } from "../../shared/orbat/scenarioOrbat";
 import { commitDefinedOrbatToPhase } from "../../shared/orbat/phaseOrbat";
@@ -38,7 +39,10 @@ import {
   readOrbatDefinitionRequest,
   type OrbatDefineRequest,
 } from "../../shared/orbat/defineHandoff";
-import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { PHASE_PARAM, readPhaseParam, useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { topLevelWindow } from "@/shared/hooks/useMockDemo";
+import { parsePhaseHierarchyKey } from "@/shared/orbat/phaseKeys";
+import { usePhasePreflight } from "@/shared/orbat/usePhasePreflight";
 import { useOrbatStore } from "./store/useOrbatStore";
 import { useCompositionData } from "@/shared/hooks/useCompositionData";
 import { AiTemplateGenerator } from "./components/AiTemplateGenerator";
@@ -79,9 +83,6 @@ import {
 import { client } from "@/client";
 import { AppSwitcher } from "@/components/AppSwitcher";
 import {
-  cseAddComposition,
-  cseAddProject,
-  cseValidateOrbat,
   llmPhaseToOrbat,
   NxgUnit,
   NxgUnitHierarchy,
@@ -91,9 +92,12 @@ import {
 import { createAndFetchTempObjectSetRid } from "@osdk/client/internal";
 import type { CompositionNode } from "@/shared/types";
 
-const CSE_COMPOSITION_NAME = "orbat-manager-env";
-const CSE_COMPOSITION_TYPE = "vbs4";
-const CSE_PROJECT  = "orbat-manager-project";
+// No CSE calls from this screen. It used to create a composition and project
+// on mount and validate an in-memory copy of the map through Workshop
+// (orbatJson → translatedInputOrbat → cseValidateOrbat) — a different input,
+// function set and project from what Execute launches. It now shows the
+// Translator preflight for the phase ORBAT in the ontology, the same check
+// Execute gates on. See docs/ORBAT_PIPELINE_PLAN.md (3.1, 3.2).
 
 // Workshop config lives in orbatManager.config.ts — see ORBAT_CONFIG.
 
@@ -822,6 +826,23 @@ export default function App() {
   // we are told which phase to show and read its ORBAT from the ontology.
   const phaseKey: string = firstPrimaryKey(workshopCtx?.phase);
 
+  // ── The phase being worked on, for its preflight ─────────────────────────
+  // Workshop's `phase`, else ?phase=, else the phase named by ?hierarchy= (the
+  // planner opens this screen with hier-{scenario}--{phase}). Its operation is
+  // the scenario's when the hierarchy names one.
+  const urlParams = useMemo(() => new URLSearchParams(window.location.search), []);
+  const urlPhaseHierarchy = useMemo(
+    () => parsePhaseHierarchyKey(urlParams.get("hierarchy")),
+    [urlParams],
+  );
+  const preflightPhaseId: string | null =
+    phaseKey || readPhaseParam(window.location.search) || urlPhaseHierarchy?.phaseId || null;
+  const preflightOperationKey: string = urlPhaseHierarchy
+    ? operationKeyForScenario(urlPhaseHierarchy.scenarioId)
+    : operationKey;
+  const preflight = usePhasePreflight(preflightOperationKey, preflightPhaseId);
+  const standaloneWindow = useMemo(topLevelWindow, []);
+
   // ── Operation Phase Groups ───────────────────────────────────────────────
   // Session-scoped store of multi-phase operation timelines.
   // Each group has a canonical CompositionNode tree (stable ids) and one
@@ -879,10 +900,6 @@ export default function App() {
     ingestResult: ReturnType<typeof ingestPhaseOrbat>;
     suggestedOpKey: string;
   }>(null);
-  // translatedInputOrbat: written by a Workshop translation function after
-  // orbatJson (map placement output) is processed. This is what gets sent to CSE.
-  const translatedOrbatRaw = workshopCtx?.translatedInputOrbat?.fieldValue;
-  const translatedInputOrbat: string = (translatedOrbatRaw?.status === "LOADED" ? (translatedOrbatRaw.value as string) ?? "" : "").trim();
   // phaseDescription: written by an external application to request that
   // this widget generate a phase ORBAT via the llmPhaseToOrbat function.
   // See ORBAT_CONFIG.
@@ -2120,105 +2137,18 @@ export default function App() {
     setPendingPhaseHydration(null);
   }, [pendingPhaseHydration]);
 
-  const [cseReady, setCseReady] = useState(false);
-  useEffect(() => {
-    (async () => {
-      console.log("[CSE setup] Initialising composition + project…");
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client(cseAddComposition as any) as any).executeFunction({
-          compositionName: CSE_COMPOSITION_NAME,
-          compositionType: CSE_COMPOSITION_TYPE,
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (client(cseAddProject as any) as any).executeFunction({
-          composition: CSE_COMPOSITION_NAME,
-          projectName: CSE_PROJECT,
-        });
-        console.log("[CSE setup] Ready.");
-      } catch (e) { console.warn("[CSE setup] Init failed (non-fatal):", e); }
-      setCseReady(true);
-    })();
-  }, []);
-
-  type CseStatus = "idle" | "running" | "done" | "error";
-  interface CseError { type?: string; message?: string; description?: string; isWarning?: boolean; path?: string; }
-  const [cseErrors, setCseErrors] = useState<CseError[]>([]);
-  const [cseStatus, setCseStatus] = useState<CseStatus>("idle");
-
-  // Track the last orbatExport JSON we validated against so we only call
-  // cseValidateOrbat when placement actually changes — not on every re-render
-  // or Workshop variable round-trip.
-  const lastValidatedExportRef = useRef<string>("");
-
-  // Run cseValidateOrbat when the translated ORBAT comes back from Workshop.
-  // Flow: user places units → orbatJson written to Workshop variable →
-  //       Workshop translation function runs → translatedInputOrbat updated →
-  //       this effect fires and calls CSE.
-  // Guard: compare against last validated string so Workshop polling doesn't
-  //        cause repeated calls with the same payload.
-  useEffect(() => {
-    if (!translatedInputOrbat) {
-      console.log("[CSE validate] translatedInputOrbat is empty — clearing state.");
-      setCseErrors([]);
-      setCseStatus("idle");
-      lastValidatedExportRef.current = "";
-      return;
-    }
-
-    if (!cseReady) {
-      console.log("[CSE validate] CSE not ready yet — waiting.");
-      return;
-    }
-
-    if (translatedInputOrbat === lastValidatedExportRef.current) {
-      console.log("[CSE validate] translatedInputOrbat unchanged — skipping call.");
-      return;
-    }
-
-    console.log(
-      `[CSE validate] translatedInputOrbat updated (${translatedInputOrbat.length} chars). Queuing validation…`,
-    );
-    lastValidatedExportRef.current = translatedInputOrbat;
-    setCseStatus("running");
-    setCseErrors([]);
-
-    const timer = setTimeout(async () => {
-      console.log("[CSE validate] → cseValidateOrbat", {
-        projectName: CSE_PROJECT,
-        payloadLength: translatedInputOrbat.length,
-        preview: translatedInputOrbat.slice(0, 120),
-      });
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const raw = await (client(cseValidateOrbat as any) as any).executeFunction({
-          projectName: CSE_PROJECT,
-          orbatContent: translatedInputOrbat,
-        });
-        const result = typeof raw === "string" ? JSON.parse(raw) : raw;
-        const errors: CseError[] = result?.errors ?? [];
-        console.log(`[CSE validate] ✓ Done — ${errors.length} issue(s):`, errors);
-        setCseErrors(errors);
-        setCseStatus("done");
-      } catch (e) {
-        console.error("[CSE validate] ✗ Call failed:", e);
-        setCseStatus("error");
-      }
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [translatedInputOrbat, cseReady]);
-
-  const workshopCtxRef = useRef(workshopCtx);
-  useEffect(() => { workshopCtxRef.current = workshopCtx; }, [workshopCtx]);
-  useEffect(() => {
-    if (!orbatExport) return;
-    const id = requestIdleCallback(() => { workshopCtxRef.current?.orbatJson?.setLoadedValue?.(JSON.stringify(orbatExport)); }, { timeout: 2000 });
-    return () => cancelIdleCallback(id);
-  }, [orbatExport]);
-
-  const blockingCse = cseErrors.filter((e) => !e.isWarning).length;
-  const warningCse  = cseErrors.filter((e) => e.isWarning).length;
+  // Preflight issues in the shape the map's check panel shows.
+  const preflightIssues = useMemo(
+    () =>
+      (preflight.report?.issues ?? []).map((i) => ({
+        type: i.code,
+        message: i.message,
+        isWarning: i.severity !== "ERROR",
+      })),
+    [preflight.report],
+  );
+  const blockingPreflight = preflight.report?.errors ?? 0;
+  const warningPreflight = preflight.report?.warnings ?? 0;
 
   return (
     <div className="om-widget">
@@ -2338,12 +2268,40 @@ export default function App() {
               ⚠ Phase ORBAT: {phaseIngestError.length > 40 ? phaseIngestError.slice(0, 40) + "…" : phaseIngestError}
             </span>
           )}
-          {!cseReady && <span className="om-status-chip om-status-chip--info">⟳ CSE init…</span>}
-          {cseReady && cseStatus === "running" && <span className="om-status-chip om-status-chip--info">⟳ CSE validating…</span>}
-          {cseReady && cseStatus === "done" && (
-            <span className={`om-status-chip ${blockingCse === 0 ? "om-status-chip--ok" : "om-status-chip--err"}`}>
-              {blockingCse === 0 ? `✓ CSE valid${warningCse > 0 ? ` (${warningCse} warn)` : ""}` : `✗ ${blockingCse} error${blockingCse !== 1 ? "s" : ""}`}
+          {preflightPhaseId && preflight.status === "running" && (
+            <span className="om-status-chip om-status-chip--info">⟳ Preflight…</span>
+          )}
+          {preflightPhaseId && preflight.status === "error" && (
+            <span
+              className="om-status-chip om-status-chip--err"
+              title={preflight.error ?? undefined}
+              onClick={preflight.recheck}
+              style={{ cursor: "pointer" }}
+            >
+              ⚠ Preflight unavailable — retry
             </span>
+          )}
+          {preflightPhaseId && preflight.status === "done" && (
+            <span
+              className={`om-status-chip ${blockingPreflight === 0 ? "om-status-chip--ok" : "om-status-chip--err"}`}
+              title={`${preflight.report?.summary ?? ""} — the same check Execute runs before launch. Click to re-check after saving.`}
+              onClick={preflight.recheck}
+              style={{ cursor: "pointer" }}
+            >
+              {blockingPreflight === 0
+                ? `✓ Preflight clean${warningPreflight > 0 ? ` (${warningPreflight} warn)` : ""}`
+                : `✗ Preflight: ${blockingPreflight} error${blockingPreflight !== 1 ? "s" : ""}`}
+            </span>
+          )}
+          {preflightPhaseId && standaloneWindow && (
+            <button
+              type="button"
+              className="mil-btn mil-btn--sm mil-btn--default"
+              onClick={() => navigate(`/execute?${PHASE_PARAM}=${encodeURIComponent(preflightPhaseId)}`)}
+              title="Check this phase against CSE and launch it"
+            >
+              Launch in Execute →
+            </button>
           )}
           <AppSwitcher />
         </div>
@@ -2691,8 +2649,8 @@ export default function App() {
             availableItems={mapAvailableItems}
             onAddToMap={handleAddToMap}
             onRemoveFromMap={handleRemoveFromMap}
-            cseErrors={cseErrors}
-            cseStatus={cseStatus}
+            cseErrors={preflightIssues}
+            cseStatus={preflightPhaseId ? preflight.status : "idle"}
             onCreatePhaseGroup={handleCreatePhaseGroup}
             onAssignTemplateToSlot={handleAssignTemplateToSlot}
             onRenamePhaseSlot={handleRenamePhaseSlot}
