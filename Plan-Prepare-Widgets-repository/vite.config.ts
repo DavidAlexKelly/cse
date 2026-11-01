@@ -21,7 +21,6 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: [
-        "./orbatManager.html",
         "./taskManager.html",
         "./taskAssignment.html",
         "./taskGraph.html",
