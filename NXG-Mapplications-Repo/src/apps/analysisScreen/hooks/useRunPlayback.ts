@@ -118,7 +118,7 @@ function angleDelta(from: number, to: number): number {
  * identity crosses frames — see accumulateIdentity for why dynamic state
  * deliberately does not.
  */
-function buildFrames(raw: RawFrame[], identities: Map<string, TrackRow>): Frame[] {
+export function buildFrames(raw: RawFrame[], identities: Map<string, TrackRow>): Frame[] {
   for (const frame of raw) accumulateIdentity(frame.rows, identities);
 
   return raw.map((frame): Frame => {

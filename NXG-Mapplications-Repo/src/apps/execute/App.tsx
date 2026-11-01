@@ -21,6 +21,7 @@ import {
   type WorkshopObjectSetValue,
   useWorkshopObjectKey,
 } from "@/shared/hooks/useWorkshopObjectKey";
+import { recordLaunch } from "@/shared/lib/launchRecords";
 import { phaseHierarchyKey } from "@/shared/orbat/phaseKeys";
 import { loadPhaseForest } from "@/shared/orbat/phaseOrbat";
 import { operationKeyForScenario } from "@/shared/orbat/scenarioOrbat";
@@ -258,8 +259,16 @@ export default function ExecuteApp() {
     }
     setLaunching(false);
     setLaunched(true);
+    // Lets Analysis open the resulting run on this phase's plan.
+    recordLaunch({
+      scenarioId,
+      phaseId: target.phaseId,
+      phaseName: phase?.name ?? target.phaseId,
+      launchedAtS: Math.floor(Date.now() / 1000),
+      demo: runner.demo,
+    });
     ctx?.onLaunched?.executeEvent?.(undefined);
-  }, [target, launching, runner, ctx]);
+  }, [target, launching, runner, ctx, scenarioId, phase?.name]);
 
   const openLiveMap = () => navigate(mockDemo ? "/hlamap?mock=1" : "/hlamap");
 

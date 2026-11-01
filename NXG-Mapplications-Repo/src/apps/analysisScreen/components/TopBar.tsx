@@ -1,9 +1,8 @@
 // ── analysisScreen/components/TopBar.tsx ───────────────────────────────────
 // Title, run picker and run metadata.
-
 import type { FC } from "react";
 import type { RunSummary } from "../types";
-import { formatDateTime, formatDuration, UI } from "./ui";
+import { UI, formatDateTime, formatDuration } from "./ui";
 
 interface Props {
   runs: RunSummary[];
@@ -29,6 +28,13 @@ interface Props {
    */
   view?: AnalysisView;
   onViewChange?: (view: AnalysisView) => void;
+  /**
+   * The phase the run is measured against. Omit to hide the selector (the
+   * mock run carries its own plan).
+   */
+  phases?: { id: string; name: string }[];
+  selectedPhaseId?: string | null;
+  onSelectPhase?: (phaseId: string) => void;
 }
 
 export type AnalysisView = "map" | "debrief";
@@ -48,6 +54,9 @@ const TopBar: FC<Props> = ({
   onToggleMockDemo,
   view,
   onViewChange,
+  phases,
+  selectedPhaseId,
+  onSelectPhase,
 }) => (
   <div
     style={{
@@ -144,8 +153,46 @@ const TopBar: FC<Props> = ({
 
     {selectedRun && (
       <div style={{ fontFamily: UI.fontMono, fontSize: 10, color: UI.textDim }}>
-        {formatDateTime(selectedRun.startS)} · {formatDuration(selectedRun.endS - selectedRun.startS)}
+        {formatDateTime(selectedRun.startS)} ·{" "}
+        {formatDuration(selectedRun.endS - selectedRun.startS)}
       </div>
+    )}
+
+    {phases && onSelectPhase && (
+      <label
+        style={{
+          fontFamily: UI.fontMono,
+          fontSize: 10,
+          color: UI.textFaint,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+        }}
+        title="The phase whose plan this run is measured against"
+      >
+        PLAN
+        <select
+          value={selectedPhaseId ?? ""}
+          disabled={phases.length === 0}
+          onChange={(e) => onSelectPhase(e.target.value)}
+          style={{
+            background: UI.bg2,
+            color: UI.text,
+            border: `1px solid ${UI.border}`,
+            fontFamily: UI.fontMono,
+            fontSize: 11,
+            padding: "4px 6px",
+            minWidth: 180,
+          }}
+        >
+          {phases.length === 0 && <option value="">no phases</option>}
+          {phases.map((phase) => (
+            <option key={phase.id} value={phase.id}>
+              {phase.name}
+            </option>
+          ))}
+        </select>
+      </label>
     )}
 
     <label

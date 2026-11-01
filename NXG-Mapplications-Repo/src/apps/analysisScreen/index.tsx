@@ -9,14 +9,22 @@
 // duration. Windows outside the resident buffer are fetched on demand when the
 // playhead lands on them, so a 16-hour run is navigable without ever pulling
 // 20 million rows into the browser.
-
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
+import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import type { HlaEntity, LatLon } from "@/shared/hla/types";
-import AnalysisMap, {
-  DEFAULT_PLAN_LAYERS,
-  type PlanLayerToggles,
-} from "./components/AnalysisMap";
+import { useMockDemo } from "@/shared/hooks/useMockDemo";
+import {
+  type WorkshopObjectSetValue,
+  useWorkshopObjectKey,
+} from "@/shared/hooks/useWorkshopObjectKey";
+import { launchForRun, readLaunchRecords } from "@/shared/lib/launchRecords";
+import { SqlError } from "@/shared/lib/sqlClient";
+import { useScenario } from "../scenarioPlanner/hooks/useScenario";
+import { DEFAULT_SCENARIO_ID } from "../scenarioPlanner/shared/phaseColours";
+import { ANALYSIS_CONFIG } from "./analysisConfig";
+import AnalysisMap, { DEFAULT_PLAN_LAYERS, type PlanLayerToggles } from "./components/AnalysisMap";
 import CompliancePanel from "./components/CompliancePanel";
 import DebriefView from "./components/DebriefView";
 import SidePanel from "./components/SidePanel";
@@ -24,13 +32,10 @@ import Timeline from "./components/Timeline";
 import TopBar, { type AnalysisView } from "./components/TopBar";
 import { UI } from "./components/ui";
 import { listRuns } from "./data/tracks";
-import { SqlError } from "@/shared/lib/sqlClient";
-import { planKeyEvents } from "./lib/planEvents";
-import { useRunPlayback } from "./hooks/useRunPlayback";
+import { useLivePhaseAnalysis } from "./hooks/useLivePhaseAnalysis";
 import { createMockRun, useMockRunPlayback } from "./hooks/useMockRunPlayback";
-import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
-import { useMockDemo } from "@/shared/hooks/useMockDemo";
-import { ANALYSIS_CONFIG } from "./analysisConfig";
+import { useRunPlayback } from "./hooks/useRunPlayback";
+import { planKeyEvents } from "./lib/planEvents";
 import type { RunSummary } from "./types";
 
 /** Positions retained behind the selected unit, in frames. */
@@ -71,14 +76,14 @@ function Banner({ tone, children }: { tone: "error" | "warn"; children: React.Re
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedString(field: any): string | null {
   return field?.fieldValue?.status === "LOADED"
-    ? (field.fieldValue.value as string) ?? null
+    ? ((field.fieldValue.value as string) ?? null)
     : null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedBool(field: any): boolean | null {
   return field?.fieldValue?.status === "LOADED"
-    ? (field.fieldValue.value as boolean) ?? null
+    ? ((field.fieldValue.value as boolean) ?? null)
     : null;
 }
 
@@ -133,7 +138,7 @@ const AnalysisScreen: FC = () => {
   const mockRun = useMemo(() => createMockRun(), []);
 
   const runs = useMemo(
-    () => (mockDemo ? [mockRun] : runsQuery.data ?? []),
+    () => (mockDemo ? [mockRun] : (runsQuery.data ?? [])),
     [mockDemo, mockRun, runsQuery.data],
   );
 
@@ -171,7 +176,7 @@ const AnalysisScreen: FC = () => {
 
   const selectedRun: RunSummary | null = useMemo(
     () => runs.find((run) => run.id === selectedRunId) ?? null,
-    [runs, selectedRunId]
+    [runs, selectedRunId],
   );
 
   // Both are called unconditionally because hooks must be, but each is handed
@@ -190,12 +195,46 @@ const AnalysisScreen: FC = () => {
     setSelectedOrderId(null);
   }, [selectedRunId]);
 
+  // ── Which phase the run executed ─────────────────────────────────────────
+  // The mock run carries its own plan. A real run is measured against a phase
+  // of the scenario: the one picked here, else the one Execute recorded
+  // launching it for, else Workshop's selected phase, else the first.
+  const scenarioRaw =
+    ctx?.scenario?.fieldValue?.status === "LOADED" ? ctx.scenario.fieldValue.value : undefined;
+  const { scenarioMeta, ontologyPhases } = useScenario(scenarioRaw);
+  const scenarioId = scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID;
+  const phases = useMemo(() => ontologyPhases ?? [], [ontologyPhases]);
+  const phaseRaw: WorkshopObjectSetValue =
+    ctx?.selectedPhase?.fieldValue?.status === "LOADED"
+      ? (ctx.selectedPhase.fieldValue.value as WorkshopObjectSetValue)
+      : undefined;
+  const inboundPhaseId = useWorkshopObjectKey(phaseRaw, NxgPhase).primaryKey ?? null;
+  const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(null);
+  const launchedPhaseId = useMemo(() => {
+    if (mockDemo || !selectedRun) return null;
+    const record = launchForRun(selectedRun, readLaunchRecords());
+    return record && record.scenarioId === scenarioId ? record.phaseId : null;
+  }, [mockDemo, selectedRun, scenarioId]);
+  // A different run may have executed a different phase: let the record speak again.
+  useEffect(() => setPickedPhaseId(null), [selectedRunId]);
+  const known = (id: string | null) => (id && phases.some((p) => p.id === id) ? id : null);
+  const phaseId =
+    known(pickedPhaseId) ??
+    known(launchedPhaseId) ??
+    known(inboundPhaseId) ??
+    phases[0]?.id ??
+    null;
+  const phase = phases.find((p) => p.id === phaseId) ?? null;
+
   // ── Plan vs execution ────────────────────────────────────────────────────
-  // Keyed on the playback supplying a compliance result rather than on the
-  // mock-demo flag. Only mock runs can produce one today, but when a real run
-  // can — a plan resolved from the ontology, a track sampled by SQL — nothing
-  // here needs to change.
-  const compliance = playback.compliance;
+  // Mock runs: the checked-in plan and synthetic track. Real runs: the
+  // phase's saved plan, measured against the run's whole track with planned
+  // units matched to simulated entities (useLivePhaseAnalysis).
+  const live = useLivePhaseAnalysis(mockDemo ? null : selectedRun, scenarioId, phase);
+  const analysis = mockDemo
+    ? { plan: playback.plan, compliance: playback.compliance, debrief: playback.debrief }
+    : { plan: live.plan, compliance: live.compliance, debrief: live.debrief };
+  const compliance = analysis.compliance;
   const selectedOrder = useMemo(
     () => compliance?.orders.find((order) => order.orderId === selectedOrderId) ?? null,
     [compliance, selectedOrderId],
@@ -213,7 +252,7 @@ const AnalysisScreen: FC = () => {
     [compliance],
   );
 
-  const debrief = playback.debrief;
+  const debrief = analysis.debrief;
 
   // A run with no event log has nothing to put on a second tab, and an empty
   // tab is worse than no tab. Fall back to the map if one disappears from under
@@ -248,10 +287,7 @@ const AnalysisScreen: FC = () => {
   // Destroyed units are dimmed rather than removed: in a replay, where a unit
   // died is part of what you are looking for. The feed does not populate
   // damage_state today, so this is currently inert.
-  const isFaded = useCallback(
-    (entity: HlaEntity) => entity.damageState === "Destroyed",
-    []
-  );
+  const isFaded = useCallback((entity: HlaEntity) => entity.damageState === "Destroyed", []);
 
   // ── Breadcrumb trail for the selected unit ───────────────────────────────
   // Accumulated from frames as they are displayed rather than queried, so it
@@ -281,7 +317,7 @@ const AnalysisScreen: FC = () => {
 
     lastTrailTsRef.current = currentFrameTs;
     const points = [...trailRef.current.points, { lat: entity.lat, lon: entity.lon }].slice(
-      -TRAIL_LENGTH
+      -TRAIL_LENGTH,
     );
     trailRef.current = { id: selectedEntityId, points };
     setTrail(points);
@@ -312,7 +348,14 @@ const AnalysisScreen: FC = () => {
         onToggleMockDemo={ownsMockDemo ? setMockDemo : undefined}
         view={debriefAvailable ? view : undefined}
         onViewChange={debriefAvailable ? setView : undefined}
+        phases={mockDemo ? undefined : phases}
+        selectedPhaseId={phaseId}
+        onSelectPhase={setPickedPhaseId}
       />
+
+      {!mockDemo && selectedRun && phase && (
+        <PlanStatus live={live} phaseName={phase.name} launched={launchedPhaseId === phaseId} />
+      )}
 
       {permissionProblem && (
         <Banner tone="error">
@@ -346,7 +389,7 @@ const AnalysisScreen: FC = () => {
             // Re-frame the camera when the analyst switches run: a different
             // execution can be somewhere else entirely.
             fitKey={selectedRun?.id}
-            plan={playback.plan}
+            plan={analysis.plan}
             compliance={compliance}
             selectedOrderId={selectedOrderId}
             onSelectOrder={handleSelectOrder}
@@ -423,6 +466,64 @@ const AnalysisScreen: FC = () => {
     </div>
   );
 };
+
+/** One line on what this run is being measured against, and how well the two lined up. */
+function PlanStatus({
+  live,
+  phaseName,
+  launched,
+}: {
+  live: ReturnType<typeof useLivePhaseAnalysis>;
+  phaseName: string;
+  launched: boolean;
+}) {
+  let text: string;
+  let tone: string = UI.textDim;
+  switch (live.status) {
+    case "loading":
+      text = `Measuring this run against "${phaseName}" — reading the whole run…`;
+      break;
+    case "no-plan":
+      text = `"${phaseName}" has no saved plan to measure against. Pick another phase, or plan this one in the Scenario Planner.`;
+      tone = UI.amber;
+      break;
+    case "error":
+      text = `Could not measure this run against "${phaseName}": ${live.error}`;
+      tone = UI.red;
+      break;
+    case "ready": {
+      const matches = live.match?.matches ?? [];
+      const by = (m: string) => matches.filter((x) => x.method === m).length;
+      text =
+        `Plan: "${phaseName}"${launched ? " (launched from Execute)" : ""} — ` +
+        `${matches.length} of ${live.plannedCount} planned units found in the run` +
+        (matches.length > 0
+          ? ` (${by("name")} by name, ${by("position")} by nearest position — position matches are inferred)`
+          : "") +
+        ".";
+      if (matches.length < live.plannedCount) tone = UI.amber;
+      break;
+    }
+    default:
+      return null;
+  }
+  return (
+    <div
+      style={{
+        background: UI.bg1,
+        borderBottom: `1px solid ${UI.border}`,
+        color: tone,
+        fontFamily: UI.fontMono,
+        fontSize: 10,
+        padding: "6px 14px",
+        flexShrink: 0,
+      }}
+      role="status"
+    >
+      {text}
+    </div>
+  );
+}
 
 const AnalysisScreenApp: FC = () => (
   <QueryClientProvider client={queryClient}>

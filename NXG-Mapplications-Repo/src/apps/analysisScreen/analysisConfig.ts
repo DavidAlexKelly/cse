@@ -25,6 +25,35 @@ import type { IConfigDefinition } from "@osdk/workshop-iframe-custom-widget";
 //
 export const ANALYSIS_CONFIG = [
   {
+    fieldId: "scenario",
+    field: {
+      type: "single" as const,
+      label: "Scenario (NxgScenario object set)",
+      helperText:
+        "The exercise whose phases runs are measured against. Wire the same variable as " +
+        "the Scenario Planner. Leave unset to fall back to Operation BALTIC SHIELD.",
+      fieldValue: {
+        type: "inputOutput" as const,
+        variableType: { type: "temporaryObjectSetRid" as const },
+      },
+    },
+  },
+  {
+    fieldId: "selectedPhase",
+    field: {
+      type: "single" as const,
+      label: "Selected Phase (NxgPhase object set)",
+      helperText:
+        "The phase whose plan the run is measured against — its saved orders, " +
+        "objectives and predicted end state. A run launched from the Execute screen " +
+        "opens on the phase it was launched for instead.",
+      fieldValue: {
+        type: "inputOutput" as const,
+        variableType: { type: "temporaryObjectSetRid" as const },
+      },
+    },
+  },
+  {
     fieldId: "mockDemo",
     field: {
       type: "single" as const,
