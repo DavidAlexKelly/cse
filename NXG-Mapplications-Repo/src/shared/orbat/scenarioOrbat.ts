@@ -161,6 +161,14 @@ export function isPinnedScenario(scenarioId: string): boolean {
   return !!(binding?.blue || binding?.red);
 }
 
+/**
+ * The NxgOperation a scenario's ORBATs belong to. Phase hierarchies use it too:
+ * the Translator selects a phase's hierarchies by operationKey + phaseKey.
+ */
+export function operationKeyForScenario(scenarioId: string): string {
+  return SCENARIO_BINDINGS[scenarioId]?.operationKey ?? DEFAULT_OPERATION_KEY;
+}
+
 /** The hierarchy holding a scenario's own ORBAT, when it isn't pinned. */
 export function scenarioHierarchyKey(scenarioId: string): string {
   return `hier-${scenarioId}`;

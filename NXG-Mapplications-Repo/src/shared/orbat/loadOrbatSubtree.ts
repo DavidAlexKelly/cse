@@ -16,7 +16,9 @@ import {
 import type { CompositionNode } from "@/shared/types";
 
 /** Guard against a cycle or a pathological tree bringing the UI down. */
-const MAX_NODES = 2000;
+// 6000 so a full division (≈3,000 units at the auto-generate cap) plus its
+// opposing force loads in one go. Was 2000, which silently truncated one.
+export const MAX_NODES = 6000;
 const MAX_DEPTH = 12;
 
 export interface OrbatSubtree {
@@ -68,8 +70,25 @@ function toCompositionNode(
   };
 }
 
+/**
+ * Stored positions for a set of units. Keys with no NxgUnit, or a unit with no
+ * position, are simply absent from the result.
+ */
+export async function fetchUnitPositions(
+  keys: string[],
+): Promise<Map<string, { lat: number; lng: number }>> {
+  const units = await fetchUnits(keys);
+  const out = new Map<string, { lat: number; lng: number }>();
+  for (const [key, unit] of units) {
+    if (unit.latitude != null && unit.longitude != null) {
+      out.set(key, { lat: unit.latitude, lng: unit.longitude });
+    }
+  }
+  return out;
+}
+
 /** Fetch units by primary key, chunked so the $in filter stays reasonable. */
-async function fetchUnits(keys: string[]): Promise<Map<string, NxgUnit.OsdkInstance>> {
+export async function fetchUnits(keys: string[]): Promise<Map<string, NxgUnit.OsdkInstance>> {
   const byKey = new Map<string, NxgUnit.OsdkInstance>();
   const CHUNK = 100;
   for (let i = 0; i < keys.length; i += CHUNK) {

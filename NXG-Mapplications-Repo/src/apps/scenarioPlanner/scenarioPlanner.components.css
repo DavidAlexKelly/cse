@@ -1256,3 +1256,57 @@
   to   { transform: rotate(360deg); }
 }
 
+
+/* ── Map toolbar row (branches · start/end state · ORBAT level) ── */
+.sp-map-toolbar {
+  margin: 8px 8px 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.sp-map-toolbar__spacer {
+  flex: 1;
+}
+.sp-map-toolbar__state {
+  display: inline-flex;
+  gap: 2px;
+}
+.sp-map-toolbar__crumb {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.sp-hint--blocked {
+  background: rgba(163, 38, 44, 0.94);
+  white-space: normal;
+  max-width: 70%;
+  text-align: center;
+}
+
+/* ── Phase ORBAT status line (save / generate results) ── */
+.sp-orbat-status {
+  position: absolute;
+  bottom: 62px;
+  right: 8px;
+  z-index: 10;
+  max-width: 360px;
+  padding: 6px 10px;
+  background: rgba(17, 19, 24, 0.92);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: #c8cdd8;
+  font-size: 11px;
+  line-height: 1.4;
+  backdrop-filter: blur(4px);
+}
+.sp-orbat-status--error {
+  border-color: #a3262c;
+  color: #ffd7d9;
+}

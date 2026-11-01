@@ -30,6 +30,7 @@ import {
   commitOrbatForPlacement,
   describeActionError,
 } from "../../shared/orbat/scenarioOrbat";
+import { commitDefinedOrbatToPhase } from "../../shared/orbat/phaseOrbat";
 import {
   clearOrbatDefinitionRequest,
   publishOrbatDefinitionResult,
@@ -1312,15 +1313,38 @@ export default function App() {
     setDefineBusy(true);
     setDefineError(null);
     try {
-      const result = await commitOrbatForPlacement({
-        scenarioId: defineRequest.scenarioId,
-        scenarioName: defineRequest.scenarioName,
-        root,
-        side: defineRequest.side,
-        lat: defineRequest.lat,
-        lng: defineRequest.lng,
-        unitLabel: defineRequest.unitLabel,
-      });
+      // A request that names a phase is written into THAT phase's ORBAT:
+      // phase-native keys, subordinates ringed around the placed position,
+      // root slotted into the phase tree. Older callers without a phase keep
+      // the scenario-wide path.
+      const result = defineRequest.phaseId
+        ? await commitDefinedOrbatToPhase(
+            {
+              scenarioId: defineRequest.scenarioId,
+              scenarioName: defineRequest.scenarioName,
+              phaseId: defineRequest.phaseId,
+              // The hierarchy is named after the phase if this call creates
+              // it. Never fall back to the phase ID: that is what used to end
+              // up in the name.
+              phaseName: defineRequest.phaseName ?? "Phase",
+            },
+            root,
+            { lat: defineRequest.lat, lng: defineRequest.lng },
+            defineRequest.side,
+          ).then((r) => ({
+            hierarchyKey: r.hierarchyKey,
+            rootUnitKey: r.rootUnitKey,
+            unitsCreated: r.unitCount,
+          }))
+        : await commitOrbatForPlacement({
+            scenarioId: defineRequest.scenarioId,
+            scenarioName: defineRequest.scenarioName,
+            root,
+            side: defineRequest.side,
+            lat: defineRequest.lat,
+            lng: defineRequest.lng,
+            unitLabel: defineRequest.unitLabel,
+          });
       publishOrbatDefinitionResult({
         unitId: defineRequest.unitId,
         rootUnitKey: result.rootUnitKey,

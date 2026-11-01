@@ -1136,14 +1136,24 @@ def _upsert_hierarchy(
     name_override: str | None = None,
     valid_from_override: str | None = None,
     valid_to_override: str | None = None,
+    phase_key: str | None = None,
 ) -> None:
-    """Create a NxgUnitHierarchy if it doesn't exist, otherwise update it."""
+    """
+    Create a NxgUnitHierarchy if it doesn't exist, otherwise update it.
+
+    phase_key is only written when given. A per-phase ORBAT
+    (hier-{scenario}--{phase}) must carry it — it is how the phase functions
+    and CSE validation find the hierarchy — but a caller that does not know it
+    must not clear one that is already set.
+    """
     props = dict(
         name=name_override or f"{operation_key} Hierarchy",
         operation_key=operation_key,
         valid_from=_parse_date(valid_from_override) if valid_from_override else _parse_date(operation_data.get("startTime")),
         valid_to=_parse_date(valid_to_override) if valid_to_override else _parse_date(operation_data.get("endTime")),
     )
+    if phase_key:
+        props["phase_key"] = phase_key
     existing = FoundryClient().ontology.objects.NxgUnitHierarchy.get(hierarchy_key)
     if existing is None:
         ontology_edits.objects.NxgUnitHierarchy.create(hierarchy_key, **props)
@@ -1385,7 +1395,8 @@ def reconcile_scenario_orbat(scenario_json: String) -> list[OntologyEdit]:
              "primaryKey": "hier-scenario_operation_baltic_shield",
              "name":       "Operation BALTIC SHIELD — Scenario ORBAT",
              "validFrom":  "2026-09-15",
-             "validTo":    null
+             "validTo":    null,
+             "phaseKey":   "obs_phase_01"
           },
           "units": [ {"primaryKey": "...", "unitIdentifier": "...", ...} ],
           "unitHierarchyEdges": [
@@ -1394,6 +1405,10 @@ def reconcile_scenario_orbat(scenario_json: String) -> list[OntologyEdit]:
           ],
           "managedChildUnitKeys": ["..."]
         }
+
+    `unitHierarchy.phaseKey` is optional. Set it for a per-phase ORBAT
+    (hier-{scenario}--{phase}) so the hierarchy is stamped with NxgPhase.phaseId
+    in the same transaction as its units; omit it to leave the property as it is.
 
     `units` and `unitHierarchyEdges` take the same shape as
     import_ontology_orbat_from_json. Edge primary keys may be omitted; they are
@@ -1440,6 +1455,7 @@ def reconcile_scenario_orbat(scenario_json: String) -> list[OntologyEdit]:
         name_override=hierarchy_data.get("name"),
         valid_from_override=hierarchy_data.get("validFrom"),
         valid_to_override=hierarchy_data.get("validTo"),
+        phase_key=hierarchy_data.get("phaseKey"),
     )
     _upsert_units_batch(ontology_edits, units_data)
     _upsert_edges_batch(ontology_edits, edges_data, hierarchy_key)

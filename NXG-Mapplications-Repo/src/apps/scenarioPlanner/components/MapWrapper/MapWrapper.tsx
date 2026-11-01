@@ -9,9 +9,11 @@ import {
   forwardRef,
   type ChangeEvent,
   type KeyboardEvent,
+  type ReactNode,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ScenarioMap } from "../../map/ScenarioMap";
+import type { OrbatLevelFeature } from "../../map/orbatLevelLayer";
 import type { PlacedArrow, PlacedObjective } from "../../map/ScenarioMap";
 // ── Terrain-aware routing ──────────────────────────────────────────────────
 import { DEFAULT_TERRAIN, type TerrainDatasets } from "../../../../shared/routing/terrainDatasets";
@@ -79,6 +81,47 @@ interface Props {
    * shared/routing/terrainDatasets.ts.
    */
   terrain?: TerrainDatasets;
+
+  // ── Toolbar row above the map ──
+  /** Left of the toolbar: ← BRANCHES and the breadcrumb. */
+  toolbarStart?: ReactNode;
+  /** Right of the toolbar: the ORBAT level control. */
+  toolbarEnd?: ReactNode;
+
+  // ── Phase ORBAT ──
+  /** Phase ORBAT units at the selected level; null → level view off. */
+  orbatLevelNodes?: OrbatLevelFeature[] | null;
+  orbatLevelDraggable?: boolean;
+  /**
+   * Placements whose unit the level layer is drawing (by ORBAT root key). They
+   * are hidden so the same unit is never on the map twice.
+   */
+  hiddenOrbatKeys?: ReadonlySet<string>;
+  /** Plain click on a level-view unit (not while assigning an order). */
+  onOrbatNodeSelect?: (key: string) => void;
+  onOrbatNodeContext?: (key: string, client: { x: number; y: number }) => void;
+  onOrbatNodeMoved?: (key: string, lat: number, lng: number) => void;
+  onViewChange?: (zoom: number, centerLat: number) => void;
+  /** What a tree unit is, so an order can be given to it (see assignOrder). */
+  treeNodeInfo?: (key: string) => {
+    label: string;
+    sidc: string;
+    lat: number;
+    lng: number;
+    hierarchyKey: string;
+  } | null;
+  /** Right-click → Place unit… (into the phase tree). */
+  onPlaceOrbatUnitRequest?: (lat: number, lng: number) => void;
+  /** Right-click a placed unit → Auto-generate ORBAT. */
+  onAutoGenerateOrbat?: (unit: PlacedUnit) => void;
+  /** A placed unit was dragged (Units view) — move its ORBAT with it. */
+  onPlacementMoved?: (unit: PlacedUnit, lat: number, lng: number) => void;
+  /**
+   * Why this unit may not be given an order, or null. Orders follow the chain
+   * of command: blocked under a superior that has one, or over subordinates
+   * that have theirs.
+   */
+  orderGuard?: (unit: PlacedUnit) => string | null;
 }
 
 export interface MapWrapperHandle {
@@ -114,6 +157,28 @@ export interface MapWrapperHandle {
     phaseIndex: number,
   ) => void;
   deletePhaseItems: (phaseId: string) => void;
+  /**
+   * Add a placement linked to a phase ORBAT unit (Place unit dialog). Returns
+   * its id. The level layer usually draws the unit, so the placement is hidden
+   * there — it exists so orders, end state and the phase map state treat tree
+   * units like any other unit.
+   */
+  placeOrbatUnit: (
+    phaseId: string,
+    unit: {
+      label: string;
+      sidc: string;
+      templateId: string;
+      lat: number;
+      lng: number;
+      orbatRootUnitKey: string;
+      orbatHierarchyKey: string;
+    },
+  ) => string;
+  /** Move placements linked to these ORBAT units (by root key) in the selected phase. */
+  moveOrbatLinkedUnits: (moves: ReadonlyMap<string, { lat: number; lng: number }>) => void;
+  /** Remove the selected phase's placements linked to these ORBAT units (they were deleted). */
+  removeOrbatLinkedUnits: (keys: ReadonlySet<string>) => void;
 }
 
 type MapTool = "select" | "placeUnit" | "drawArrow" | "placeMilx" | "placeObjective" | "eraser" | "assignOrder";
@@ -226,6 +291,20 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
   onSelectedUnitChange,
   onUnitPlaced,
   terrain = DEFAULT_TERRAIN,
+  toolbarStart,
+  toolbarEnd,
+  orbatLevelNodes = null,
+  orbatLevelDraggable = false,
+  hiddenOrbatKeys,
+  onOrbatNodeSelect,
+  onOrbatNodeContext,
+  onOrbatNodeMoved,
+  onViewChange,
+  treeNodeInfo,
+  onPlaceOrbatUnitRequest,
+  onAutoGenerateOrbat,
+  onPlacementMoved,
+  orderGuard,
 }, ref) {
   // ── Terrain-aware router (singleton, initialised once) ──────────────────
   // The file client is shared with the App layer (which needs the same raster
@@ -387,6 +466,8 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
   // states were never written back to the ontology. Now every mutation of
   // units / arrows / objectives schedules a single debounced callback with
   // the phase's full snapshot.
+  const onPlacementMovedRef = useRef(onPlacementMoved);
+  useEffect(() => { onPlacementMovedRef.current = onPlacementMoved; }, [onPlacementMoved]);
   const onUnitPlacedRef = useRef(onUnitPlaced);
   useEffect(() => { onUnitPlacedRef.current = onUnitPlaced; }, [onUnitPlaced]);
   const onPhaseMapEditedRef = useRef(onPhaseMapEdited);
@@ -667,9 +748,65 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
         setArrows((prev) => prev.filter((a) => a.phaseId !== phaseId));
         setObjectives((prev) => prev.filter((o) => o.phaseId !== phaseId));
       },
+      placeOrbatUnit: (phaseId, unit) => {
+        const id = uuidv4();
+        const placement: PhaseUnit = {
+          id,
+          templateId: unit.templateId,
+          label: unit.label,
+          sidc: unit.sidc,
+          lat: unit.lat,
+          lng: unit.lng,
+          phaseId,
+          phaseColour: phaseColourRef.current,
+          orbatRootUnitKey: unit.orbatRootUnitKey,
+          orbatHierarchyKey: unit.orbatHierarchyKey,
+          orbatIsBasic: false,
+        };
+        setPlacedUnits((prev) => [...prev, placement]);
+        return id;
+      },
+      moveOrbatLinkedUnits: (moves) => {
+        const phaseId = selectedPhaseIdRef.current;
+        if (!phaseId || moves.size === 0) return;
+        setPlacedUnits((prev) =>
+          prev.map((u) => {
+            if (u.phaseId !== phaseId || !u.orbatRootUnitKey) return u;
+            const to = moves.get(u.orbatRootUnitKey);
+            return to ? { ...u, lat: to.lat, lng: to.lng } : u;
+          }),
+        );
+      },
+      removeOrbatLinkedUnits: (keys) => {
+        const phaseId = selectedPhaseIdRef.current;
+        if (!phaseId || keys.size === 0) return;
+        const gone = new Set(
+          placedUnitsRef.current
+            .filter((u) => u.phaseId === phaseId && u.orbatRootUnitKey && keys.has(u.orbatRootUnitKey))
+            .map((u) => u.id),
+        );
+        if (gone.size === 0) return;
+        setPlacedUnits((prev) => prev.filter((u) => !gone.has(u.id)));
+        // Orders given to a removed unit go with it.
+        setArrows((prev) => prev.filter((a) => !(a.assignedUnitId && gone.has(a.assignedUnitId))));
+      },
     }),
     [buildPhaseMapState],
   );
+
+  // ── Orders follow the chain of command ──────────────────────────────────
+  const orderGuardRef = useRef(orderGuard);
+  useEffect(() => { orderGuardRef.current = orderGuard; }, [orderGuard]);
+  const [orderBlocked, setOrderBlocked] = useState<string | null>(null);
+  const orderBlockedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashOrderBlocked = useCallback((reason: string) => {
+    setOrderBlocked(reason);
+    if (orderBlockedTimer.current) clearTimeout(orderBlockedTimer.current);
+    orderBlockedTimer.current = setTimeout(() => setOrderBlocked(null), 4500);
+  }, []);
+  useEffect(() => () => {
+    if (orderBlockedTimer.current) clearTimeout(orderBlockedTimer.current);
+  }, []);
 
   useEffect(() => {
     const handler = (e: globalThis.KeyboardEvent) => {
@@ -751,7 +888,12 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
     );
   }, [viewMode, visibleUnits, visibleArrows, visibleObjectives, phaseDurationHours]);
 
-  const mapUnits = endState ? endState.units : visibleUnits;
+  const mapUnitsAll = endState ? endState.units : visibleUnits;
+  // Units the ORBAT level layer is drawing are not drawn twice.
+  const mapUnits =
+    hiddenOrbatKeys && hiddenOrbatKeys.size > 0 && !previewActive
+      ? mapUnitsAll.filter((u) => !(u.orbatRootUnitKey && hiddenOrbatKeys.has(u.orbatRootUnitKey)))
+      : mapUnitsAll;
   const mapArrows = endState ? [] as PlacedArrow[] : visibleArrows;
   const mapObjectives = endState ? endState.objectives : visibleObjectives;
   const isResolved = viewMode === "resolved";
@@ -947,6 +1089,11 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
     if (tool === "assignOrder") {
       const style = arrowStyleRef.current;
       if (!style.tacticSidc && !style.tacticLabel) return;
+      const blocked = orderGuardRef.current?.(unit);
+      if (blocked) {
+        flashOrderBlocked(blocked);
+        return;
+      }
       const id = uuidv4();
       const colour = phaseColourRef.current;
       const isMilx = style.tacticSidc ? isMilxOrder(APP_CATALOG, style.tacticSidc) : false;
@@ -1000,7 +1147,7 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
         return;
       }
     handleUnitSelect(unit.id);
-  }, [handleUnitSelect, finishArrow]);
+  }, [handleUnitSelect, finishArrow, flashOrderBlocked]);
 
   const handleMapClick = useCallback((lat: number, lng: number) => {
     const tool = activeToolRef.current;
@@ -1120,6 +1267,8 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
       setPlacedUnits((prev) =>
         prev.map((u) => (u.id === id ? { ...u, lat, lng } : u)),
       );
+      const moved = placedUnitsRef.current.find((u) => u.id === id);
+      if (moved?.orbatRootUnitKey) onPlacementMovedRef.current?.(moved, lat, lng);
       setArrows((prev) =>
         prev.map((a) => {
           if (a.milxUnitAnchors) {
@@ -1279,6 +1428,45 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
     [previewMap, onPreviewMapEdit],
   );
 
+  // ── Level-view unit clicks ────────────────────────────────────────────────
+  // With the Assign Order tool, a tree unit is ordered through the normal
+  // placement path: reuse the hidden placement linked to it, or create one.
+  // Orders, end state and save then need no special case for tree units.
+  const handleOrbatNodeClick = useCallback(
+    (key: string) => {
+      if (activeToolRef.current !== "assignOrder") {
+        onOrbatNodeSelect?.(key);
+        return;
+      }
+      const phaseId = selectedPhaseIdRef.current;
+      if (!phaseId) return;
+      let placement = placedUnitsRef.current.find(
+        (u) => u.phaseId === phaseId && u.orbatRootUnitKey === key,
+      );
+      if (!placement) {
+        const info = treeNodeInfo?.(key);
+        if (!info) return;
+        placement = {
+          id: uuidv4(),
+          templateId: "",
+          label: info.label,
+          sidc: info.sidc,
+          lat: info.lat,
+          lng: info.lng,
+          phaseId,
+          phaseColour: phaseColourRef.current,
+          orbatRootUnitKey: key,
+          orbatHierarchyKey: info.hierarchyKey,
+        };
+        const created = placement;
+        setPlacedUnits((prev) => [...prev, created]);
+        placedUnitsRef.current = [...placedUnitsRef.current, created];
+      }
+      handleUnitClick(placement);
+    },
+    [onOrbatNodeSelect, treeNodeInfo, handleUnitClick],
+  );
+
   // ── Terrain order store (read step for onUnitClick wiring) ──────────────
   const terrainOrderStep = useOrderPlacementStore((s) => s.step);
 
@@ -1301,23 +1489,34 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
     drawHint = "Click map to place objective";
 
   return (
-    <div className={"sp-body"}>
-      {/* MapItemSidebar removed — units/drawings now placed via right-click context menu */}
-      <div className={"sp-map-fill"}>
-        <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', gap: 0, borderRadius: 4, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+    <div className={"sp-body sp-map-column"}>
+      {/* One toolbar row above the map: branches + breadcrumb · Start/End
+          state · ORBAT level. Replaces three separately floated overlays that
+          collided with each other and with the map's own banners. */}
+      <div className="mil-toolbar sp-map-toolbar">
+        {toolbarStart}
+        <span className="sp-map-toolbar__spacer" />
+        <div className="sp-map-toolbar__state" role="group" aria-label="Map state">
           <button
-            onClick={() => setViewMode('planning')}
-            style={{ padding: '4px 12px', fontSize: 12, border: 'none', cursor: 'pointer', background: viewMode === 'planning' ? 'var(--accent-primary)' : '#1a1f2e', color: '#fff' }}
+            type="button"
+            className={`mil-btn mil-btn--sm ${viewMode === "planning" ? "mil-btn--primary" : "mil-btn--default"}`}
+            onClick={() => setViewMode("planning")}
           >
             Start State
           </button>
           <button
-            onClick={() => setViewMode('resolved')}
-            style={{ padding: '4px 12px', fontSize: 12, border: 'none', cursor: 'pointer', background: viewMode === 'resolved' ? 'var(--accent-primary)' : '#1a1f2e', color: '#fff' }}
+            type="button"
+            className={`mil-btn mil-btn--sm ${viewMode === "resolved" ? "mil-btn--primary" : "mil-btn--default"}`}
+            onClick={() => setViewMode("resolved")}
           >
             End State
           </button>
         </div>
+        {toolbarEnd && <span className="mil-toolbar__separator" />}
+        {toolbarEnd}
+      </div>
+      {/* MapItemSidebar removed — units/drawings now placed via right-click context menu */}
+      <div className={"sp-map-fill"}>
         <ScenarioMap
           placedUnits={mapUnits}
           placingTemplate={isResolved ? null : (activeTool === "placeUnit" ? placingTemplate : null)}
@@ -1378,6 +1577,15 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
           phaseStartOffset={0}
           phaseEndOffset={phaseDurationHours / 24}
           onAddTerrainArrow={isResolved ? undefined : handleAddTerrainArrow}
+          onAutoGenerateOrbat={isResolved || readOnly ? undefined : onAutoGenerateOrbat}
+          canAssignOrder={(unit) => orderGuardRef.current?.(unit) ?? null}
+          onOrderBlocked={flashOrderBlocked}
+          orbatLevelNodes={isResolved || previewActive ? null : orbatLevelNodes}
+          orbatLevelDraggable={orbatLevelDraggable && !readOnly && !isResolved}
+          onOrbatNodeClick={(key) => handleOrbatNodeClick(key)}
+          onOrbatNodeContext={readOnly ? undefined : onOrbatNodeContext}
+          onOrbatNodeMoved={onOrbatNodeMoved}
+          onViewChange={onViewChange}
         />
 
         {selectedOrderArrow && orderPanelAnchor && (
@@ -1463,9 +1671,14 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
               : "No units, orders or objectives have been saved for this phase. Right-click the map to place units and drawings — changes save automatically."}
           </div>
         )}
-        {drawHint && !isResolved && (
+        {drawHint && !isResolved && !orderBlocked && (
           <div className={"sp-hint"} aria-live="polite">
             {drawHint}
+          </div>
+        )}
+        {orderBlocked && (
+          <div className={"sp-hint sp-hint--blocked"} role="alert">
+            Order not given — {orderBlocked}
           </div>
         )}
         {/* TIMELINE button — bottom-left of map, sits above the MGRS strip */}
@@ -1517,6 +1730,7 @@ export const MapWrapper = forwardRef<MapWrapperHandle, Props>(function MapWrappe
           onClose={() => setContextMenu(null)}
           onPlaceUnit={handleContextPlaceUnit}
           onPlaceDrawing={handleContextPlaceDrawing}
+          onPlaceOrbatUnit={selectedPhaseId ? onPlaceOrbatUnitRequest : undefined}
         />
 
         {pendingObjective && (

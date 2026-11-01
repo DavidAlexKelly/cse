@@ -166,3 +166,68 @@ describe("countPlacementsWithoutOrbat", () => {
     ).toBe(0);
   });
 });
+
+describe("serialiseComposition — phase ORBAT options", () => {
+  const tree = () =>
+    node("Bde", {
+      echelon: "Brigade",
+      children: [
+        node("1 Bn", { children: [node("A Coy", { echelon: "Company" })] }),
+        node("2 Bn", { quantity: 2 }),
+      ],
+    });
+
+  it("positions every unit on a ring around its parent", () => {
+    const { units } = serialiseComposition(tree(), {
+      lat: 54.7,
+      lng: 20.5,
+      layout: "ring",
+      newKey: counter(),
+    });
+    expect(units).toHaveLength(5);
+    for (const unit of units) {
+      expect(unit.latitude).not.toBeNull();
+      expect(unit.longitude).not.toBeNull();
+    }
+    // Children are spread out, not stacked on the parent.
+    const [, bn1, bn2a, bn2b] = units;
+    const spots = new Set([bn1, bn2a, bn2b].map((u) => `${u.latitude},${u.longitude}`));
+    expect(spots.size).toBe(3);
+  });
+
+  it("uses keyFor, falling back to newKey", () => {
+    const { units, rootUnitKey } = serialiseComposition(tree(), {
+      lat: 0,
+      lng: 0,
+      newKey: counter("p1--"),
+      keyFor: (_n, { isRoot }) => (isRoot ? "p1--root" : undefined),
+    });
+    expect(rootUnitKey).toBe("p1--root");
+    expect(units[1].primaryKey).toBe("p1---1");
+  });
+
+  it("can leave an existing root's row alone and only write beneath it", () => {
+    const { units, edges, rootUnitKey } = serialiseComposition(tree(), {
+      lat: 0,
+      lng: 0,
+      newKey: counter(),
+      keyFor: (_n, { isRoot }) => (isRoot ? "EXISTING" : undefined),
+      omitRootUnit: true,
+    });
+    expect(rootUnitKey).toBe("EXISTING");
+    expect(units.map((u) => u.primaryKey)).not.toContain("EXISTING");
+    expect(edges.filter((e) => e.parentUnitKey === "EXISTING")).toHaveLength(3);
+  });
+
+  it("stops at maxUnits, keeping whole levels first", () => {
+    const { units, truncated } = serialiseComposition(tree(), {
+      lat: 0,
+      lng: 0,
+      newKey: counter(),
+      maxUnits: 4,
+    });
+    expect(truncated).toBe(true);
+    // Root and all three battalions survive; the company does not.
+    expect(units.map((u) => u.unitIdentifier)).toEqual(["Bde", "1 Bn", "2 Bn 1", "2 Bn 2"]);
+  });
+});

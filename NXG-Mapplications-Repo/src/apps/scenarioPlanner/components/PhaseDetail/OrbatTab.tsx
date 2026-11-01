@@ -41,9 +41,10 @@ export interface OrbatTabProps {
    */
   onOpenScenarioOrbat?: (side: "blue" | "red") => void;
   /**
-   * Re-derive the whole scenario hierarchy and write it in one action. The
-   * reconciler runs automatically on placement and deletion; this is the
-   * explicit repair path after a failure or an edit made elsewhere.
+   * Save the phase ORBAT: make it complete and CSE-ready — clone inherited
+   * ORBATs into the phase, re-lay native ones under their placements, and
+   * reconcile parentage — in one action. (Was "Rebuild hierarchy", which
+   * re-derived one scenario-wide hierarchy; ORBATs are per phase now.)
    */
   onRebuildHierarchy?: () => void;
   /** Result of the last rebuild or bulk generation this session. */
@@ -88,11 +89,12 @@ function ScenarioOrbatLinks({
     <div className="sp-detail__section">
       <div className="sp-detail__section-header">
         <span className="sp-detail__section-icon" aria-hidden="true">⧉</span>
-        Whole-scenario ORBAT
+        Phase ORBAT
       </div>
       <p className="sp-orders-tab__end-state-hint">
-        The overall friendly and enemy ORBATs are not authored — each side hangs
-        from the most senior unit placed on it, with everything else organised
+        Each phase has its own friendly and enemy ORBAT, with every unit positioned
+        for that phase. Each side hangs from the most senior unit placed on it,
+        with everything else organised
         beneath by echelon.
       </p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -114,7 +116,7 @@ function ScenarioOrbatLinks({
           <button
             type="button"
             className="sp-btn--primary sp-btn--sm"
-            title="Write a basic ORBAT for every land unit that hasn't got one, and organise the force — a single ontology action."
+            title="Write a basic ORBAT for every land unit in this phase that hasn't got one."
             onClick={onGenerateAllOrbats}
             disabled={generateBusy}
           >
@@ -127,10 +129,10 @@ function ScenarioOrbatLinks({
           <button
             type="button"
             className="sp-btn--outline sp-btn--sm"
-            title="Re-derive the command structure from the units on the map and write it in one go."
+            title="Make this phase's ORBAT complete and CSE-ready: copy in inherited ORBATs, re-lay units under their placements, and organise the command structure — in one action."
             onClick={onRebuildHierarchy}
           >
-            ⟳ Rebuild hierarchy
+            ⟳ Save phase ORBAT
           </button>
         )}
       </div>

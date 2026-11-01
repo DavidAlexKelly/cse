@@ -27,7 +27,6 @@ import {
 import { usePhaseCatalogues } from "./hooks/usePhaseCatalogues";
 import { DEFAULT_EXERCISE, DEFAULT_SCENARIO_ID, MOCK_EXERCISE } from "./shared/phaseColours";
 import {
-  commitOrbatForPlacement,
   describeActionError,
   resolveScenarioOrbat,
   sideForSidc,
@@ -37,21 +36,57 @@ import {
   takeOrbatDefinitionResult,
 } from "../../shared/orbat/defineHandoff";
 import { useUnitOrbat } from "./hooks/useUnitOrbat";
-import { buildOrbatSkeleton, countNodes } from "../../shared/orbat/skeleton";
+import {
+  buildOrbatSkeleton,
+  countNodes,
+  echelonForPlacedUnit,
+} from "../../shared/orbat/skeleton";
 import {
   isOrbatEligible,
   orbatIneligibleReason,
 } from "../../shared/orbat/eligibility";
+import { sideRootKeys } from "../../shared/orbat/reconcile";
+import { echelonRank } from "../../shared/orbat/hierarchy";
 import {
-  createDebouncedReconciler,
-  reconcileScenarioHierarchy,
-  sideRootKeys,
-} from "../../shared/orbat/reconcile";
-import { desiredParentage, membersForScenario } from "../../shared/orbat/hierarchy";
+  type PositionMap,
+  ancestorsOf,
+  descendantsOf,
+  dominantEchelonAt,
+  effectivePosition,
+  frontierAt,
+  indexForest,
+  translateSubtree,
+} from "../../shared/orbat/orbatLevels";
 import {
-  countPlacementsWithoutOrbat,
-  generateOrbatsForPlacements,
-} from "../../shared/orbat/generate";
+  isNativeToPhase,
+  partitionPhasePlacements,
+  phaseHierarchyKey,
+} from "../../shared/orbat/phaseKeys";
+import {
+  type PhaseTarget,
+  autoGeneratePhaseOrbat,
+  changeParentInPhase,
+  createDebouncedPhaseReconciler,
+  generateBeneathNode,
+  loadPhaseForest,
+  moveOrbatUnits,
+  placeUnitInPhase,
+  removeSubtreeInPhase,
+  savePhaseOrbat,
+} from "../../shared/orbat/phaseOrbat";
+import { parentCandidates } from "../../shared/orbat/placeIntoOrbat";
+import { autoLevelForZoom } from "../../shared/orbat/ringLayout";
+import { usePhaseOrbat } from "./hooks/usePhaseOrbat";
+import type { OrbatLevelFeature } from "./map/orbatLevelLayer";
+import {
+  OrbatLevelControl,
+  type OrbatLevelMode,
+} from "./components/OrbatLevelControl/OrbatLevelControl";
+import {
+  PlaceUnitDialog,
+  type PlaceUnitChoice,
+} from "./components/PlaceUnitDialog/PlaceUnitDialog";
+import { OrbatNodeMenu } from "./components/OrbatNodeMenu/OrbatNodeMenu";
 import type { PlacedUnit as PlacedUnitType } from "./map/types";
 import { resolveDocSidc } from "./shared/docSidc";
 // Composition-tab / phase-sync services (DJ-Slate perf pass): parallel
@@ -304,6 +339,22 @@ async function pushPhaseObjectSet(
     console.warn("[ScenarioPlanWidget] Could not create temp object-set RID:", err);
     phaseField?.setFailedWithError?.("Failed to resolve phase object set");
   }
+}
+
+/** A phase map-state unit as the ORBAT code sees a placement. */
+function toPlacedUnit(u: MapUnitPlacement): PlacedUnitType {
+  return {
+    id: u.id,
+    templateId: u.templateId ?? "",
+    label: u.label,
+    sidc: u.sidc,
+    lat: u.lat,
+    lng: u.lng,
+    orbatRootUnitKey: u.orbatRootUnitKey,
+    orbatHierarchyKey: u.orbatHierarchyKey,
+    orbatIsBasic: u.orbatIsBasic,
+    orbatParentUnitKey: u.orbatParentUnitKey,
+  };
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -666,91 +717,153 @@ export default function ScenarioPlanWidget() {
     }
   }, [phaseMapData, phases, terrainRaster]);
 
-  // ── Scenario ORBAT hierarchy ──────────────────────────────────────────────
-  // Where each placed unit sits in the force is DERIVED from the set of placed
-  // units (shared/orbat/hierarchy.ts) and reconciled in one action, rather than
-  // decided by whichever write happens to run first. Placing a brigade after
-  // three battalions therefore re-parents the battalions instead of leaving
-  // them orphaned under a stale root.
+  // ── Phase ORBAT ───────────────────────────────────────────────────────────
+  // Each phase owns its ORBAT: hier-{scenario}--{phase}, with its own copies of
+  // its units, each positioned for that phase (CSE spawns from NxgUnit
+  // lat/lng). See shared/orbat/phaseKeys.ts and docs/PHASE_ORBAT_PLAN.md. The
+  // phase ORBAT is the source of truth for what the level view draws.
 
-  /**
-   * Every placement in the scenario, across all phases.
-   *
-   * The reconciler works per scenario, not per phase: a unit exists once in the
-   * force even though it appears in each phase it is present for. Duplicate
-   * appearances collapse in membersForScenario, keyed on the ORBAT root.
-   */
+  const scenarioIdForOrbat = scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID;
+  const phaseTarget: PhaseTarget | null = useMemo(
+    () =>
+      selectedPhase
+        ? {
+            scenarioId: scenarioIdForOrbat,
+            scenarioName: exercise.exerciseName,
+            phaseId: selectedPhase.id,
+            phaseName: selectedPhase.name,
+          }
+        : null,
+    [scenarioIdForOrbat, exercise.exerciseName, selectedPhase],
+  );
+  const phaseHierKey = phaseTarget
+    ? phaseHierarchyKey(phaseTarget.scenarioId, phaseTarget.phaseId)
+    : null;
+  const phaseOrbat = usePhaseOrbat(
+    viewingBranchLeaf ? phaseHierKey : null,
+    phaseTarget?.phaseId ?? null,
+  );
+  const orbatIndex = phaseOrbat.index;
+  const hasPhaseOrbat = !!orbatIndex && orbatIndex.nodes.size > 0;
+  const { reload: reloadPhaseOrbat, applyMoves, revertMoves } = phaseOrbat;
+
+  // Refs for callbacks fired from the map, which must see the latest values.
+  const orbatIndexRef = useRef(orbatIndex);
+  orbatIndexRef.current = orbatIndex;
+  const phaseTargetRef = useRef(phaseTarget);
+  phaseTargetRef.current = phaseTarget;
+
+  /** One status line for every phase ORBAT action — also shown in the ORBAT tab. */
+  const [orbatStatus, setOrbatStatus] = useState<{ text: string; error?: boolean } | null>(null);
+  const reportOrbat = useCallback((text: string, error = false) => {
+    setOrbatStatus({ text, error });
+  }, []);
+  useEffect(() => {
+    if (!orbatStatus) return;
+    const t = setTimeout(() => setOrbatStatus(null), orbatStatus.error ? 15000 : 8000);
+    return () => clearTimeout(t);
+  }, [orbatStatus]);
+  const reconcileStatus = orbatStatus?.text ?? null;
+
+  /** The selected phase's placements, from the map. */
+  const phasePlacements = useCallback((): PlacedUnitType[] => {
+    if (!selectedPhaseId) return [];
+    return (mapWrapperRef.current?.readPhaseMapState(selectedPhaseId)?.units ?? []).map(
+      toPlacedUnit,
+    );
+  }, [selectedPhaseId]);
+
+  /** Every placement in the scenario — only the legacy scenario-wide links still use this. */
   const collectScenarioPlacements = useCallback((): PlacedUnitType[] => {
     const handle = mapWrapperRef.current;
     if (!handle) return [];
     return phaseIds.flatMap((phaseId) =>
-      (handle.readPhaseMapState(phaseId)?.units ?? []).map((u) => ({
-        id: u.id,
-        templateId: u.templateId ?? "",
-        label: u.label,
-        sidc: u.sidc,
-        lat: u.lat,
-        lng: u.lng,
-        orbatRootUnitKey: u.orbatRootUnitKey,
-        orbatHierarchyKey: u.orbatHierarchyKey,
-        orbatIsBasic: u.orbatIsBasic,
-      })) as PlacedUnitType[],
+      (handle.readPhaseMapState(phaseId)?.units ?? []).map(toPlacedUnit),
     );
   }, [phaseIds]);
 
-  const reconcilerRef = useRef(createDebouncedReconciler());
+  // ── Level view ────────────────────────────────────────────────────────────
+  const [levelMode, setLevelMode] = useState<OrbatLevelMode>({ kind: "auto" });
+  const [mapView, setMapView] = useState({ zoom: 8, lat: 54.7 });
+  const handleViewChange = useCallback((zoom: number, lat: number) => {
+    setMapView((prev) => (prev.zoom === zoom && prev.lat === lat ? prev : { zoom, lat }));
+  }, []);
+  const autoLevel = orbatIndex
+    ? autoLevelForZoom(mapView.zoom, mapView.lat, Math.max(0, orbatIndex.maxDepth))
+    : 0;
+  const activeLevel =
+    !hasPhaseOrbat || levelMode.kind === "units"
+      ? null
+      : levelMode.kind === "auto"
+        ? autoLevel
+        : Math.min(levelMode.level, orbatIndex!.maxDepth);
+  const [selectedOrbatKey, setSelectedOrbatKey] = useState<string | null>(null);
+  /** Bumped to make the layer redraw from the index (e.g. after a refused drag). */
+  const [layerVersion, setLayerVersion] = useState(0);
+
+  const orbatLevelNodes = useMemo((): OrbatLevelFeature[] | null => {
+    void layerVersion;
+    if (activeLevel === null || !orbatIndex) return null;
+    const out: OrbatLevelFeature[] = [];
+    for (const node of frontierAt(orbatIndex, activeLevel)) {
+      const pos = effectivePosition(orbatIndex, node.key);
+      if (!pos) continue;
+      out.push({
+        key: node.key,
+        label: node.label,
+        sidc: node.sidc,
+        lat: pos.lat,
+        lng: pos.lng,
+        selected: node.key === selectedOrbatKey,
+      });
+    }
+    return out;
+  }, [activeLevel, orbatIndex, selectedOrbatKey, layerVersion]);
+
+  // While the level view is on, the tree is what is drawn: a placement whose
+  // unit is in the tree (and drawable) is hidden, so nothing appears twice.
+  const hiddenOrbatKeys = useMemo(() => {
+    if (!orbatLevelNodes || !orbatIndex) return undefined;
+    const keys = new Set<string>();
+    for (const key of orbatIndex.nodes.keys()) {
+      if (effectivePosition(orbatIndex, key)) keys.add(key);
+    }
+    return keys;
+  }, [orbatLevelNodes, orbatIndex]);
+
+  const levelInfos = useMemo(
+    () =>
+      orbatIndex && hasPhaseOrbat
+        ? orbatIndex.levels.map((_, level) => ({
+            level,
+            count: frontierAt(orbatIndex, level).length,
+            echelon: dominantEchelonAt(orbatIndex, level),
+          }))
+        : [],
+    [orbatIndex, hasPhaseOrbat],
+  );
+
+  // ── Parentage reconcile after map edits (phase-scoped, debounced) ────────
+  const phaseReconcilerRef = useRef(createDebouncedPhaseReconciler());
   useEffect(() => {
-    const reconciler = reconcilerRef.current;
+    const reconciler = phaseReconcilerRef.current;
     return () => reconciler.cancel();
   }, []);
 
-  const scheduleReconcile = useCallback(() => {
-    if (readOnly) return;
-    reconcilerRef.current.schedule({
-      scenarioId: scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
-      scenarioName: exercise.exerciseName,
-      placements: collectScenarioPlacements(),
-    });
-  }, [readOnly, scenarioMeta?.scenarioId, exercise.exerciseName, collectScenarioPlacements]);
-
-  /** Result of the last manual rebuild, shown in the ORBAT tab. */
-  const [reconcileStatus, setReconcileStatus] = useState<string | null>(null);
-
-  /**
-   * "Rebuild hierarchy" — reconcile now, ignoring the unchanged-payload check.
-   * The reconciler is idempotent, so this is also the repair path after a
-   * failed run or an edit made somewhere else.
-   */
-  const handleRebuildHierarchy = useCallback(async () => {
-    setReconcileStatus("Rebuilding…");
-    const outcome = await reconcileScenarioHierarchy({
-      scenarioId: scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
-      scenarioName: exercise.exerciseName,
-      placements: collectScenarioPlacements(),
-      force: true,
-    });
-    switch (outcome.status) {
-      case "applied":
-        setReconcileStatus(
-          `Hierarchy rebuilt — ${outcome.units} unit${outcome.units === 1 ? "" : "s"}, ` +
-            `${outcome.edges} command link${outcome.edges === 1 ? "" : "s"}.`,
-        );
-        break;
-      case "unchanged":
-        setReconcileStatus("Hierarchy is already up to date.");
-        break;
-      case "skipped":
-        setReconcileStatus(
-          outcome.reason === "pinned"
-            ? "This scenario uses a hand-built ORBAT, which is left as authored."
-            : "No units with an ORBAT to organise yet.",
-        );
-        break;
-      case "failed":
-        setReconcileStatus(`Could not rebuild the hierarchy. ${outcome.detail}`);
-        break;
-    }
-  }, [scenarioMeta?.scenarioId, exercise.exerciseName, collectScenarioPlacements]);
+  const schedulePhaseReconcile = useCallback(
+    (phaseId: string, state: MapPhaseState) => {
+      if (readOnly) return;
+      const target = phaseTargetRef.current;
+      const index = orbatIndexRef.current;
+      if (!target || target.phaseId !== phaseId || !index) return;
+      phaseReconcilerRef.current.schedule({
+        target,
+        index,
+        placements: state.units.map(toPlacedUnit),
+      });
+    },
+    [readOnly],
+  );
 
   // ── Persist map edits back to [NXG-P] Phase Map State ─────────────────────
   // MapWrapper debounces this callback, so one write lands per burst of edits.
@@ -767,21 +880,32 @@ export default function ScenarioPlanWidget() {
           err,
         );
       });
-      // Covers placement, deletion and phase inheritance in one place. The
-      // reconciler debounces and skips an unchanged payload, so a drag that
-      // moves a unit without changing the force costs nothing.
-      scheduleReconcile();
+      // Placement, deletion and inheritance in one place. The reconciler only
+      // touches units native to the phase that are currently roots, debounces,
+      // and skips an unchanged payload.
+      schedulePhaseReconcile(phaseId, state);
     },
-    [saveStartState, scheduleReconcile],
+    [saveStartState, schedulePhaseReconcile],
   );
   handlePhaseMapEditedRef.current = handlePhaseMapEdited;
+
+  /** Persist a phase's map state on the next tick, once a setState has landed. */
+  const persistPhaseSoon = useCallback(
+    (phaseId: string) => {
+      setTimeout(() => {
+        const snapshot = mapWrapperRef.current?.readPhaseMapState(phaseId);
+        if (snapshot) handlePhaseMapEdited(phaseId, snapshot);
+      }, 0);
+    },
+    [handlePhaseMapEdited],
+  );
 
   // ── Define ORBAT for a placed unit ────────────────────────────────────────
   // NOTHING is written to the ontology here. "Define ORBAT" hands the
   // placement to the ORBAT screen, which seeds a DRAFT from the unit's type;
   // the graph is created only when the planner confirms it there, and this app
   // then links the placement (clearing the red "!").
-  const [orbatBusyUnitId] = useState<string | null>(null);
+  const [orbatBusyUnitId, setOrbatBusyUnitId] = useState<string | null>(null);
   /** Last ORBAT creation failure, shown in the ORBAT tab. */
   const [orbatError, setOrbatError] = useState<string | null>(null);
   /** Unit currently selected on the map — drives the ORBAT tab. */
@@ -791,77 +915,10 @@ export default function ScenarioPlanWidget() {
     selectedMapUnit?.orbatRootUnitKey,
   );
 
-  // ── Basic ORBAT on placement ──────────────────────────────────────────────
-  // Dropping a unit writes its BASIC ORBAT (two levels, derived from the unit
-  // type) straight into the scenario's side hierarchy, so the force exists in
-  // the ontology without the planner defining each unit by hand. The placement
-  // is flagged orbatIsBasic, which is what the yellow triangle reports; the
-  // planner can refine it later via Define ORBAT, and saving clears the flag.
-  const basicOrbatInFlightRef = useRef<Set<string>>(new Set());
-
-  const handleUnitPlaced = useCallback(
-    async (unit: PlacedUnitType) => {
-      if (readOnly) return;
-      if (unit.orbatRootUnitKey) return;                       // already has one
-      // Land only for now — a destroyer or a satellite gets no ORBAT at all
-      // (see shared/orbat/eligibility.ts).
-      if (!isOrbatEligible(unit)) {
-        console.log(
-          `[ScenarioPlanWidget] no ORBAT for "${unit.label}" — ${orbatIneligibleReason(unit)}`,
-        );
-        return;
-      }
-      if (basicOrbatInFlightRef.current.has(unit.id)) return;  // double-fire guard
-      basicOrbatInFlightRef.current.add(unit.id);
-
-      try {
-        const result = await commitOrbatForPlacement({
-          scenarioId: scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
-          scenarioName: exercise.exerciseName,
-          root: buildOrbatSkeleton(unit, { depth: 2 }),
-          side: sideForSidc(unit.sidc),
-          lat: unit.lat,
-          lng: unit.lng,
-          unitLabel: unit.label,
-        });
-
-        mapWrapperRef.current?.setUnitOrbat(unit.id, {
-          orbatRootUnitKey: result.rootUnitKey,
-          orbatHierarchyKey: result.hierarchyKey,
-          orbatIsBasic: true,
-        });
-        setSelectedMapUnit((prev) =>
-          prev && prev.id === unit.id
-            ? {
-                ...prev,
-                orbatRootUnitKey: result.rootUnitKey,
-                orbatHierarchyKey: result.hierarchyKey,
-                orbatIsBasic: true,
-              }
-            : prev,
-        );
-        console.log(
-          `[ScenarioPlanWidget] basic ORBAT created for "${unit.label}" — ` +
-            `${result.unitsCreated} units in ${result.hierarchyKey}`,
-        );
-        // The unit now has a key, so it can take part in the hierarchy. This
-        // is what re-parents everything else if it outranks them.
-        scheduleReconcile();
-      } catch (err) {
-        // Non-fatal: the unit stays on the map, keeps its badge, and can be
-        // given an ORBAT explicitly via Define ORBAT.
-        const detail = err instanceof Error ? err.message : describeActionError(err);
-        console.warn(`[ScenarioPlanWidget] basic ORBAT for "${unit.label}" failed:`, detail);
-        setOrbatError(`Could not create the basic ORBAT for "${unit.label}". ${detail}`);
-      } finally {
-        basicOrbatInFlightRef.current.delete(unit.id);
-      }
-    },
-    [readOnly, scenarioMeta?.scenarioId, exercise.exerciseName, scheduleReconcile],
-  );
-
-  // Units placed before this feature (or whose write failed) have no ORBAT at
-  // all — show the generated tree so the panel is still useful.
+  // Placing a unit no longer writes a basic ORBAT behind the planner's back:
+  // a phase ORBAT is built deliberately — Place unit (with or without
+  // "Generate ORBAT beneath"), right-click → Auto-generate ORBAT, or Generate
+  // missing ORBATs. Until then the panel previews the basic one.
   const basicOrbat = useMemo(() => {
     if (!selectedMapUnit || selectedMapUnit.orbatRootUnitKey) return null;
     if (!isOrbatEligible(selectedMapUnit)) return null;
@@ -875,141 +932,447 @@ export default function ScenarioPlanWidget() {
     [selectedMapUnit],
   );
 
-  // ── Generate ORBATs for the whole force ───────────────────────────────────
-  // One action writes every missing ORBAT and the command structure over them.
-  // Doing it per object was ~400 round trips for BALTIC SHIELD's 15 land units
-  // with no transaction; this either lands completely or not at all.
-  const [generateBusy, setGenerateBusy] = useState(false);
+  // ── Place unit (into the phase tree) ──────────────────────────────────────
+  const [placeDialog, setPlaceDialog] = useState<{ lat: number; lng: number } | null>(null);
+  const [placeBusy, setPlaceBusy] = useState(false);
+  const [placeError, setPlaceError] = useState<string | null>(null);
+  const lastPlacedSideRef = useRef<"friend" | "hostile">("friend");
 
-  const missingOrbatCount = useMemo(
-    () => countPlacementsWithoutOrbat(collectScenarioPlacements()),
-    // See the note on scenarioMembers: the ref isn't reactive, so we recompute
-    // when the observable state around it changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [collectScenarioPlacements, phaseMapData, selectedMapUnit, reconcileStatus],
+  const openPlaceDialog = useCallback((lat: number, lng: number) => {
+    setPlaceError(null);
+    setPlaceDialog({ lat, lng });
+  }, []);
+
+  const handlePlaceOrbatUnit = useCallback(
+    async (choice: PlaceUnitChoice) => {
+      const target = phaseTargetRef.current;
+      if (!placeDialog || !target) return;
+      setPlaceBusy(true);
+      setPlaceError(null);
+      try {
+        const index = orbatIndexRef.current ?? indexForest([]);
+        const result = await placeUnitInPhase(target, index, {
+          spec: { label: choice.label, sidc: choice.sidc, templateId: choice.templateId },
+          lat: placeDialog.lat,
+          lng: placeDialog.lng,
+          generateBeneath: choice.generateBeneath,
+        });
+        lastPlacedSideRef.current = choice.sidc[1] === "H" ? "hostile" : "friend";
+        // A linked placement, so orders and end state work on it like any unit.
+        mapWrapperRef.current?.placeOrbatUnit(target.phaseId, {
+          label: choice.label,
+          sidc: choice.sidc,
+          templateId: choice.templateId,
+          lat: placeDialog.lat,
+          lng: placeDialog.lng,
+          orbatRootUnitKey: result.rootUnitKey,
+          orbatHierarchyKey: result.hierarchyKey,
+        });
+        await reloadPhaseOrbat();
+        setLevelMode({ kind: "level", level: result.level });
+        setSelectedOrbatKey(result.rootUnitKey);
+        setPlaceDialog(null);
+        const parentLabel = result.parentKey
+          ? index.nodes.get(result.parentKey)?.label ?? "its superior"
+          : null;
+        reportOrbat(
+          `Placed "${choice.label}" ${parentLabel ? `under "${parentLabel}"` : "as a top-level unit"}` +
+            (result.adopted.length > 0
+              ? `, taking command of ${result.adopted.length} unit${result.adopted.length === 1 ? "" : "s"}`
+              : "") +
+            (choice.generateBeneath
+              ? ` — ${result.unitCount} units` +
+                (result.truncated ? ` (stopped at the ${result.cap}-unit cap for its echelon)` : "")
+              : "") +
+            ".",
+        );
+      } catch (err) {
+        setPlaceError(err instanceof Error ? err.message : describeActionError(err));
+      } finally {
+        setPlaceBusy(false);
+      }
+    },
+    [placeDialog, reloadPhaseOrbat, reportOrbat],
   );
 
-  const handleGenerateAllOrbats = useCallback(async () => {
-    if (generateBusy) return;
-    setGenerateBusy(true);
-    setReconcileStatus("Generating ORBATs…");
-    try {
-      const outcome = await generateOrbatsForPlacements({
-        scenarioId: scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
-        scenarioName: exercise.exerciseName,
-        placements: collectScenarioPlacements(),
-      });
-
-      if (outcome.status === "failed") {
-        setReconcileStatus(`Could not generate ORBATs. ${outcome.detail}`);
-        return;
+  // ── Moves ─────────────────────────────────────────────────────────────────
+  /** Persist moves of native units; on failure, undo them everywhere. */
+  const commitOrbatMoves = useCallback(
+    async (moves: PositionMap, previous: PositionMap, what: string) => {
+      applyMoves(moves);
+      mapWrapperRef.current?.moveOrbatLinkedUnits(moves);
+      try {
+        await moveOrbatUnits(moves);
+      } catch (err) {
+        revertMoves(moves.keys());
+        mapWrapperRef.current?.moveOrbatLinkedUnits(previous);
+        reportOrbat(
+          `Could not move ${what} — it has been put back. ${err instanceof Error ? err.message : describeActionError(err)}`,
+          true,
+        );
       }
-      if (outcome.status === "skipped") {
-        setReconcileStatus(
-          outcome.reason === "pinned"
-            ? "This scenario uses a hand-built ORBAT, which is left as authored."
-            : "Every land unit already has an ORBAT.",
+    },
+    [applyMoves, revertMoves, reportOrbat],
+  );
+
+  /** Level view: a dragged unit takes its whole subtree with it. */
+  const handleOrbatNodeMoved = useCallback(
+    (key: string, lat: number, lng: number) => {
+      const index = orbatIndexRef.current;
+      const target = phaseTargetRef.current;
+      if (!index || !target) return;
+      if (!isNativeToPhase(key, target.phaseId)) {
+        setLayerVersion((v) => v + 1);
+        reportOrbat(
+          "That unit's ORBAT belongs to another phase. Save this phase's ORBAT first, then move it.",
+          true,
         );
         return;
       }
-
-      // Link each generated ORBAT to every phase the unit appears in.
-      const handle = mapWrapperRef.current;
-      for (const item of outcome.generated) {
-        for (const placementId of item.placementIds) {
-          handle?.setUnitOrbat(placementId, {
-            orbatRootUnitKey: item.rootUnitKey,
-            orbatHierarchyKey: outcome.hierarchyKey,
-            orbatIsBasic: true,
-          });
-        }
+      const moves = translateSubtree(index, key, { lat, lng });
+      const previous: PositionMap = new Map();
+      for (const k of moves.keys()) {
+        const p = effectivePosition(index, k);
+        if (p) previous.set(k, p);
       }
-      setSelectedMapUnit((prev) => {
-        if (!prev) return prev;
-        const match = outcome.generated.find((g) => g.placementIds.includes(prev.id));
-        return match
-          ? {
-              ...prev,
-              orbatRootUnitKey: match.rootUnitKey,
-              orbatHierarchyKey: outcome.hierarchyKey,
-              orbatIsBasic: true,
-            }
-          : prev;
+      void commitOrbatMoves(moves, previous, `"${index.nodes.get(key)?.label ?? "unit"}"`);
+    },
+    [commitOrbatMoves, reportOrbat],
+  );
+
+  /** Units view: dragging a placed unit with a native ORBAT moves its tree too. */
+  const handlePlacementMoved = useCallback(
+    (unit: PlacedUnitType, lat: number, lng: number) => {
+      const index = orbatIndexRef.current;
+      const target = phaseTargetRef.current;
+      const key = unit.orbatRootUnitKey;
+      if (!index || !target || !key || !index.nodes.has(key)) return;
+      if (!isNativeToPhase(key, target.phaseId)) return;
+      const moves = translateSubtree(index, key, { lat, lng });
+      const previous: PositionMap = new Map();
+      for (const k of moves.keys()) {
+        const p = effectivePosition(index, k);
+        if (p) previous.set(k, p);
+      }
+      applyMoves(moves);
+      moveOrbatUnits(moves).catch((err) => {
+        revertMoves(moves.keys());
+        reportOrbat(
+          `Could not move "${unit.label}"'s ORBAT. ${err instanceof Error ? err.message : describeActionError(err)}`,
+          true,
+        );
       });
+    },
+    [applyMoves, revertMoves, reportOrbat],
+  );
 
-      // Persist the links on the next tick, once the map state carries them.
-      setTimeout(() => {
-        for (const phaseId of phaseIds) {
-          const snapshot = mapWrapperRef.current?.readPhaseMapState(phaseId);
-          if (snapshot) handlePhaseMapEdited(phaseId, snapshot);
+  // ── Orders follow the chain of command ────────────────────────────────────
+  const orderGuard = useCallback(
+    (unit: PlacedUnitType): string | null => {
+      const index = orbatIndexRef.current;
+      const key = unit.orbatRootUnitKey;
+      if (!index || !key || !index.nodes.has(key) || !selectedPhaseId) return null;
+      const state = mapWrapperRef.current?.readPhaseMapState(selectedPhaseId);
+      if (!state) return null;
+      const keyOfPlacement = new Map(state.units.map((u) => [u.id, u.orbatRootUnitKey]));
+      const ordered = new Set<string>();
+      for (const arrow of state.arrows) {
+        if (!arrow.assignedUnitId) continue;
+        const k = keyOfPlacement.get(arrow.assignedUnitId);
+        if (k && k !== key) ordered.add(k);
+      }
+      const superior = ancestorsOf(index, key).find((k) => ordered.has(k));
+      if (superior) {
+        return `"${unit.label}" inherits the order on "${index.nodes.get(superior)?.label ?? superior}".`;
+      }
+      const subordinates = descendantsOf(index, key).filter((k) => ordered.has(k));
+      if (subordinates.length > 0) {
+        return (
+          `${subordinates.length} of "${unit.label}"'s subordinate${subordinates.length === 1 ? " has an order" : "s have orders"}` +
+          " — remove theirs first."
+        );
+      }
+      return null;
+    },
+    [selectedPhaseId],
+  );
+
+  // ── Level-view right-click menu ───────────────────────────────────────────
+  const [nodeMenu, setNodeMenu] = useState<{ key: string; client: { x: number; y: number } } | null>(
+    null,
+  );
+  const [nodeBusy, setNodeBusy] = useState(false);
+
+  const runOrbatAction = useCallback(
+    async (failurePrefix: string, action: () => Promise<string>) => {
+      setNodeBusy(true);
+      try {
+        const message = await action();
+        await reloadPhaseOrbat();
+        reportOrbat(message);
+      } catch (err) {
+        reportOrbat(
+          `${failurePrefix} ${err instanceof Error ? err.message : describeActionError(err)}`,
+          true,
+        );
+      } finally {
+        setNodeBusy(false);
+      }
+    },
+    [reloadPhaseOrbat, reportOrbat],
+  );
+
+  const capNote = (r: { truncated: boolean; cap: number }) =>
+    r.truncated ? ` (stopped at the ${r.cap}-unit cap for its echelon)` : "";
+
+  /** Re-parent in the phase tree, and keep the placement's override in step. */
+  const changeOrbatParent = useCallback(
+    (key: string, parentKey: string | null) => {
+      const target = phaseTargetRef.current;
+      const index = orbatIndexRef.current;
+      if (!target || !index) return;
+      const label = index.nodes.get(key)?.label ?? "Unit";
+      void runOrbatAction("Could not change the parent.", async () => {
+        if (!isNativeToPhase(key, target.phaseId)) {
+          throw new Error("That unit belongs to another phase — save this phase's ORBAT first.");
         }
-      }, 0);
+        await changeParentInPhase(target, index, key, parentKey);
+        // A planner override on the placement would otherwise be re-applied
+        // by the reconciler over the choice just made.
+        const placement = phasePlacements().find((u) => u.orbatRootUnitKey === key);
+        if (placement) {
+          mapWrapperRef.current?.setUnitParent(placement.id, parentKey);
+          persistPhaseSoon(target.phaseId);
+        }
+        return parentKey
+          ? `"${label}" now reports to "${index.nodes.get(parentKey)?.label ?? parentKey}".`
+          : `"${label}" is now a top-level unit.`;
+      });
+    },
+    [runOrbatAction, phasePlacements, persistPhaseSoon],
+  );
 
-      setReconcileStatus(
-        `Generated ${outcome.generated.length} ORBAT${outcome.generated.length === 1 ? "" : "s"} — ` +
-          `${outcome.units} units and ${outcome.edges} command links in one action.`,
+  // ── Auto-generate (placed unit) and Generate missing (whole phase) ────────
+  const handleAutoGenerateOrbat = useCallback(
+    (unit: PlacedUnitType) => {
+      const target = phaseTargetRef.current;
+      if (!target) return;
+      setOrbatBusyUnitId(unit.id);
+      reportOrbat(`Generating an ORBAT for "${unit.label}"…`);
+      void runOrbatAction(`Could not generate an ORBAT for "${unit.label}".`, async () => {
+        try {
+          const index = orbatIndexRef.current ?? indexForest([]);
+          const key = unit.orbatRootUnitKey;
+          if (key && isNativeToPhase(key, target.phaseId) && index.nodes.has(key)) {
+            if ((index.childrenOf.get(key)?.length ?? 0) > 0) {
+              throw new Error("It already has an ORBAT in this phase.");
+            }
+            const r = await generateBeneathNode(target, index, key);
+            return `Generated ${r.unitCount} units beneath "${unit.label}"${capNote(r)}.`;
+          }
+          const r = await autoGeneratePhaseOrbat(target, index, unit);
+          mapWrapperRef.current?.setUnitOrbat(unit.id, {
+            orbatRootUnitKey: r.rootUnitKey,
+            orbatHierarchyKey: r.hierarchyKey,
+            orbatIsBasic: false,
+          });
+          setSelectedMapUnit((prev) =>
+            prev && prev.id === unit.id
+              ? { ...prev, orbatRootUnitKey: r.rootUnitKey, orbatHierarchyKey: r.hierarchyKey, orbatIsBasic: false }
+              : prev,
+          );
+          persistPhaseSoon(target.phaseId);
+          return `Generated an ORBAT for "${unit.label}" — ${r.unitCount} units${capNote(r)}.`;
+        } finally {
+          setOrbatBusyUnitId(null);
+        }
+      });
+    },
+    [runOrbatAction, persistPhaseSoon, reportOrbat],
+  );
+
+  const [generateBusy, setGenerateBusy] = useState(false);
+
+  const missingOrbatCount = useMemo(
+    () =>
+      selectedPhaseId
+        ? partitionPhasePlacements(phasePlacements(), selectedPhaseId).missing.length
+        : 0,
+    // phasePlacements reads a ref, which isn't reactive; these are the
+    // observable proxies for "the map changed".
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [phasePlacements, phaseMapData, selectedMapUnit, orbatStatus, selectedPhaseId],
+  );
+
+  /**
+   * Basic (two-level) ORBAT for every land placement in this phase without
+   * one. Senior units first, so each lands under the right parent and adopts
+   * whatever is already near it.
+   */
+  const handleGenerateAllOrbats = useCallback(async () => {
+    const target = phaseTargetRef.current;
+    if (generateBusy || !target || !phaseHierKey) return;
+    const { missing } = partitionPhasePlacements(phasePlacements(), target.phaseId);
+    if (missing.length === 0) {
+      reportOrbat("Every land unit in this phase already has an ORBAT.");
+      return;
+    }
+    missing.sort(
+      (a, b) => echelonRank(echelonForPlacedUnit(b)) - echelonRank(echelonForPlacedUnit(a)),
+    );
+    setGenerateBusy(true);
+    let done = 0;
+    let units = 0;
+    try {
+      let index = orbatIndexRef.current ?? indexForest([]);
+      for (const placement of missing) {
+        reportOrbat(`Generating ORBATs… ${done + 1} of ${missing.length}`);
+        const r = await placeUnitInPhase(target, index, {
+          spec: { label: placement.label, sidc: placement.sidc, templateId: placement.templateId },
+          lat: placement.lat,
+          lng: placement.lng,
+          generateBeneath: true,
+          depth: 2,
+        });
+        mapWrapperRef.current?.setUnitOrbat(placement.id, {
+          orbatRootUnitKey: r.rootUnitKey,
+          orbatHierarchyKey: r.hierarchyKey,
+          orbatIsBasic: true,
+        });
+        done++;
+        units += r.unitCount;
+        // The next placement is parented against the tree as it now stands.
+        index = indexForest((await loadPhaseForest(r.hierarchyKey, target.phaseId)).nodes);
+      }
+      reportOrbat(`Generated ${done} ORBAT${done === 1 ? "" : "s"} — ${units} units in this phase.`);
+    } catch (err) {
+      reportOrbat(
+        `Generated ${done} of ${missing.length} ORBATs, then failed: ${err instanceof Error ? err.message : describeActionError(err)}`,
+        true,
       );
     } finally {
+      persistPhaseSoon(target.phaseId);
+      await reloadPhaseOrbat();
       setGenerateBusy(false);
     }
-  }, [
-    generateBusy,
-    scenarioMeta?.scenarioId,
-    exercise.exerciseName,
-    collectScenarioPlacements,
-    phaseIds,
-    handlePhaseMapEdited,
-  ]);
+  }, [generateBusy, phaseHierKey, phasePlacements, persistPhaseSoon, reloadPhaseOrbat, reportOrbat]);
 
-  // ── Parent override for the selected unit ─────────────────────────────────
-  // Echelon ranking is a good default and a poor authority: it puts BASTION-P
-  // under the EW battalion in BALTIC SHIELD because that is the only enemy
-  // unit between a battery and brigade level. One click fixes it, and the
-  // choice is persisted with the placement so a rebuild doesn't undo it.
-  const scenarioMembers = useMemo(
-    () => membersForScenario(collectScenarioPlacements()),
-    // phaseMapData / selection changes are the observable proxy for "the map
-    // changed" — collectScenarioPlacements reads a ref, which isn't reactive.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [collectScenarioPlacements, phaseMapData, selectedMapUnit],
+  /**
+   * "Save phase ORBAT" — make it complete and CSE-ready: clone inherited
+   * ORBATs in, re-lay native ones under their placements, reconcile parentage.
+   * The repair path after a failure or an edit made elsewhere, too.
+   */
+  const handleSavePhaseOrbat = useCallback(async () => {
+    const target = phaseTargetRef.current;
+    if (!target) return;
+    reportOrbat("Saving the phase ORBAT…");
+    try {
+      const result = await savePhaseOrbat(
+        target,
+        orbatIndexRef.current ?? indexForest([]),
+        phasePlacements(),
+      );
+      for (const link of result.linked) {
+        mapWrapperRef.current?.setUnitOrbat(link.placementId, {
+          orbatRootUnitKey: link.rootUnitKey,
+          orbatHierarchyKey: result.hierarchyKey,
+        });
+      }
+      if (result.linked.length > 0) persistPhaseSoon(target.phaseId);
+      await reloadPhaseOrbat();
+      reportOrbat(
+        "Phase ORBAT saved" +
+          (result.clonedUnits > 0 ? ` — ${result.clonedUnits} units copied in from earlier phases` : "") +
+          (result.movedUnits > 0 ? `, ${result.movedUnits} re-laid under their placements` : "") +
+          "." +
+          (result.withoutOrbat.length > 0
+            ? ` No ORBAT yet: ${result.withoutOrbat.join(", ")}.`
+            : ""),
+      );
+    } catch (err) {
+      reportOrbat(
+        `Could not save the phase ORBAT. ${err instanceof Error ? err.message : describeActionError(err)}`,
+        true,
+      );
+    }
+  }, [phasePlacements, persistPhaseSoon, reloadPhaseOrbat, reportOrbat]);
+
+  /**
+   * A new phase based on another inherits its placements; bring their ORBATs
+   * with them — copied into the new phase and re-laid around where each unit
+   * ended the previous one.
+   */
+  const carryOrbatIntoPhase = useCallback(
+    (phase: Phase) => {
+      setTimeout(() => {
+        const units = mapWrapperRef.current?.readPhaseMapState(phase.id)?.units ?? [];
+        const placements = units.map(toPlacedUnit);
+        if (!placements.some((p) => p.orbatRootUnitKey)) return;
+        const target: PhaseTarget = {
+          scenarioId: scenarioIdForOrbat,
+          scenarioName: exercise.exerciseName,
+          phaseId: phase.id,
+          phaseName: phase.name,
+        };
+        reportOrbat(`Carrying the ORBAT into "${phase.name}"…`);
+        savePhaseOrbat(target, indexForest([]), placements)
+          .then(async (result) => {
+            for (const link of result.linked) {
+              mapWrapperRef.current?.setUnitOrbat(link.placementId, {
+                orbatRootUnitKey: link.rootUnitKey,
+                orbatHierarchyKey: result.hierarchyKey,
+              });
+            }
+            persistPhaseSoon(phase.id);
+            if (phaseTargetRef.current?.phaseId === phase.id) await reloadPhaseOrbat();
+            reportOrbat(
+              `ORBAT carried into "${phase.name}" — ${result.clonedUnits} units, positioned where the previous phase ended.`,
+            );
+          })
+          .catch((err) =>
+            reportOrbat(
+              `The new phase has its units but not their ORBATs yet — use Save phase ORBAT. ${err instanceof Error ? err.message : describeActionError(err)}`,
+              true,
+            ),
+          );
+      }, 0);
+    },
+    [scenarioIdForOrbat, exercise.exerciseName, persistPhaseSoon, reloadPhaseOrbat, reportOrbat],
   );
 
-  const derivedParentage = useMemo(
-    () => desiredParentage(scenarioMembers),
-    [scenarioMembers],
-  );
+  // ── Parent of the selected placement (ORBAT tab) ──────────────────────────
+  const selectedTreeKey =
+    selectedMapUnit?.orbatRootUnitKey && orbatIndex?.nodes.has(selectedMapUnit.orbatRootUnitKey)
+      ? selectedMapUnit.orbatRootUnitKey
+      : null;
 
   const parentOptions = useMemo(() => {
-    const key = selectedMapUnit?.orbatRootUnitKey;
-    if (!key) return [];
-    const side = sideForSidc(selectedMapUnit?.sidc);
-    return scenarioMembers
-      .filter((m) => m.unitKey !== key && m.side === side)
-      .map((m) => ({ unitKey: m.unitKey, label: m.label }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [scenarioMembers, selectedMapUnit?.orbatRootUnitKey, selectedMapUnit?.sidc]);
+    if (!selectedTreeKey || !orbatIndex) return [];
+    const subtree = new Set([selectedTreeKey, ...descendantsOf(orbatIndex, selectedTreeKey)]);
+    return parentCandidates(orbatIndex, selectedTreeKey, subtree).map((key) => ({
+      unitKey: key,
+      label: orbatIndex.nodes.get(key)?.label ?? key,
+    }));
+  }, [selectedTreeKey, orbatIndex]);
 
   const handleChangeParent = useCallback(
     (parentUnitKey: string | null) => {
       if (!selectedMapUnit) return;
-      mapWrapperRef.current?.setUnitParent(selectedMapUnit.id, parentUnitKey);
+      if (selectedTreeKey) {
+        changeOrbatParent(selectedTreeKey, parentUnitKey);
+      } else {
+        // No phase ORBAT yet: keep the choice on the placement; it is applied
+        // when the ORBAT is generated or saved.
+        mapWrapperRef.current?.setUnitParent(selectedMapUnit.id, parentUnitKey);
+        if (selectedPhaseId) persistPhaseSoon(selectedPhaseId);
+      }
       setSelectedMapUnit((prev) =>
         prev && prev.id === selectedMapUnit.id
           ? { ...prev, orbatParentUnitKey: parentUnitKey ?? undefined }
           : prev,
       );
-      // Persist on the next tick so the snapshot includes the choice, then let
-      // handlePhaseMapEdited schedule the reconcile.
-      if (selectedPhaseId) {
-        setTimeout(() => {
-          const snapshot = mapWrapperRef.current?.readPhaseMapState(selectedPhaseId);
-          if (snapshot) handlePhaseMapEdited(selectedPhaseId, snapshot);
-        }, 0);
-      } else {
-        scheduleReconcile();
-      }
     },
-    [selectedMapUnit, selectedPhaseId, handlePhaseMapEdited, scheduleReconcile],
+    [selectedMapUnit, selectedTreeKey, selectedPhaseId, changeOrbatParent, persistPhaseSoon],
   );
 
   const handleDefineOrbat = useCallback(
@@ -1043,11 +1406,12 @@ export default function ScenarioPlanWidget() {
         scenarioId: scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
         scenarioName: exercise.exerciseName,
         phaseId: selectedPhaseId ?? undefined,
+        phaseName: selectedPhase?.name,
         returnTo: "/scenario-plan",
       });
       navigate("/orbat?define=1");
     },
-    [navigate, scenarioMeta?.scenarioId, exercise.exerciseName, selectedPhaseId],
+    [navigate, scenarioMeta?.scenarioId, exercise.exerciseName, selectedPhaseId, selectedPhase?.name],
   );
 
   // ── Link a confirmed ORBAT on the way back from the ORBAT screen ─────────
@@ -1090,8 +1454,9 @@ export default function ScenarioPlanWidget() {
       `[ScenarioPlanWidget] linked ORBAT ${result.rootUnitKey} ` +
         `(${result.unitsCreated} units) to placement ${result.unitId}`,
     );
-    scheduleReconcile();
-  }, [phaseMapData, selectedPhaseId, handlePhaseMapEdited, scheduleReconcile]);
+    // The Define flow wrote into this phase's hierarchy — show it.
+    void reloadPhaseOrbat();
+  }, [phaseMapData, selectedPhaseId, handlePhaseMapEdited, reloadPhaseOrbat]);
 
   // ── Output: push the NxgPhase object set when the selection changes ───────
   // Use a ref so we can cancel an in-flight async call if the phase changes
@@ -1629,6 +1994,10 @@ export default function ScenarioPlanWidget() {
 
       if (!applied) {
         console.error(`[AddPhase] Could not inherit any units from "${sourcePhase.name}" (${sourcePhase.id}). New phase will start empty.`);
+      } else if (!readOnly) {
+        // Each phase holds its own copy of the force: copy the ORBATs in,
+        // positioned where the units ended the phase this one is based on.
+        carryOrbatIntoPhase(persistedPhase);
       }
     }
 
@@ -1642,7 +2011,7 @@ export default function ScenarioPlanWidget() {
     // leaf of the branch being viewed.
     // Only do this in map view — on the graph home we stay on the graph.
     setViewingBranchLeaf((current) => (current ? persistedPhase.id : current));
-  }, [phases, createPhase, selectPhase, phaseEndStates, phaseMapData, handlePhaseMapEdited]);
+  }, [phases, createPhase, selectPhase, phaseEndStates, phaseMapData, handlePhaseMapEdited, carryOrbatIntoPhase, readOnly]);
 
   const handleDeletePhase = useCallback(
     (phaseId: string) => {
@@ -1729,37 +2098,6 @@ export default function ScenarioPlanWidget() {
 
       {/* ── Map view — always rendered so refs/effects work, hidden when graph is showing */}
       <div className="sp-body" style={!viewingBranchLeaf ? { display: "none" } : undefined}>
-        {/* Back to graph button */}
-        <div style={{
-          position: "absolute", top: 8, left: 8, zIndex: 15,
-          display: "flex", alignItems: "center", gap: 8,
-        }}>
-          <button
-            type="button"
-            onClick={() => setViewingBranchLeaf(null)}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 5,
-              padding: "5px 12px", background: "rgba(17,19,24,0.88)",
-              border: "1px solid var(--border-default)", borderRadius: 3,
-              color: "#c8cdd8", fontSize: 11, fontWeight: 700,
-              letterSpacing: "0.06em", cursor: "pointer",
-              backdropFilter: "blur(4px)", transition: "border-color 0.15s",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#4A90D9"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2f3860"; }}
-            aria-label="Back to phase graph"
-          >
-            ← BRANCHES
-          </button>
-          <span style={{
-            fontSize: 10, color: "var(--text-muted)", letterSpacing: "0.04em",
-            background: "rgba(17,19,24,0.7)", padding: "3px 8px",
-            borderRadius: 3, backdropFilter: "blur(4px)",
-          }}>
-            {branchPath.map((p) => p.name.replace(/^Phase\s+\d+[A-Z]?\s*[—–-]\s*/i, "")).join(" → ")}
-          </span>
-        </div>
-
         <MapWrapper
           ref={mapWrapperRef}
           selectedPhaseIndex={effectivePhaseIndex}
@@ -1776,10 +2114,68 @@ export default function ScenarioPlanWidget() {
           terrain={terrain}
           onDefineOrbat={readOnly ? undefined : handleDefineOrbat}
           onSelectedUnitChange={setSelectedMapUnit}
-          onUnitPlaced={readOnly ? undefined : handleUnitPlaced}
           previewMap={null}
           onPreviewMapEdit={undefined}
+          toolbarStart={
+            <>
+              <button
+                type="button"
+                className="mil-btn mil-btn--sm mil-btn--default"
+                onClick={() => setViewingBranchLeaf(null)}
+                aria-label="Back to phase graph"
+              >
+                ← Branches
+              </button>
+              <span className="sp-map-toolbar__crumb" title={branchPath.map((p) => p.name).join(" → ")}>
+                {branchPath.map((p) => p.name.replace(/^Phase\s+\d+[A-Z]?\s*[—–-]\s*/i, "")).join(" → ")}
+              </span>
+            </>
+          }
+          toolbarEnd={
+            hasPhaseOrbat ? (
+              <OrbatLevelControl
+                mode={levelMode}
+                autoLevel={autoLevel}
+                levels={levelInfos}
+                onChange={setLevelMode}
+                loading={phaseOrbat.loading}
+              />
+            ) : undefined
+          }
+          orbatLevelNodes={orbatLevelNodes}
+          orbatLevelDraggable={!readOnly}
+          hiddenOrbatKeys={hiddenOrbatKeys}
+          onOrbatNodeSelect={setSelectedOrbatKey}
+          onOrbatNodeContext={
+            readOnly
+              ? undefined
+              : (key, client) => {
+                  setSelectedOrbatKey(key);
+                  setNodeMenu({ key, client });
+                }
+          }
+          onOrbatNodeMoved={readOnly ? undefined : handleOrbatNodeMoved}
+          onViewChange={handleViewChange}
+          treeNodeInfo={(key) => {
+            const node = orbatIndex?.nodes.get(key);
+            const pos = orbatIndex ? effectivePosition(orbatIndex, key) : null;
+            if (!node || !pos || !phaseHierKey) return null;
+            return { label: node.label, sidc: node.sidc, lat: pos.lat, lng: pos.lng, hierarchyKey: phaseHierKey };
+          }}
+          onPlaceOrbatUnitRequest={readOnly ? undefined : openPlaceDialog}
+          onAutoGenerateOrbat={readOnly ? undefined : handleAutoGenerateOrbat}
+          onPlacementMoved={readOnly ? undefined : handlePlacementMoved}
+          orderGuard={orderGuard}
         />
+
+        {orbatStatus && viewingBranchLeaf && (
+          <div
+            className={`sp-orbat-status ${orbatStatus.error ? "sp-orbat-status--error" : ""}`}
+            role={orbatStatus.error ? "alert" : "status"}
+          >
+            {orbatStatus.text}
+          </div>
+        )}
 
         <PhaseDetail
           phase={selectedPhase}
@@ -1914,6 +2310,18 @@ export default function ScenarioPlanWidget() {
             // is derived by the same rules the reconciler uses, so the link
             // always lands on whatever is actually at the top of the side.
             onOpenScenarioOrbat: async (side) => {
+              // This phase's ORBAT, entered at the side's most senior root.
+              if (orbatIndex && hasPhaseOrbat && phaseHierKey) {
+                const root = orbatIndex.roots
+                  .map((k) => orbatIndex.nodes.get(k)!)
+                  .filter((n) => n.side === side)
+                  .sort((a, b) => echelonRank(b.echelon as never) - echelonRank(a.echelon as never))[0];
+                navigate(
+                  `/orbat?hierarchy=${encodeURIComponent(phaseHierKey)}` +
+                    (root ? `&root=${encodeURIComponent(root.key)}` : ""),
+                );
+                return;
+              }
               try {
                 const target = await resolveScenarioOrbat(
                   scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID,
@@ -1934,22 +2342,19 @@ export default function ScenarioPlanWidget() {
               }
             },
             rebuildStatus: reconcileStatus,
-            onRebuildHierarchy: readOnly ? undefined : handleRebuildHierarchy,
+            onRebuildHierarchy: readOnly || !selectedPhase ? undefined : handleSavePhaseOrbat,
             missingOrbatCount,
             generateBusy,
             onGenerateAllOrbats:
               readOnly || missingOrbatCount === 0 ? undefined : handleGenerateAllOrbats,
             parentOptions,
-            currentParentKey: selectedMapUnit?.orbatRootUnitKey
-              ? derivedParentage.parentByChild[selectedMapUnit.orbatRootUnitKey] ?? null
-              : null,
+            currentParentKey: selectedTreeKey
+              ? orbatIndex?.nodes.get(selectedTreeKey)?.parentKey ?? null
+              : selectedMapUnit?.orbatParentUnitKey ?? null,
             parentIsOverride: !!selectedMapUnit?.orbatParentUnitKey,
-            isSideRoot: !!selectedMapUnit?.orbatRootUnitKey &&
-              Object.values(derivedParentage.roots).includes(
-                selectedMapUnit.orbatRootUnitKey,
-              ),
+            isSideRoot: !!selectedTreeKey && !!orbatIndex?.roots.includes(selectedTreeKey),
             parentLabelFor: (unitKey: string) =>
-              scenarioMembers.find((m) => m.unitKey === unitKey)?.label ?? unitKey,
+              orbatIndex?.nodes.get(unitKey)?.label ?? unitKey,
             onChangeParent: readOnly ? undefined : handleChangeParent,
           }}
           ordersTabProps={selectedPhase ? {
@@ -1965,6 +2370,71 @@ export default function ScenarioPlanWidget() {
           } : undefined}
         />
       </div>
+
+      {placeDialog && (
+        <PlaceUnitDialog
+          at={placeDialog}
+          busy={placeBusy}
+          error={placeError}
+          defaultSide={lastPlacedSideRef.current}
+          onPlace={handlePlaceOrbatUnit}
+          onClose={() => !placeBusy && setPlaceDialog(null)}
+        />
+      )}
+
+      {nodeMenu && orbatIndex?.nodes.has(nodeMenu.key) && phaseTarget && (() => {
+        const node = orbatIndex.nodes.get(nodeMenu.key)!;
+        const below = descendantsOf(orbatIndex, node.key);
+        const native = isNativeToPhase(node.key, phaseTarget.phaseId);
+        const subtree = new Set([node.key, ...below]);
+        return (
+          <OrbatNodeMenu
+            client={nodeMenu.client}
+            label={node.label}
+            echelon={node.echelon}
+            busy={nodeBusy}
+            generateBlockedReason={
+              (orbatIndex.childrenOf.get(node.key)?.length ?? 0) > 0
+                ? "It already has subordinates"
+                : !native
+                  ? "Inherited from another phase — save this phase's ORBAT first"
+                  : null
+            }
+            parentOptions={parentCandidates(orbatIndex, node.key, subtree).map((key) => ({
+              key,
+              label: orbatIndex.nodes.get(key)?.label ?? key,
+              echelon: orbatIndex.nodes.get(key)?.echelon ?? "",
+            }))}
+            currentParentKey={node.parentKey}
+            removeCount={native ? [node.key, ...below].filter((k) => isNativeToPhase(k, phaseTarget.phaseId)).length : 0}
+            onGenerateBeneath={() =>
+              void runOrbatAction(`Could not generate beneath "${node.label}".`, async () => {
+                const r = await generateBeneathNode(phaseTarget, orbatIndex, node.key);
+                return `Generated ${r.unitCount} units beneath "${node.label}"${capNote(r)}.`;
+              })
+            }
+            onChangeParent={(parentKey) => changeOrbatParent(node.key, parentKey)}
+            onOpenInOrbatManager={
+              phaseHierKey
+                ? () =>
+                    navigate(
+                      `/orbat?hierarchy=${encodeURIComponent(phaseHierKey)}&root=${encodeURIComponent(node.key)}`,
+                    )
+                : undefined
+            }
+            onRemove={() =>
+              void runOrbatAction(`Could not remove "${node.label}".`, async () => {
+                const removed = await removeSubtreeInPhase(phaseTarget, orbatIndex, node.key);
+                mapWrapperRef.current?.removeOrbatLinkedUnits(subtree);
+                persistPhaseSoon(phaseTarget.phaseId);
+                if (selectedOrbatKey && subtree.has(selectedOrbatKey)) setSelectedOrbatKey(null);
+                return `Removed "${node.label}"${removed > 1 ? ` and ${removed - 1} units below it` : ""} from this phase.`;
+              })
+            }
+            onClose={() => setNodeMenu(null)}
+          />
+        );
+      })()}
 
       {viewingBranchLeaf && (
         <PhaseTimeline
