@@ -59,4 +59,3 @@ export function parsePreflight(raw: unknown): PreflightReport | null {
     issues,
   };
 }
-

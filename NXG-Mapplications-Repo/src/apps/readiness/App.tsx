@@ -19,6 +19,8 @@ import { liveRunner } from "../execute/lib/runner";
 import { usePhaseCatalogues } from "../scenarioPlanner/hooks/usePhaseCatalogues";
 import { useScenario } from "../scenarioPlanner/hooks/useScenario";
 import { DEFAULT_SCENARIO_ID } from "../scenarioPlanner/shared/phaseColours";
+import { latestLaunchByPhase } from "@/shared/lib/launchRecords";
+import { useLaunchRecords } from "@/shared/lib/launchStore";
 import { loadDemoModeFacts, loadPhaseFacts, loadRunFacts } from "./data/loadFacts";
 import {
   type PhaseFacts,
@@ -93,6 +95,8 @@ export default function ReadinessApp() {
   const [round, setRound] = useState(0);
   const [probes, setProbes] = useState<Record<string, ProbeFinding>>({});
   const [phaseFacts, setPhaseFacts] = useState<PhaseFacts[] | null>(null);
+  const launches = useLaunchRecords(scenarioId, true);
+  const lastLaunch = useMemo(() => latestLaunchByPhase(launches.launches), [launches.launches]);
   const [runs, setRuns] = useState<RunFacts | null>(null);
   const [demoData, setDemoData] = useState<{ phase: boolean; mapState: boolean } | null>(null);
   const [cse, setCse] = useState<CheckResult | null>(null);
@@ -323,6 +327,9 @@ export default function ReadinessApp() {
                     <th title="Training objectives tied to the phase (scenario-wide in brackets)">
                       TOs
                     </th>
+                    <th title="The most recent launch of this phase (NxgCseLaunch, else this device)">
+                      Last launch
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -348,6 +355,16 @@ export default function ReadinessApp() {
                         <td>{p.orders}</td>
                         <td>{p.orbat ? `${p.orbat.blue} / ${p.orbat.red}` : "?"}</td>
                         <td>{p.phaseObjectives || `(${p.scenarioObjectives})`}</td>
+                        <td>
+                          {(() => {
+                            const l = lastLaunch.get(p.phaseId);
+                            if (!l) return "—";
+                            const when = new Date(l.launchedAtS * 1000).toLocaleDateString();
+                            return l.status === "failed"
+                              ? `failed (${l.failedStep ?? "?"}) ${when}`
+                              : `${l.status ?? "launched"} ${when}${l.demo ? " · demo" : ""}`;
+                          })()}
+                        </td>
                       </tr>
                     );
                   })}

@@ -11,6 +11,12 @@
 // Expected fields are the parameters (actions, functions) or properties
 // (object types) the app actually sends or reads — a resource that exists but
 // lacks one fails at the worst moment, so it is checked here.
+import {
+  LAUNCH_ACTIONS,
+  LAUNCH_OBJECT_PARAM,
+  LAUNCH_OBJECT_TYPE,
+  LAUNCH_PROPERTIES,
+} from "@/shared/lib/launchRecords";
 import type { ResourceKind } from "@/shared/lib/metadataFields";
 import {
   ASSESSMENT_ACTIONS,
@@ -222,6 +228,17 @@ export const REQUIREMENTS: Requirement[] = [
     doc: EXECUTE_DOC,
   },
   {
+    id: "q-preflight-composition",
+    stage: "execute",
+    kind: "query",
+    names: ["nxgPreflightOrbatFromPhaseForComposition"],
+    need: "recommended",
+    byName: true,
+    fields: ["operation_key", "phase_key", "composition_xml"],
+    why: "Checks the ORBAT against the chosen composition: simulators it runs, force size, echelon span. Without it Execute checks the ORBAT alone.",
+    doc: EXECUTE_DOC,
+  },
+  {
     id: "q-translate",
     stage: "execute",
     kind: "query",
@@ -302,6 +319,40 @@ export const REQUIREMENTS: Requirement[] = [
     names: ["hlaMoveToLocation"],
     need: "recommended",
     why: "Live tasking from the HLA Map.",
+    doc: EXECUTE_DOC,
+  },
+
+  {
+    id: "o-launch",
+    stage: "execute",
+    kind: "objectType",
+    names: [LAUNCH_OBJECT_TYPE],
+    need: "optional",
+    byName: true,
+    fields: [...LAUNCH_PROPERTIES],
+    why: "Records each launch (project, composition, status, times). Without it launches are recorded on the launching device only, and Analysis can only match runs launched there.",
+    doc: EXECUTE_DOC,
+  },
+  {
+    id: "a-launch-create",
+    stage: "execute",
+    kind: "action",
+    names: [LAUNCH_ACTIONS.create],
+    need: "optional",
+    byName: true,
+    fields: [...LAUNCH_PROPERTIES],
+    why: "Records a new launch.",
+    doc: EXECUTE_DOC,
+  },
+  {
+    id: "a-launch-modify",
+    stage: "execute",
+    kind: "action",
+    names: [LAUNCH_ACTIONS.modify],
+    need: "optional",
+    byName: true,
+    fields: [LAUNCH_OBJECT_PARAM, "status"],
+    why: "Updates a launch as it progresses.",
     doc: EXECUTE_DOC,
   },
 

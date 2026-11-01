@@ -7,13 +7,14 @@
 //   demoRunner  the same steps, simulated — for a room with no simulator.
 //               It says so in every answer; nothing it returns pretends to be
 //               a CSE verdict.
-import { executeQuery } from "@/shared/lib/platformFunctions";
+import { FunctionUnavailableError, executeQuery } from "@/shared/lib/platformFunctions";
 import { bridge } from "../../hlamap/bridgeClient";
 import {
+  type CompositionInfo,
   type LaunchStepId,
   type PreflightReport,
   cseValidationErrors,
-  extractNames,
+  extractCompositions,
   isAlreadyExists,
   parseCseResult,
   parsePreflight,
@@ -32,13 +33,28 @@ export interface CseCheck {
   note: string;
 }
 
+/** A preflight report, and what it was checked against. */
+export interface PreflightResult extends PreflightReport {
+  /** One line: against the composition, or the ORBAT alone and why. */
+  basis: string;
+  /** True when the composition's own limits and simulators were checked. */
+  againstComposition: boolean;
+}
+
 export interface Runner {
   readonly demo: boolean;
-  preflight(target: ExecuteTarget): Promise<PreflightReport>;
-  compositions(): Promise<string[]>;
+  /**
+   * Translator preflight for the phase. With the composition's XML, the
+   * composition-aware check (simulators it runs, force size, echelon span);
+   * without it, the ORBAT alone.
+   */
+  preflight(target: ExecuteTarget, compositionXml?: string | null): Promise<PreflightResult>;
+  compositions(): Promise<CompositionInfo[]>;
   validateWithCse(target: ExecuteTarget): Promise<CseCheck>;
   /** Runs one launch step; resolves with a line for the log. */
   launchStep(step: LaunchStepId, target: ExecuteTarget): Promise<string>;
+  /** The ORBAT XML exported for a phase in this session, if any — for the launch record. */
+  exportedXml(phaseId: string): string | null;
 }
 
 // Only the CSE-Prep functions (NXG-CSE-Prep-Functions, all `nxgCse*`, snake_case
@@ -48,6 +64,7 @@ export interface Runner {
 // arguments fails, so they are deliberately not alternatives here.
 const Q = {
   preflight: ["nxgPreflightOrbatFromPhase", "preflightOrbatFromPhase"],
+  preflightForComposition: ["nxgPreflightOrbatFromPhaseForComposition"],
   translate: ["nxgTranslateOrbatToXmlFromPhase", "translateOrbatToXmlFromPhase"],
   compositions: ["nxgCseGetCompositions", "cseGetCompositions"],
   addProject: ["nxgCseAddProject"],
@@ -89,17 +106,42 @@ export function liveRunner(): Runner {
 
   return {
     demo: false,
-    async preflight(t) {
-      const raw = await executeQuery(Q.preflight, {
-        operation_key: t.operationKey,
-        phase_key: t.phaseId,
-      });
-      const report = parsePreflight(raw);
+    exportedXml: (phaseId) => xmlByPhase.get(phaseId) ?? null,
+    async preflight(t, compositionXml) {
+      const args = { operation_key: t.operationKey, phase_key: t.phaseId };
+      let fallbackWhy = compositionXml
+        ? ""
+        : t.composition
+          ? `CSE did not return the files of ${t.composition}, so the ORBAT was checked on its own.`
+          : "No composition chosen yet — the ORBAT was checked on its own.";
+      if (compositionXml) {
+        try {
+          const report = parsePreflight(
+            await executeQuery(Q.preflightForComposition, {
+              ...args,
+              composition_xml: compositionXml,
+            }),
+          );
+          if (!report) throw new Error("Preflight returned a report that could not be read.");
+          return {
+            ...report,
+            basis: `Checked against composition ${t.composition}: its simulators, force size and echelon span.`,
+            againstComposition: true,
+          };
+        } catch (err) {
+          if (!(err instanceof FunctionUnavailableError)) throw err;
+          fallbackWhy =
+            "The composition-aware preflight is not available to this app yet, so the ORBAT was checked on its own.";
+        }
+      }
+      const report = parsePreflight(await executeQuery(Q.preflight, args));
       if (!report) throw new Error("Preflight returned a report that could not be read.");
-      return report;
+      return { ...report, basis: fallbackWhy, againstComposition: false };
     },
     async compositions() {
-      return extractNames(cse(await executeQuery(Q.compositions, {}), "Listing compositions"));
+      return extractCompositions(
+        cse(await executeQuery(Q.compositions, {}), "Listing compositions"),
+      );
     },
     async validateWithCse(t) {
       const xml = await exportXml(t);
@@ -150,6 +192,7 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export function demoRunner(unitCount: () => number): Runner {
   return {
     demo: true,
+    exportedXml: () => null,
     async preflight() {
       await wait(900);
       return {
@@ -157,11 +200,13 @@ export function demoRunner(unitCount: () => number): Runner {
         errors: 0,
         warnings: 0,
         issues: [],
+        basis: "Demo mode — nothing was checked.",
+        againstComposition: false,
       };
     },
     async compositions() {
       await wait(300);
-      return ["CSP-SWORD-VBS4 (demo)"];
+      return [{ name: "CSP-SWORD-VBS4 (demo)", xml: null }];
     },
     async validateWithCse(t) {
       await wait(1400);

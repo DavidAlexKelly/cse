@@ -13,7 +13,8 @@
 // from the ontology when it can be, so the numbers in the demo are real.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
-import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
+import { NxgPhase, NxgUnitHierarchy } from "@nxg-simulation-execution-testing/sdk";
+import { client } from "@/client";
 import { AppSwitcher } from "@/components/AppSwitcher";
 import { readPhaseParam, useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useMockDemo } from "@/shared/hooks/useMockDemo";
@@ -21,7 +22,8 @@ import {
   type WorkshopObjectSetValue,
   useWorkshopObjectKey,
 } from "@/shared/hooks/useWorkshopObjectKey";
-import { recordLaunch } from "@/shared/lib/launchRecords";
+import { type LaunchRecord, digestOf } from "@/shared/lib/launchRecords";
+import { saveLaunch } from "@/shared/lib/launchStore";
 import { phaseHierarchyKey } from "@/shared/orbat/phaseKeys";
 import { loadPhaseForest } from "@/shared/orbat/phaseOrbat";
 import { operationKeyForScenario } from "@/shared/orbat/scenarioOrbat";
@@ -34,13 +36,22 @@ import {
   LAUNCH_STEPS,
   type LaunchStepId,
   type OrbatCounts,
-  type PreflightReport,
+  type CompositionInfo,
+  type StoredCseVerdict,
+  storedCseVerdict,
+  storedVerdictState,
   assessReadiness,
   defaultProjectName,
   orbatState,
   preflightState,
 } from "./lib/executePlan";
-import { type CseCheck, type ExecuteTarget, demoRunner, liveRunner } from "./lib/runner";
+import {
+  type CseCheck,
+  type ExecuteTarget,
+  type PreflightResult,
+  demoRunner,
+  liveRunner,
+} from "./lib/runner";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedBool(field: any): boolean | null {
@@ -99,13 +110,14 @@ export default function ExecuteApp() {
   const [projectName, setProjectName] = useState(() => defaultProjectName(scenarioId));
   useEffect(() => setProjectName(defaultProjectName(scenarioId)), [scenarioId]);
   const [composition, setComposition] = useState("");
-  const [compositions, setCompositions] = useState<string[] | null>(null);
+  const [compositions, setCompositions] = useState<CompositionInfo[] | null>(null);
+  const compositionXml = compositions?.find((c) => c.name === composition)?.xml ?? null;
   const [compositionsError, setCompositionsError] = useState<string | null>(null);
 
   // ── Checks ────────────────────────────────────────────────────────────────
   const [counts, setCounts] = useState<OrbatCounts | null>(null);
   const [orbatNote, setOrbatNote] = useState<string | null>(null);
-  const [preflight, setPreflight] = useState<PreflightReport | null>(null);
+  const [preflight, setPreflight] = useState<PreflightResult | null>(null);
   const [preflightRun, setPreflightRun] = useState<CheckState>("pending");
   const [preflightError, setPreflightError] = useState<string | null>(null);
   const [cseCheck, setCseCheck] = useState<CseCheck | null>(null);
@@ -164,36 +176,57 @@ export default function ExecuteApp() {
     };
   }, [scenarioId, phaseId]);
 
+  // The verdict nxgCseValidatePhaseOrbat stored on the phase hierarchy, shown
+  // until a fresh check is run (plan 4.5). Live mode only.
+  const [storedVerdict, setStoredVerdict] = useState<StoredCseVerdict | null>(null);
+  useEffect(() => {
+    setStoredVerdict(null);
+    if (!phaseId || mockDemo) return;
+    let live = true;
+    client(NxgUnitHierarchy)
+      .fetchOne(phaseHierarchyKey(scenarioId, phaseId))
+      .then((h) => {
+        if (live) setStoredVerdict(storedCseVerdict(h as unknown as Record<string, unknown>));
+      })
+      .catch(() => {
+        /* no hierarchy yet, or no access — nothing stored to show */
+      });
+    return () => {
+      live = false;
+    };
+  }, [scenarioId, phaseId, mockDemo]);
+
   const runPreflight = useCallback(async () => {
     if (!target) return;
     setPreflightRun("running");
     setPreflightError(null);
     try {
-      setPreflight(await runner.preflight(target));
+      setPreflight(await runner.preflight(target, compositionXml));
       setPreflightRun("ok");
     } catch (err) {
       setPreflight(null);
       setPreflightRun("fail");
       setPreflightError(errorText(err));
     }
-  }, [runner, target]);
+  }, [runner, target, compositionXml]);
 
-  // Preflight runs by itself once the ORBAT is known to exist.
+  // Preflight runs by itself once the ORBAT is known to exist, and again when
+  // the composition changes — the composition-aware check depends on it.
   const autoPreflightFor = useRef<string | null>(null);
   useEffect(() => {
     if (!phaseId || !counts || counts.blue + counts.red === 0) return;
-    const key = `${phaseId}|${mockDemo}`;
+    const key = `${phaseId}|${mockDemo}|${composition}|${compositionXml ? "xml" : "-"}`;
     if (autoPreflightFor.current === key) return;
     autoPreflightFor.current = key;
     void runPreflight();
-  }, [phaseId, counts, mockDemo, runPreflight]);
+  }, [phaseId, counts, mockDemo, composition, compositionXml, runPreflight]);
 
   const loadCompositions = useCallback(async () => {
     setCompositionsError(null);
     try {
-      const names = await runner.compositions();
-      setCompositions(names);
-      setComposition((current) => current || names[0] || "");
+      const found = await runner.compositions();
+      setCompositions(found);
+      setComposition((current) => current || found[0]?.name || "");
     } catch (err) {
       setCompositions([]);
       setCompositionsError(errorText(err));
@@ -236,24 +269,57 @@ export default function ExecuteApp() {
   const [launching, setLaunching] = useState(false);
   const [launched, setLaunched] = useState(false);
 
+  const [launchNote, setLaunchNote] = useState<string | null>(null);
+
   const runLaunch = useCallback(async () => {
     if (!target || launching) return;
     setLaunching(true);
     setLaunched(false);
     setLaunch({});
     setLaunchLog([]);
+    setLaunchNote(null);
+
+    // The launch record (NxgCseLaunch, docs/ORBAT_PIPELINE_PLAN.md 4.3): written
+    // at the start and after the steps that matter, never awaited by the launch.
+    const nowS = () => Math.floor(Date.now() / 1000);
+    let record: LaunchRecord = {
+      launchId: crypto.randomUUID(),
+      scenarioId,
+      phaseId: target.phaseId,
+      phaseName: phase?.name ?? target.phaseId,
+      operationKey: target.operationKey,
+      project: target.projectName,
+      composition: target.composition,
+      status: "running",
+      unitCount: counts ? counts.blue + counts.red : undefined,
+      startedAtS: nowS(),
+      launchedAtS: nowS(),
+      demo: runner.demo,
+    };
+    const save = (patch: Partial<LaunchRecord>) => {
+      record = { ...record, ...patch };
+      void saveLaunch(record).then((outcome) => setLaunchNote(outcome.note));
+    };
+    save({});
+
     for (const step of LAUNCH_STEPS) {
       setLaunch((s) => ({ ...s, [step.id]: "running" }));
       try {
         const line = await runner.launchStep(step.id, target);
         setLaunch((s) => ({ ...s, [step.id]: "ok" }));
         setLaunchLog((log) => [...log, { text: line }]);
+        if (step.id === "export") {
+          const xml = runner.exportedXml(target.phaseId);
+          if (xml) save({ orbatDigest: digestOf(xml) });
+        }
+        if (step.id === "publish") save({ publishedAtS: nowS() });
       } catch (err) {
         setLaunch((s) => ({ ...s, [step.id]: "fail" }));
         setLaunchLog((log) => [
           ...log,
           { text: `${step.label} failed — ${errorText(err)}`, error: true },
         ]);
+        save({ status: "failed", failedStep: step.id, error: errorText(err), endedAtS: nowS() });
         setLaunching(false);
         return;
       }
@@ -261,15 +327,9 @@ export default function ExecuteApp() {
     setLaunching(false);
     setLaunched(true);
     // Lets Analysis open the resulting run on this phase's plan.
-    recordLaunch({
-      scenarioId,
-      phaseId: target.phaseId,
-      phaseName: phase?.name ?? target.phaseId,
-      launchedAtS: Math.floor(Date.now() / 1000),
-      demo: runner.demo,
-    });
+    save({ status: "launched", simStartedAtS: nowS(), launchedAtS: nowS() });
     ctx?.onLaunched?.executeEvent?.(undefined);
-  }, [target, launching, runner, ctx, scenarioId, phase?.name]);
+  }, [target, launching, runner, ctx, scenarioId, phase?.name, counts]);
 
   const openLiveMap = () => navigate(mockDemo ? "/hlamap?mock=1" : "/hlamap");
 
@@ -355,7 +415,7 @@ export default function ExecuteApp() {
             title="Preflight"
             detail={
               preflightError ??
-              preflight?.summary ??
+              (preflight ? `${preflight.summary}${preflight.basis ? ` ${preflight.basis}` : ""}` : null) ??
               (pState === "running" ? "Checking every unit will actually spawn…" : "Not run yet.")
             }
             action={
@@ -382,14 +442,23 @@ export default function ExecuteApp() {
           </Check>
 
           <Check
-            state={cseRun}
+            state={cseRun === "pending" ? storedVerdictState(storedVerdict) : cseRun}
             title="CSE validation"
             detail={
               cseError ??
               cseCheck?.note ??
               (cseRun === "running"
                 ? "Exporting the ORBAT and asking CSE…"
-                : "Advised before launch.")
+                : storedVerdict
+                  ? `Last stored CSE check: ${storedVerdict.status}` +
+                    (storedVerdict.atS
+                      ? ` (${new Date(storedVerdict.atS * 1000).toLocaleString()})`
+                      : "") +
+                    (storedVerdict.detail && storedVerdict.status !== "PASSED"
+                      ? ` — ${storedVerdict.detail.slice(0, 200)}`
+                      : "") +
+                    ". Validate again for a fresh answer."
+                  : "Advised before launch.")
             }
             action={
               <button
@@ -432,8 +501,8 @@ export default function ExecuteApp() {
                   disabled={launching}
                 >
                   {compositions.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                    <option key={c.name} value={c.name}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
@@ -523,6 +592,7 @@ export default function ExecuteApp() {
             </button>
           </div>
 
+          {launchNote && <div className="ex__hint">{launchNote}</div>}
           {launchLog.length > 0 && (
             <ul className="ex__log" aria-live="polite">
               {launchLog.map((entry, i) => (

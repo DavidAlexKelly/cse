@@ -1,3 +1,5 @@
+import { type PreflightReport, asObject } from "@/shared/orbat/preflight";
+
 // apps/execute/lib/executePlan.ts
 //
 // The Execute screen's decisions — pure, no network, no React.
@@ -15,7 +17,6 @@ export type CheckState = "pending" | "running" | "ok" | "warn" | "fail" | "skipp
 
 export type { PreflightIssue, PreflightReport } from "@/shared/orbat/preflight";
 export { parsePreflight } from "@/shared/orbat/preflight";
-import { type PreflightReport, asObject } from "@/shared/orbat/preflight";
 
 export function preflightState(report: PreflightReport | null): CheckState {
   if (!report) return "fail";
@@ -81,6 +82,103 @@ export function extractNames(
   };
   walk(asObject(data) ?? data, 0);
   return [...out].sort((a, b) => a.localeCompare(b));
+}
+
+// ─── Stored CSE verdict ──────────────────────────────────────────────────────
+
+export interface StoredCseVerdict {
+  status: "PASSED" | "FAILED" | "ERROR" | string;
+  detail: string;
+  /** Epoch seconds, when known. */
+  atS: number | null;
+}
+
+/**
+ * The verdict nxgCseValidatePhaseOrbat stored on the phase hierarchy
+ * (cse_validation_status / _detail / validated_at). The property API names
+ * are camel-cased by the ontology; both spellings are read. Null when the
+ * hierarchy has never been checked.
+ */
+export function storedCseVerdict(
+  o: Record<string, unknown> | null | undefined,
+): StoredCseVerdict | null {
+  if (!o) return null;
+  const pick = (...keys: string[]) => keys.map((k) => o[k]).find((v) => v != null && v !== "");
+  const status = pick("cseValidationStatus", "cse_validation_status");
+  if (typeof status !== "string") return null;
+  const detail = pick("cseValidationDetail", "cse_validation_detail");
+  const at = pick("cseValidatedAt", "cse_validated_at");
+  const t = typeof at === "string" ? Date.parse(at) : typeof at === "number" ? at : NaN;
+  return {
+    status,
+    detail: typeof detail === "string" ? detail : "",
+    atS: Number.isFinite(t) ? Math.floor((t > 1e12 ? t : t * 1000) / 1000) : null,
+  };
+}
+
+/** How a stored verdict shows before a fresh check: advisory, so a failure warns. */
+export function storedVerdictState(v: StoredCseVerdict | null): CheckState {
+  if (!v) return "pending";
+  return v.status === "PASSED" ? "ok" : "warn";
+}
+
+// ─── Compositions ────────────────────────────────────────────────────────────
+
+/** A CSE composition: its name, and its composition document when CSE sent it. */
+export interface CompositionInfo {
+  name: string;
+  /** The composition XML (files[].content), or null if CSE did not return it. */
+  xml: string | null;
+}
+
+function asList(v: unknown): unknown[] {
+  if (Array.isArray(v)) return v;
+  return v == null ? [] : [v];
+}
+
+/**
+ * The composition document among a composition's files: the one named
+ * composition.xml, else the first whose content is a <Composition> document.
+ */
+export function compositionXmlOf(files: unknown): string | null {
+  const list = asList(files)
+    .map((f) => asObject(f))
+    .filter((f): f is Record<string, unknown> => !!f)
+    .map((f) => ({
+      path: String(f.path ?? ""),
+      content: typeof f.content === "string" ? f.content : "",
+    }))
+    .filter((f) => f.content.trim().length > 0);
+  const named = list.find((f) => /(^|\/)composition\.xml$/i.test(f.path));
+  if (named) return named.content;
+  return list.find((f) => /<\s*([\w-]+:)?Composition[\s>]/.test(f.content))?.content ?? null;
+}
+
+/**
+ * nxgCseGetCompositions' data → compositions. CSE-Prep decodes responses
+ * heuristically, so a single composition may arrive as an object rather than
+ * a one-element list, and files likewise; both are accepted. Falls back to
+ * name-only entries when the shape is not recognised.
+ */
+export function extractCompositions(data: unknown): CompositionInfo[] {
+  const root = asObject(data) ?? data;
+  const container =
+    root && typeof root === "object" && !Array.isArray(root)
+      ? (root as Record<string, unknown>).compositions
+      : root;
+  const byName = new Map<string, CompositionInfo>();
+  for (const item of asList(container)) {
+    const o = asObject(item);
+    const name = o && typeof o.name === "string" ? o.name.trim() : "";
+    if (!o || !name) continue;
+    const xml = compositionXmlOf(o.files);
+    const prior = byName.get(name);
+    byName.set(name, { name, xml: prior?.xml ?? xml });
+  }
+  if (byName.size === 0) {
+    return extractNames(data).map((name) => ({ name, xml: null }));
+  }
+  return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 // ─── Readiness ───────────────────────────────────────────────────────────────

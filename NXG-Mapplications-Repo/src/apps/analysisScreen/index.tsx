@@ -22,7 +22,8 @@ import {
   type WorkshopObjectSetValue,
   useWorkshopObjectKey,
 } from "@/shared/hooks/useWorkshopObjectKey";
-import { launchForRun, readLaunchRecords } from "@/shared/lib/launchRecords";
+import { launchForRun } from "@/shared/lib/launchRecords";
+import { useLaunchRecords } from "@/shared/lib/launchStore";
 import { SqlError } from "@/shared/lib/sqlClient";
 import { usePhaseCatalogues } from "../scenarioPlanner/hooks/usePhaseCatalogues";
 import { useScenario } from "../scenarioPlanner/hooks/useScenario";
@@ -230,11 +231,13 @@ const AnalysisScreen: FC = () => {
       : undefined;
   const inboundPhaseId = useWorkshopObjectKey(phaseRaw, NxgPhase).primaryKey ?? null;
   const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(null);
+  // Launch records (NxgCseLaunch, else this device's): which phase a run executed.
+  const launchRecords = useLaunchRecords(mockDemo ? null : scenarioId, !mockDemo);
   const launchedPhaseId = useMemo(() => {
     if (mockDemo || !selectedRun) return null;
-    const record = launchForRun(selectedRun, readLaunchRecords());
+    const record = launchForRun(selectedRun, launchRecords.launches);
     return record && record.scenarioId === scenarioId ? record.phaseId : null;
-  }, [mockDemo, selectedRun, scenarioId]);
+  }, [mockDemo, selectedRun, scenarioId, launchRecords.launches]);
   // A different run may have executed a different phase: let the record speak again.
   useEffect(() => setPickedPhaseId(null), [selectedRunId]);
   const known = (id: string | null) => (id && phases.some((p) => p.id === id) ? id : null);
