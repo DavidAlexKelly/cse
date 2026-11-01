@@ -1,0 +1,356 @@
+/* ============================================================
+   Custom Sidebar Widget — Layout & Sizing
+
+   Visual language: shared Mission Control design system
+   (see src/shared/styling/global.css + surfaces.css).
+   All colours/radii/shadows come from the shared tokens so the
+   sidebar always matches the other widgets in the set.
+
+   Sizing philosophy (same contract as customHeader.css):
+   - html/body/#root: flex column, 100% width & height — fills
+     the Workshop iframe completely.
+   - .csb-root: flex: 1 1 auto, min-height: 0 — grows to fill
+     whatever height Workshop allocates, shrinks without overflow.
+   - .csb-rail: fixed width (set inline) + overflow hidden.
+   - .csb-item__label: flex: 1 1 auto, min-width: 0 so labels
+     truncate rather than push the sidebar wider.
+   ============================================================ */
+
+/* ---- Root fill ---- */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---- Widget root ---- */
+.csb-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+}
+
+/* ---- Sidebar rail ---- */
+.csb-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;             /* fill height */
+  min-height: 0;
+  width: 100%;                /* controlled by CSS variable set inline */
+  overflow: hidden;
+  background: var(--bg-base-grad);
+  background-color: var(--bg-base);
+  border-right: 1px solid var(--border-subtle);
+  box-sizing: border-box;
+  transition: width var(--transition-normal);
+}
+
+/* Signature indigo → violet → teal rule, shared with every other widget */
+.csb-rail::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--accent-violet-grad);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: var(--z-raised);
+}
+
+.csb-rail--no-border {
+  border-right: none;
+}
+
+/* ---- Branding header ---- */
+.csb-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  min-height: 56px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Brand mark — icon sits in a raised indigo-lit tile */
+.csb-header__icon {
+  box-sizing: content-box;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-raised);
+  color: var(--accent-primary-hover);
+  box-shadow: inset 0 0 12px rgba(108, 92, 231, 0.18);
+  flex-shrink: 0;
+}
+
+.csb-header__title {
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Fade out when collapsing */
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.csb-header__title--hidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  flex: 0 0 0;
+}
+
+/* ---- Nav list ---- */
+.csb-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-3) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar visually but keep it functional */
+.csb-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.csb-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.csb-nav::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+
+/* ---- Nav item ---- */
+.csb-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+  min-height: 42px;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.csb-item:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: var(--border-subtle);
+}
+
+.csb-item--active {
+  background: linear-gradient(100deg, rgba(108, 92, 231, 0.22) 0%, rgba(108, 92, 231, 0.05) 100%);
+  border-color: rgba(108, 92, 231, 0.4);
+}
+
+.csb-item--active .csb-item__label {
+  color: var(--text-primary);
+}
+
+.csb-item--active .csb-item__icon {
+  background: var(--accent-primary-muted);
+  border-color: rgba(108, 92, 231, 0.45);
+  color: var(--accent-primary-hover);
+}
+
+/* ---- Item icon (tile) ---- */
+.csb-item__icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-raised);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+/* ---- Item label ---- */
+.csb-item__label {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.csb-item__label--hidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  flex: 0 0 0;
+}
+
+/* ---- Item badge ---- */
+.csb-item__badge {
+  flex-shrink: 0;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.csb-item__badge--hidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+}
+
+/* ---- Collapsed tooltip ---- */
+.csb-item--collapsed {
+  justify-content: center;
+  padding: var(--space-2) 0;
+}
+
+.csb-item--collapsed::after {
+  content: attr(data-label);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 4px 10px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: var(--shadow-card);
+  transition: opacity var(--transition-fast);
+  z-index: var(--z-overlay);
+}
+
+.csb-item--collapsed:hover::after {
+  opacity: 1;
+}
+
+/* ---- Section divider ---- */
+.csb-divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: var(--space-2) var(--space-3);
+  flex-shrink: 0;
+}
+
+/* ---- Footer: collapse toggle ---- */
+.csb-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-subtle);
+  padding: var(--space-2);
+}
+
+.csb-collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  font-family: inherit;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 36px;
+}
+
+.csb-collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.csb-collapse-btn__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  transition: transform var(--transition-normal);
+}
+
+.csb-collapse-btn__icon--flipped {
+  transform: rotate(180deg);
+}
+
+.csb-collapse-btn__label {
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+  flex: 1 1 auto;
+  text-align: left;
+  min-width: 0;
+}
+
+.csb-collapse-btn__label--hidden {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  flex: 0 0 0;
+}
+
+/* ---- Collapsed: centre the toggle ---- */
+.csb-collapse-btn--collapsed {
+  justify-content: center;
+  padding: var(--space-2) 0;
+}
