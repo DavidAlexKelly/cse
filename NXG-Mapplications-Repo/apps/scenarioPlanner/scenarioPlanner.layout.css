@@ -1,0 +1,169 @@
+/*
+ * scenarioPlanner.layout.css
+ * Top-level layout: widget shell, body split, map column.
+ * All tokens come from global.css (:root).
+ */
+
+.sp-widget {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-base-grad);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  overflow: hidden;
+}
+
+.sp-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Map column (contains sidebar + map fill + toolbar) ── */
+.sp-map-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.sp-map-fill {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  margin: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+}
+
+/* ── Map canvas wrapper ── */
+.sp-map-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-base);
+  min-height: 0;
+  margin: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-panel);
+}
+
+/* ── SVG drawing overlay ── */
+.sp-svg-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-raised);
+}
+
+/* ── Unit picker overlay ── */
+.sp-unit-picker-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+}
+
+.sp-unit-picker-overlay > * {
+  pointer-events: all;
+}
+
+/* ── Phase panel (left sidebar) ── */
+.sp-phase-panel {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface-flat);
+  border-right: 1px solid var(--border-default);
+  overflow: hidden;
+}
+
+/* ── Phase detail panel (right sidebar) ── */
+.sp-detail-panel {
+  width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--bg-surface-flat);
+  border-left: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-normal);
+}
+
+.sp-detail-panel--open {
+  width: 340px;
+}
+
+.sp-detail-panel__inner {
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Map items sidebar ── */
+.sp-items-sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 100%;
+  z-index: var(--z-raised);
+}
+
+.sp-items-panel {
+  width: 0;
+  overflow: hidden;
+  background: var(--bg-surface-flat);
+  border-right: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.sp-items-panel--open {
+  width: 220px;
+}
+
+.sp-items-panel__inner {
+  width: 220px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Phase creator drawer ── */
+.sp-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 480px;
+  background: var(--bg-base);
+  border-left: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  z-index: var(--z-modal);
+  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.45);
+}
+
+.sp-drawer--open {
+  transform: translateX(0);
+}
