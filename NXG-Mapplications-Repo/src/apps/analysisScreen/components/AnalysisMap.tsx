@@ -313,8 +313,9 @@ const AnalysisMap: FC<Props> = ({
         <div
           style={{
             position: "absolute",
+            // Clear of Leaflet's zoom control, which sits at top-left.
             top: 10,
-            left: 10,
+            left: 52,
             zIndex: 1000,
             background: "rgba(14,18,25,0.88)",
             border: `1px solid ${UI.border}`,
@@ -328,7 +329,7 @@ const AnalysisMap: FC<Props> = ({
             style={{
               fontFamily: UI.fontMono,
               fontSize: 9,
-              color: UI.textFaint,
+              color: UI.textDim,
               letterSpacing: 1,
               marginBottom: 2,
             }}

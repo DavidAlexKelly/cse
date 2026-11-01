@@ -93,8 +93,12 @@ export function resolveMockDemo(workshopValue: boolean | null, localValue: boole
   return workshopValue ?? localValue;
 }
 
-/** Whether this window is the top-level one, i.e. not embedded anywhere. */
-function topLevelWindow(): boolean {
+/**
+ * Whether this window is the top-level one, i.e. not embedded anywhere.
+ * Standalone, the apps link to each other directly; in Workshop the module's
+ * own tabs do that, so in-app "next step" links are hidden there.
+ */
+export function topLevelWindow(): boolean {
   if (typeof window === "undefined") return false;
   try {
     return window.self === window.top;

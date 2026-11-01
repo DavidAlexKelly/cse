@@ -221,6 +221,11 @@
   background: rgba(240, 180, 41, 0.1);
   border-color: rgba(240, 180, 41, 0.4);
 }
+.ex__reason--done {
+  background: rgba(47, 191, 113, 0.18);
+  border-color: rgba(47, 191, 113, 0.6);
+  font-weight: 600;
+}
 .ex__actions {
   display: flex;
   gap: 8px;

@@ -454,3 +454,28 @@ export function evaluateResource(req: Requirement, probe: ProbeFinding | null): 
     fix: "",
   };
 }
+
+/**
+ * When (almost) every probe failed the same way, the problem is reaching
+ * Foundry at all, not any one resource — say that once instead of thirty
+ * identical rows. Null when the probes tell resource-specific stories.
+ */
+export function unreachableSummary(
+  probes: readonly (ProbeFinding | null | undefined)[],
+): CheckResult | null {
+  const answered = probes.filter((p): p is ProbeFinding => !!p);
+  if (answered.length < probes.length || answered.length < 3) return null;
+  const errors = answered.filter((p) => p.status === "error");
+  if (errors.length < answered.length * 0.8) return null;
+  const counts = new Map<string, number>();
+  for (const e of errors) counts.set(e.detail, (counts.get(e.detail) ?? 0) + 1);
+  const [detail] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+  return {
+    id: "d-unreachable",
+    stage: "plan",
+    label: "Foundry Ontology API",
+    state: "fail",
+    message: `Could not reach it from this app (${detail}), so none of the ${answered.length} resources could be checked.`,
+    fix: "Open this screen from the deployed app in Foundry (or check the app's sign-in and network), then Re-check.",
+  };
+}

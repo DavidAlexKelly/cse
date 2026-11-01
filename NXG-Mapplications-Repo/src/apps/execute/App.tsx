@@ -12,10 +12,10 @@
 // and federation call and says so on screen. The phase ORBAT is still read
 // from the ontology when it can be, so the numbers in the demo are real.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { AppSwitcher } from "@/components/AppSwitcher";
+import { readPhaseParam, useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useMockDemo } from "@/shared/hooks/useMockDemo";
 import {
   type WorkshopObjectSetValue,
@@ -86,12 +86,13 @@ export default function ExecuteApp() {
       ? (ctx.selectedPhase.fieldValue.value as WorkshopObjectSetValue)
       : undefined;
   const inboundPhaseId = useWorkshopObjectKey(phaseRaw, NxgPhase).primaryKey ?? null;
-  const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(null);
-  const phaseId =
-    pickedPhaseId ??
-    (inboundPhaseId && phases.some((p) => p.id === inboundPhaseId) ? inboundPhaseId : null) ??
-    phases[0]?.id ??
-    null;
+  // A phase handed over in the URL (Scenario Planner's "Execute phase") is the
+  // first choice; Workshop's selectedPhase and the first phase follow.
+  const [pickedPhaseId, setPickedPhaseId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : readPhaseParam(window.location.search),
+  );
+  const known = (id: string | null) => (id && phases.some((p) => p.id === id) ? id : null);
+  const phaseId = known(pickedPhaseId) ?? known(inboundPhaseId) ?? phases[0]?.id ?? null;
   const phase = phases.find((p) => p.id === phaseId) ?? null;
 
   // ── CSE settings ──────────────────────────────────────────────────────────
@@ -470,14 +471,38 @@ export default function ExecuteApp() {
             })}
           </ol>
 
-          <div className={`ex__reason ${readiness.canLaunch ? "" : "ex__reason--blocked"}`}>
-            {readiness.reason}
-          </div>
+          {(() => {
+            // What the banner says follows the launch, not only readiness:
+            // once launched, "Ready to launch" is the wrong instruction.
+            const failedStep = LAUNCH_STEPS.find((st) => launch[st.id] === "fail");
+            const doneSteps = LAUNCH_STEPS.filter((st) => launch[st.id] === "ok").length;
+            const [tone, text] = launching
+              ? [
+                  "",
+                  `Launching — step ${Math.min(doneSteps + 1, LAUNCH_STEPS.length)} of ${LAUNCH_STEPS.length}…`,
+                ]
+              : failedStep
+                ? [
+                    "ex__reason--blocked",
+                    `${failedStep.label} failed — see the log below. Fix it and launch again.`,
+                  ]
+                : launched
+                  ? [
+                      "ex__reason--done",
+                      `Launched${runner.demo ? " (demo)" : ""} — the simulation is running. Open the live map to watch and task it.`,
+                    ]
+                  : [readiness.canLaunch ? "" : "ex__reason--blocked", readiness.reason];
+            return (
+              <div className={`ex__reason ${tone}`} role="status">
+                {text}
+              </div>
+            );
+          })()}
 
           <div className="ex__actions">
             <button
               type="button"
-              className="mil-btn mil-btn--md mil-btn--primary"
+              className={`mil-btn mil-btn--md ${launched ? "mil-btn--default" : "mil-btn--primary"}`}
               onClick={() => void runLaunch()}
               disabled={!readiness.canLaunch || launching || !composition}
               title={!composition ? "Choose a composition" : readiness.reason}
@@ -486,8 +511,13 @@ export default function ExecuteApp() {
             </button>
             <button
               type="button"
-              className={`mil-btn mil-btn--md ${launched ? "mil-btn--primary" : "mil-btn--default"}`}
+              className={`mil-btn mil-btn--md ${launched ? "mil-btn--primary" : "mil-btn--ghost"}`}
               onClick={openLiveMap}
+              title={
+                launched
+                  ? undefined
+                  : "The live map works before a launch too — it shows whatever the federation is publishing"
+              }
             >
               Open live map →
             </button>

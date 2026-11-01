@@ -16,6 +16,8 @@ interface Props {
   mockDemo?: boolean;
   /** Present when this app owns the setting (standalone); absent in Workshop. */
   onToggleMockDemo?: (value: boolean) => void;
+  /** The next act of the demo; absent in Workshop, where the module's tabs do this. */
+  onOpenAnalysis?: () => void;
 }
 
 const DOT_COLOR: Record<ConnState, string> = {
@@ -45,6 +47,7 @@ const TopBar: FC<Props> = ({
   onStop,
   mockDemo = false,
   onToggleMockDemo,
+  onOpenAnalysis,
 }) => {
   const statusLabel = mockDemo
     ? `simulated federation · ${status?.entityCount ?? 0} entities`
@@ -144,6 +147,16 @@ const TopBar: FC<Props> = ({
           >
             ● DEMO — SIMULATED
           </span>
+        )}
+        {onOpenAnalysis && (
+          <button
+            type="button"
+            style={btnStyle(UI.accent)}
+            onClick={onOpenAnalysis}
+            title="Replay the run against the phase plan and debrief it"
+          >
+            Analyse run →
+          </button>
         )}
         <AppSwitcher />
       </div>

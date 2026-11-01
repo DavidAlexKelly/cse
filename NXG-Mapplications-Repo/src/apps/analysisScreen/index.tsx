@@ -10,13 +10,14 @@
 // playhead lands on them, so a 16-hour run is navigable without ever pulling
 // 20 million rows into the browser.
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { BALTIC_SHIELD_PLAN } from "@/shared/hla/balticShieldPlan";
 import type { HlaEntity, LatLon } from "@/shared/hla/types";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useMockDemo } from "@/shared/hooks/useMockDemo";
+import { topLevelWindow } from "@/shared/hooks/useMockDemo";
 import {
   type WorkshopObjectSetValue,
   useWorkshopObjectKey,
@@ -476,6 +477,7 @@ const AnalysisScreen: FC = () => {
   }, [selectedEntityId, playback.entities, currentFrameTs]);
 
   const runsError = runsQuery.error;
+  const standaloneWindow = useMemo(topLevelWindow, []);
   const permissionProblem =
     playback.permissionDenied || (runsError instanceof SqlError && runsError.permissionDenied);
 
@@ -545,7 +547,82 @@ const AnalysisScreen: FC = () => {
       )}
 
       {view === "map" && (
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        <div style={{ display: "flex", flex: 1, overflow: "hidden", position: "relative" }}>
+          {!mockDemo && !runsQuery.isLoading && runs.length === 0 && (
+            // An empty grey map says nothing; say what to do instead.
+            <div
+              role="status"
+              style={{
+                position: "absolute",
+                top: "38%",
+                left: "calc(50% - 160px)",
+                transform: "translate(-50%, -50%)",
+                zIndex: 1100,
+                maxWidth: 420,
+                background: UI.bg1,
+                border: `1px solid ${UI.border}`,
+                borderLeft: `3px solid ${UI.accent}`,
+                padding: "16px 18px",
+                color: UI.text,
+                fontSize: 13,
+                lineHeight: 1.5,
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: UI.fontMono,
+                  fontSize: 10,
+                  letterSpacing: 1,
+                  color: UI.accent,
+                }}
+              >
+                NO RECORDED RUNS {runsError != null ? "AVAILABLE" : "YET"}
+              </div>
+              <div style={{ margin: "6px 0 10px" }}>
+                {runsError != null
+                  ? "The track dataset could not be read, so there is no run to replay."
+                  : "A run appears here once a phase has been launched and the federation has published positions."}{" "}
+                Launch a phase from Execute
+                {ownsMockDemo ? ", or replay the demo run." : ", or switch on demo mode."}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {ownsMockDemo && (
+                  <button
+                    type="button"
+                    onClick={() => setMockDemo(true)}
+                    style={{
+                      background: `${UI.amber}22`,
+                      color: UI.amber,
+                      border: `1px solid ${UI.amber}`,
+                      fontFamily: UI.fontMono,
+                      fontSize: 11,
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    REPLAY THE DEMO RUN
+                  </button>
+                )}
+                {standaloneWindow && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/execute")}
+                    style={{
+                      background: "transparent",
+                      color: UI.accent,
+                      border: `1px solid ${UI.border}`,
+                      fontFamily: UI.fontMono,
+                      fontSize: 11,
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    OPEN EXECUTE →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           <AnalysisMap
             entities={playback.entities}
             selectedId={selectedEntityId}

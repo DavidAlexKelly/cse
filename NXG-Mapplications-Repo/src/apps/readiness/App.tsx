@@ -11,9 +11,9 @@
 // Plus an opt-in live check of the CSE connection (it only lists
 // compositions). "Copy report" gives the whole result as text.
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { AppSwitcher } from "@/components/AppSwitcher";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { probeResource } from "@/shared/lib/platformMetadata";
 import { liveRunner } from "../execute/lib/runner";
 import { usePhaseCatalogues } from "../scenarioPlanner/hooks/usePhaseCatalogues";
@@ -36,6 +36,7 @@ import {
   REQUIREMENTS,
   STAGES,
   evaluateResource,
+  unreachableSummary,
 } from "./lib/requirements";
 import "./readiness.css";
 
@@ -182,7 +183,11 @@ export default function ReadinessApp() {
 
   // ── Results ─────────────────────────────────────────────────────────────
   const results = useMemo<CheckResult[]>(() => {
-    const out = REQUIREMENTS.map((r) => evaluateResource(r, probes[r.id] ?? null));
+    // One row, not thirty, when the metadata API itself could not be reached.
+    const unreachable = unreachableSummary(REQUIREMENTS.map((r) => probes[r.id] ?? null));
+    const out = unreachable
+      ? [unreachable]
+      : REQUIREMENTS.map((r) => evaluateResource(r, probes[r.id] ?? null));
     if (cse) out.push(cse);
     out.push(runCheck(runs), demoModeCheck(demoData));
     return out;
@@ -268,6 +273,10 @@ export default function ReadinessApp() {
         <section className="rd__col">
           {STAGES.map((stage) => {
             const rows = all.filter((r) => r.stage === stage.id);
+            // A stage with nothing to say (e.g. when one "unreachable" row
+            // stands in for every resource) is noise; Execute keeps its card
+            // for the CSE check.
+            if (rows.length === 0 && stage.id !== "execute") return null;
             return (
               <div key={stage.id} className="rd__card">
                 <div className="rd__card-title">

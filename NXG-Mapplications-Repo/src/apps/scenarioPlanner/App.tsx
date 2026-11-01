@@ -1,7 +1,8 @@
 import "./scenarioPlanner.layout.css";
 import "./scenarioPlanner.components.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { PHASE_PARAM, useAppNavigate } from "@/shared/hooks/useAppNavigate";
+import { topLevelWindow } from "@/shared/hooks/useMockDemo";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { PhaseTimeline } from "./components/PhaseTimeline/PhaseTimeline";
 import {
@@ -361,6 +362,7 @@ function toPlacedUnit(u: MapUnitPlacement): PlacedUnitType {
 
 export default function ScenarioPlanWidget() {
   const navigate = useAppNavigate();
+  const standaloneWindow = useMemo(topLevelWindow, []);
   const workshopCtxAsync = useWorkshopContext(SCENARIO_CONFIG);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = workshopCtxAsync.status === "LOADED" ? (workshopCtxAsync.value as any) : null;
@@ -2132,15 +2134,33 @@ export default function ScenarioPlanWidget() {
             </>
           }
           toolbarEnd={
-            hasPhaseOrbat ? (
-              <OrbatLevelControl
-                mode={levelMode}
-                autoLevel={autoLevel}
-                levels={levelInfos}
-                onChange={setLevelMode}
-                loading={phaseOrbat.loading}
-              />
-            ) : undefined
+            <>
+              {hasPhaseOrbat && (
+                <OrbatLevelControl
+                  mode={levelMode}
+                  autoLevel={autoLevel}
+                  levels={levelInfos}
+                  onChange={setLevelMode}
+                  loading={phaseOrbat.loading}
+                />
+              )}
+              {/* The next act of the demo. Standalone only: in Workshop the
+                  module's Execute tab is the way there. */}
+              {standaloneWindow && (selectedPhaseId ?? viewingBranchLeaf) && (
+                <button
+                  type="button"
+                  className="mil-btn mil-btn--sm mil-btn--primary"
+                  onClick={() =>
+                    navigate(
+                      `/execute?${PHASE_PARAM}=${encodeURIComponent(selectedPhaseId ?? viewingBranchLeaf ?? "")}`,
+                    )
+                  }
+                  title="Check this phase's ORBAT and launch it into the simulation"
+                >
+                  Execute phase ▶
+                </button>
+              )}
+            </>
           }
           orbatLevelNodes={orbatLevelNodes}
           orbatLevelDraggable={!readOnly}

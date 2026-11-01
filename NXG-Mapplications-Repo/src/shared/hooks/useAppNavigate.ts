@@ -21,6 +21,14 @@ export function carryDemoParam(path: string, currentSearch: string): string {
   return `${pathname}?${params.toString()}${hash ? `#${hash}` : ""}`;
 }
 
+/** The `phase` query parameter — how one app hands its phase to the next. */
+export const PHASE_PARAM = "phase";
+
+export function readPhaseParam(search: string): string | null {
+  const v = new URLSearchParams(search).get(PHASE_PARAM);
+  return v && v.trim() ? v.trim() : null;
+}
+
 /** useNavigate, keeping demo mode across apps. */
 export function useAppNavigate(): (path: string, options?: NavigateOptions) => void {
   const navigate = useNavigate();

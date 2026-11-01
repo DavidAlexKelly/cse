@@ -147,7 +147,7 @@ const TopBar: FC<Props> = ({
             background: mockDemo ? UI.amber : UI.textFaint,
           }}
         />
-        {mockDemo ? "MOCK DEMO" : "LIVE DATA"}
+        {mockDemo ? "DEMO MODE" : "LIVE DATA"}
       </button>
     )}
 

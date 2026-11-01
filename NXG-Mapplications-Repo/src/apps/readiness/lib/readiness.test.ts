@@ -14,6 +14,7 @@ import {
   REQUIREMENTS,
   type Requirement,
   evaluateResource,
+  unreachableSummary,
 } from "./requirements";
 
 const req = (id: string): Requirement => {
@@ -230,5 +231,29 @@ describe("report", () => {
     expect(text).toContain("Fix: Create it");
     expect(text).toContain("[OK  ] NxgPhase (object type) — Present.");
     expect(text).toMatch(/Phases\n {2}\[FAIL\] Phase 1 — map 10, orders 6, ORBAT 0 blue \/ 0 red/);
+  });
+});
+
+describe("unreachableSummary", () => {
+  const err = (detail: string): ProbeFinding => ({
+    apiName: "x",
+    status: "error",
+    inSdk: false,
+    fields: [],
+    detail,
+  });
+  it("says once that Foundry could not be reached", () => {
+    const s = unreachableSummary([
+      err("Failed to fetch"),
+      err("Failed to fetch"),
+      err("Failed to fetch"),
+      err("HTTP 500"),
+    ]);
+    expect(s?.state).toBe("fail");
+    expect(s?.message).toMatch(/Failed to fetch.*none of the 4/);
+  });
+  it("stays out of the way when probes answered or are still pending", () => {
+    expect(unreachableSummary([err("a"), err("a"), present([])])).toBeNull();
+    expect(unreachableSummary([err("a"), err("a"), err("a"), null])).toBeNull();
   });
 });

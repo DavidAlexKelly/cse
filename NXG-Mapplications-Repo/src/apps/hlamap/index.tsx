@@ -23,7 +23,8 @@ import { useEntityTrackStream } from "./hooks/useEntityTrackStream";
 import { useMockSimulation } from "./hooks/useMockSimulation";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { HLAMAP_CONFIG } from "./hlamapConfig";
-import { useMockDemo } from "@/shared/hooks/useMockDemo";
+import { topLevelWindow, useMockDemo } from "@/shared/hooks/useMockDemo";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadedBool(field: any): boolean | null {
@@ -57,6 +58,8 @@ const HlaMapApp: FC = () => {
   // client-side from the OP-BALTIC-SHIELD-2026 ORBAT, so the app is fully
   // demonstrable with no simulator, bridge or RTI available.
   const workshopCtxAsync = useWorkshopContext(HLAMAP_CONFIG);
+  const navigate = useAppNavigate();
+  const topLevel = useMemo(topLevelWindow, []);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = workshopCtxAsync.status === "LOADED" ? (workshopCtxAsync.value as any) : null;
   // Workshop's boolean when embedded; ?mock=1 and a toggle when standalone —
@@ -454,6 +457,7 @@ const HlaMapApp: FC = () => {
         onStop={() => void runBridge("Stop scenario", bridge.stopScenario)}
         mockDemo={mockDemo}
         onToggleMockDemo={standalone ? setMockDemo : undefined}
+        onOpenAnalysis={topLevel ? () => navigate("/analysis") : undefined}
       />
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         <MapView
