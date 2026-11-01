@@ -244,8 +244,12 @@ function parseEquipment(row: OSwordFormationRow): SwordEquipment | null {
  * than at each call site.
  */
 function positiveInt(raw: string | undefined, fallback: number): number {
-  const n = Number.parseInt((raw ?? "").trim(), 10);
-  return Number.isFinite(n) && n > 0 ? n : fallback;
+  // Whole numbers only: "3x" or "2.5" is malformed, not "3" or "2" — the
+  // same reading as the Translator's int() (rules fixture: constituents).
+  const text = (raw ?? "").trim();
+  if (!/^[+-]?\d+$/.test(text)) return fallback;
+  const n = Number(text);
+  return n > 0 ? n : fallback;
 }
 
 /**

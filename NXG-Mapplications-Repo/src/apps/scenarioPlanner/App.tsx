@@ -3,6 +3,7 @@ import "./scenarioPlanner.components.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PHASE_PARAM, useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { topLevelWindow } from "@/shared/hooks/useMockDemo";
+import { usePhasePreflight } from "@/shared/orbat/usePhasePreflight";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { PhaseTimeline } from "./components/PhaseTimeline/PhaseTimeline";
 import {
@@ -29,6 +30,7 @@ import { usePhaseCatalogues } from "./hooks/usePhaseCatalogues";
 import { DEFAULT_EXERCISE, DEFAULT_SCENARIO_ID, MOCK_EXERCISE } from "./shared/phaseColours";
 import {
   describeActionError,
+  operationKeyForScenario,
   resolveScenarioOrbat,
   sideForSidc,
 } from "../../shared/orbat/scenarioOrbat";
@@ -766,6 +768,18 @@ export default function ScenarioPlanWidget() {
     return () => clearTimeout(t);
   }, [orbatStatus]);
   const reconcileStatus = orbatStatus?.text ?? null;
+
+  // The Translator's preflight for the phase ORBAT (plan 5.3): the same check
+  // Execute gates on, from the server — re-run after each save.
+  const plannerPreflight = usePhasePreflight(
+    operationKeyForScenario(scenarioMeta?.scenarioId ?? DEFAULT_SCENARIO_ID),
+    selectedPhaseId ?? null,
+    hasPhaseOrbat,
+  );
+  const recheckPlannerPreflight = plannerPreflight.recheck;
+  useEffect(() => {
+    if (reconcileStatus) recheckPlannerPreflight();
+  }, [reconcileStatus, recheckPlannerPreflight]);
 
   /** The selected phase's placements, from the map. */
   const phasePlacements = useCallback((): PlacedUnitType[] => {
@@ -2362,6 +2376,17 @@ export default function ScenarioPlanWidget() {
               }
             },
             rebuildStatus: reconcileStatus,
+            preflight: hasPhaseOrbat
+              ? {
+                  status: plannerPreflight.status,
+                  summary: plannerPreflight.report?.summary ?? null,
+                  errors: plannerPreflight.report?.errors ?? 0,
+                  warnings: plannerPreflight.report?.warnings ?? 0,
+                  issues: plannerPreflight.report?.issues ?? [],
+                  error: plannerPreflight.error,
+                  onRecheck: plannerPreflight.recheck,
+                }
+              : undefined,
             onRebuildHierarchy: readOnly || !selectedPhase ? undefined : handleSavePhaseOrbat,
             missingOrbatCount,
             generateBusy,

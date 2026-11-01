@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import rules from "./__fixtures__/rules.json";
 
 import {
   assertNoDoubleCounting,
@@ -8,12 +9,9 @@ import {
   type Representation,
 } from "./representation";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SHARED CASE TABLE — keep byte-comparable with the Python mirror:
-//   [NXG] Translator → python-functions/python/tests/test_representation.py
-// Same cases, same order, same names. If you add one here, add it there.
-// Every value below is taken from the ontology as it stands, not invented.
-// ─────────────────────────────────────────────────────────────────────────────
+// SHARED CASE TABLE — the one file both this suite and the Translator's Python
+// suite run (src/shared/orbat/__fixtures__/rules.json, vendored from
+// NXG-Translator tests/shared/rules_fixture.json). Add cases there.
 
 interface Case {
   name: string;
@@ -22,83 +20,7 @@ interface Case {
   expected: Representation;
 }
 
-const CASES: Case[] = [
-  // ── physical things are entities, whatever else is true of them ──────────
-  {
-    name: "vehicle with a VBS4 model",
-    entityType: "vehicle",
-    code: "vbs_us_army_m163_vulcan_grn_x",
-    expected: "entity",
-  },
-  {
-    name: "aircraft with a SimWorks model",
-    entityType: "aircraft",
-    code: "GBR AH-64 (HELO)",
-    expected: "entity",
-  },
-  {
-    name: "human with no model chosen yet is an incomplete entity, not structure",
-    entityType: "human",
-    code: null,
-    expected: "entity",
-  },
-  {
-    name: "vehicle carrying a SWORD equipment code",
-    entityType: "vehicle",
-    code: "CP.Armored vehicle|AAA.Surface to air battery|1.1.225.2.5.33.0|equipment",
-    expected: "entity",
-  },
-  // ── organisations: the SWORD row decides ─────────────────────────────────
-  {
-    name: "organisation with a SWORD automat row",
-    entityType: "organisation",
-    code: "AAA.Surface to air battery|automat",
-    expected: "automat",
-  },
-  {
-    name: "organisation with a SWORD automat row, whitespace padded",
-    entityType: "organisation",
-    code: "  INF.Mechanised company|automat  ",
-    expected: "automat",
-  },
-  {
-    name: "organisation with a SWORD unit row is one slice of an automat",
-    entityType: "organisation",
-    code: "INF.Rifle platoon|unit",
-    expected: "subformation",
-  },
-  {
-    name: "organisation with no asset is plain structure",
-    entityType: "organisation",
-    code: null,
-    expected: "aggregate",
-  },
-  {
-    name: "organisation with an empty asset code is plain structure",
-    entityType: "organisation",
-    code: "",
-    expected: "aggregate",
-  },
-  {
-    name: "organisation carrying a platform code is still structure: it cannot be emitted",
-    entityType: "organisation",
-    code: "GBR L118 (ARTILLERY)",
-    expected: "aggregate",
-  },
-  {
-    name: "organisation carrying a SWORD equipment code is not an automat",
-    entityType: "organisation",
-    code: "CP.Armored vehicle|INF.Mechanised company|1.1.225.2.1.10.0|equipment",
-    expected: "aggregate",
-  },
-  // ── the suffix has to be the suffix, not merely present ──────────────────
-  {
-    name: "the word automat inside a name does not make an automat",
-    entityType: "organisation",
-    code: "INF.Automat support company",
-    expected: "aggregate",
-  },
-];
+const CASES: Case[] = rules.representation as Case[];
 
 describe("representationOf", () => {
   for (const c of CASES) {

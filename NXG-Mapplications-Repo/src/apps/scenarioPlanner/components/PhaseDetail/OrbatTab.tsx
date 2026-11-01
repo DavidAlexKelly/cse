@@ -49,6 +49,11 @@ export interface OrbatTabProps {
   onRebuildHierarchy?: () => void;
   /** Result of the last rebuild or bulk generation this session. */
   rebuildStatus?: string | null;
+  /**
+   * The Translator's preflight for this phase ORBAT — the check Execute gates
+   * the launch on, from the server rather than a copy of its rules here.
+   */
+  preflight?: PhasePreflightView;
   /** Land placements with no ORBAT yet — drives the bulk generate button. */
   missingOrbatCount?: number;
   /** True while a bulk generation is in flight. */
@@ -70,10 +75,63 @@ export interface OrbatTabProps {
   readOnly?: boolean;
 }
 
+export interface PhasePreflightView {
+  status: "idle" | "running" | "done" | "error";
+  summary: string | null;
+  errors: number;
+  warnings: number;
+  issues: { severity: string; code: string; message: string }[];
+  error: string | null;
+  onRecheck: () => void;
+}
+
+function PreflightLine({ preflight }: { preflight: PhasePreflightView }) {
+  if (preflight.status === "idle") return null;
+  const tone =
+    preflight.status === "error" || preflight.errors > 0
+      ? "var(--accent-red-hover, #e57373)"
+      : preflight.warnings > 0
+        ? "var(--accent-amber, #f0b429)"
+        : "var(--accent-primary, #2fbf71)";
+  const text =
+    preflight.status === "running"
+      ? "Preflight: checking every unit will spawn…"
+      : preflight.status === "error"
+        ? `Preflight unavailable: ${preflight.error ?? "unknown error"}`
+        : preflight.errors > 0
+          ? `Preflight: ${preflight.errors} error${preflight.errors === 1 ? "" : "s"} — Execute will not launch this phase`
+          : `Preflight clean${preflight.warnings ? ` (${preflight.warnings} warning${preflight.warnings === 1 ? "" : "s"})` : ""} — same check as Execute`;
+  return (
+    <div style={{ marginTop: 8, fontSize: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ color: tone, fontWeight: 600 }}>{text}</span>
+        {preflight.status !== "running" && (
+          <button type="button" className="sp-btn--outline sp-btn--sm" onClick={preflight.onRecheck}>
+            Re-check
+          </button>
+        )}
+      </div>
+      {preflight.issues.filter((i) => i.severity === "ERROR").length > 0 && (
+        <ul style={{ margin: "6px 0 0", paddingLeft: 18, color: "var(--text-secondary, #b4bfcc)" }}>
+          {preflight.issues
+            .filter((i) => i.severity === "ERROR")
+            .slice(0, 5)
+            .map((i, n) => (
+              <li key={n}>
+                <code>{i.code}</code> {i.message}
+              </li>
+            ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function ScenarioOrbatLinks({
   onOpenScenarioOrbat,
   onRebuildHierarchy,
   rebuildStatus,
+  preflight,
   missingOrbatCount = 0,
   generateBusy = false,
   onGenerateAllOrbats,
@@ -81,6 +139,7 @@ function ScenarioOrbatLinks({
   onOpenScenarioOrbat: (side: "blue" | "red") => void;
   onRebuildHierarchy?: () => void;
   rebuildStatus?: string | null;
+  preflight?: PhasePreflightView;
   missingOrbatCount?: number;
   generateBusy?: boolean;
   onGenerateAllOrbats?: () => void;
@@ -141,6 +200,7 @@ function ScenarioOrbatLinks({
           {rebuildStatus}
         </p>
       )}
+      {preflight && <PreflightLine preflight={preflight} />}
     </div>
   );
 }
@@ -259,6 +319,7 @@ export function OrbatTab({
   onOpenScenarioOrbat,
   onRebuildHierarchy,
   rebuildStatus,
+  preflight,
   missingOrbatCount = 0,
   generateBusy = false,
   onGenerateAllOrbats,
@@ -285,6 +346,7 @@ export function OrbatTab({
             onOpenScenarioOrbat={onOpenScenarioOrbat}
             onRebuildHierarchy={readOnly ? undefined : onRebuildHierarchy}
             rebuildStatus={rebuildStatus}
+            preflight={preflight}
             missingOrbatCount={missingOrbatCount}
             generateBusy={generateBusy}
             onGenerateAllOrbats={readOnly ? undefined : onGenerateAllOrbats}
@@ -307,6 +369,7 @@ export function OrbatTab({
             onOpenScenarioOrbat={onOpenScenarioOrbat}
             onRebuildHierarchy={readOnly ? undefined : onRebuildHierarchy}
             rebuildStatus={rebuildStatus}
+            preflight={preflight}
             missingOrbatCount={missingOrbatCount}
             generateBusy={generateBusy}
             onGenerateAllOrbats={readOnly ? undefined : onGenerateAllOrbats}
@@ -453,6 +516,7 @@ export function OrbatTab({
             onOpenScenarioOrbat={onOpenScenarioOrbat}
             onRebuildHierarchy={readOnly ? undefined : onRebuildHierarchy}
             rebuildStatus={rebuildStatus}
+            preflight={preflight}
             missingOrbatCount={missingOrbatCount}
             generateBusy={generateBusy}
             onGenerateAllOrbats={readOnly ? undefined : onGenerateAllOrbats}

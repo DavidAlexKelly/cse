@@ -1,0 +1,290 @@
+{
+  "_about": "Shared rule cases for the ORBAT rules implemented in BOTH NXG-Translator (Python) and NXG-Mapplications (TypeScript). Canonical copy: NXG-Translator/python-functions/python/tests/shared/rules_fixture.json; Mapplications vendors it at src/shared/orbat/__fixtures__/rules.json and a test fails if the two differ. Edit here, then copy. See NXG-Mapplications-Repo/docs/ORBAT_PIPELINE_PLAN.md (5.1).",
+  "placeholderDis": "0.0.0.0.0.0.0",
+  "representation": [
+    {
+      "name": "vehicle with a VBS4 model",
+      "entityType": "vehicle",
+      "code": "vbs_us_army_m163_vulcan_grn_x",
+      "expected": "entity"
+    },
+    {
+      "name": "aircraft with a SimWorks model",
+      "entityType": "aircraft",
+      "code": "GBR AH-64 (HELO)",
+      "expected": "entity"
+    },
+    {
+      "name": "human with no model chosen yet is an incomplete entity, not structure",
+      "entityType": "human",
+      "code": null,
+      "expected": "entity"
+    },
+    {
+      "name": "vehicle carrying a SWORD equipment code",
+      "entityType": "vehicle",
+      "code": "CP.Armored vehicle|AAA.Surface to air battery|1.1.225.2.5.33.0|equipment",
+      "expected": "entity"
+    },
+    {
+      "name": "organisation with a SWORD automat row",
+      "entityType": "organisation",
+      "code": "AAA.Surface to air battery|automat",
+      "expected": "automat"
+    },
+    {
+      "name": "organisation with a SWORD automat row, whitespace padded",
+      "entityType": "organisation",
+      "code": "  INF.Mechanised company|automat  ",
+      "expected": "automat"
+    },
+    {
+      "name": "organisation with a SWORD unit row is one slice of an automat",
+      "entityType": "organisation",
+      "code": "INF.Rifle platoon|unit",
+      "expected": "subformation"
+    },
+    {
+      "name": "organisation with no asset is plain structure",
+      "entityType": "organisation",
+      "code": null,
+      "expected": "aggregate"
+    },
+    {
+      "name": "organisation with an empty asset code is plain structure",
+      "entityType": "organisation",
+      "code": "",
+      "expected": "aggregate"
+    },
+    {
+      "name": "organisation carrying a platform code is still structure: it cannot be emitted",
+      "entityType": "organisation",
+      "code": "GBR L118 (ARTILLERY)",
+      "expected": "aggregate"
+    },
+    {
+      "name": "organisation carrying a SWORD equipment code is not an automat",
+      "entityType": "organisation",
+      "code": "CP.Armored vehicle|INF.Mechanised company|1.1.225.2.1.10.0|equipment",
+      "expected": "aggregate"
+    },
+    {
+      "name": "the word automat inside a name does not make an automat",
+      "entityType": "organisation",
+      "code": "INF.Automat support company",
+      "expected": "aggregate"
+    }
+  ],
+  "constituents": [
+    {
+      "name": "counts on every entry",
+      "raw": "Inf Pl#3#3|Mortar Sec#1#2",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 3,
+          "max": 3
+        },
+        {
+          "name": "Mortar Sec",
+          "min": 1,
+          "max": 2
+        }
+      ]
+    },
+    {
+      "name": "bare names (dataset built before the counts)",
+      "raw": "Inf Pl|HQ",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 1,
+          "max": 1
+        },
+        {
+          "name": "HQ",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "name": "missing max means exactly min",
+      "raw": "Inf Pl#2",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 2,
+          "max": 2
+        }
+      ]
+    },
+    {
+      "name": "zero or negative counts fall back",
+      "raw": "A#0#0|B#-1",
+      "expected": [
+        {
+          "name": "A",
+          "min": 1,
+          "max": 1
+        },
+        {
+          "name": "B",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "name": "a count with trailing junk is malformed, not read as its digits",
+      "raw": "Inf Pl#3x#4",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 1,
+          "max": 4
+        }
+      ]
+    },
+    {
+      "name": "a decimal count is malformed",
+      "raw": "Inf Pl#2.5",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "name": "surrounding whitespace is allowed",
+      "raw": " Inf Pl # 2 # 3 ",
+      "expected": [
+        {
+          "name": "Inf Pl",
+          "min": 2,
+          "max": 3
+        }
+      ]
+    },
+    {
+      "name": "empty entries and empty field",
+      "raw": "|A#1||",
+      "expected": [
+        {
+          "name": "A",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "name": "empty",
+      "raw": "",
+      "expected": []
+    }
+  ],
+  "simulatorNames": [
+    {
+      "raw": "ascot",
+      "expected": "ascot7"
+    },
+    {
+      "raw": "ascot7",
+      "expected": "ascot7"
+    },
+    {
+      "raw": "bsi/mace",
+      "expected": "mace"
+    },
+    {
+      "raw": "jtls",
+      "expected": "jtls-go"
+    },
+    {
+      "raw": "jtls-go",
+      "expected": "jtls-go"
+    },
+    {
+      "raw": "mace",
+      "expected": "mace"
+    },
+    {
+      "raw": "masa/sword",
+      "expected": "sword"
+    },
+    {
+      "raw": "onearc/vbs4",
+      "expected": "vbs4"
+    },
+    {
+      "raw": "plexsys/ascot7",
+      "expected": "ascot7"
+    },
+    {
+      "raw": "plexsys/simworks",
+      "expected": "simworks"
+    },
+    {
+      "raw": "sim works",
+      "expected": "simworks"
+    },
+    {
+      "raw": "simworks",
+      "expected": "simworks"
+    },
+    {
+      "raw": "sword",
+      "expected": "sword"
+    },
+    {
+      "raw": "valkyrie/jtls-go",
+      "expected": "jtls-go"
+    },
+    {
+      "raw": "vbs",
+      "expected": "vbs4"
+    },
+    {
+      "raw": "vbs3",
+      "expected": "vbs4"
+    },
+    {
+      "raw": "vbs4",
+      "expected": "vbs4"
+    },
+    {
+      "raw": "",
+      "expected": null
+    },
+    {
+      "raw": "none",
+      "expected": null
+    },
+    {
+      "raw": "None",
+      "expected": null
+    },
+    {
+      "raw": "  ",
+      "expected": null
+    },
+    {
+      "raw": "unknown-sim",
+      "expected": null
+    },
+    {
+      "raw": "  Vbs4 ",
+      "expected": "vbs4"
+    },
+    {
+      "raw": "Simworks",
+      "expected": "simworks"
+    },
+    {
+      "raw": "SWORD",
+      "expected": "sword"
+    }
+  ]
+}

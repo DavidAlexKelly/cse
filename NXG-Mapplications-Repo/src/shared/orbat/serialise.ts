@@ -8,7 +8,7 @@ import type { CompositionNode } from "@/shared/types";
 import type { PlacedUnit } from "../../apps/scenarioPlanner/map/types";
 import { isOrbatEligible } from "./eligibility";
 import type { ReconcileEdge, ReconcileUnit } from "./hierarchy";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "./model";
+import { ORGANIC_RELATIONSHIP_KEY, ontologyDate, PLACEHOLDER_DIS } from "./model";
 import { ringPositions } from "./ringLayout";
 
 /** A generated ORBAT, flattened into what the reconcile function wants. */
@@ -141,7 +141,7 @@ export function serialiseComposition(
           owningSimulator: node.owningSimulator || "none",
           simulatorIdentifierCode: node.simulatorIdentifierCode ?? null,
           dis6Code: node.canonicalAssetKey ?? null,
-          dis: "0.0.0.0.0.0.0",
+          dis: PLACEHOLDER_DIS,
           canControlDrones: false,
           militaryService: node.militaryService,
           echelon: node.echelon,

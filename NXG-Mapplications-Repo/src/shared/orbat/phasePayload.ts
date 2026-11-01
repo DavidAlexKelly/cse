@@ -24,7 +24,7 @@ import {
   desiredParentage,
   memberWithKey,
 } from "./hierarchy";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "./model";
+import { ORGANIC_RELATIONSHIP_KEY, ontologyDate, PLACEHOLDER_DIS } from "./model";
 import type { ForestIndex } from "./orbatLevels";
 import { isNativeToPhase, newPhaseUnitKey } from "./phaseKeys";
 import { ringPositions } from "./ringLayout";
@@ -497,7 +497,7 @@ export function treeSavePayload(ref: PhaseHierarchyRef, input: TreeSaveInput): T
     if (!isNew) return base;
     return {
       ...base,
-      dis: "0.0.0.0.0.0.0",
+      dis: PLACEHOLDER_DIS,
       latitude: pos?.lat ?? null,
       longitude: pos?.lng ?? null,
     };

@@ -75,7 +75,7 @@ import {
 } from "../orbat/swordFormations";
 
 import { cachedLoad, invalidatePrefix } from "./ontologyCache";
-import { ontologyDate } from "../orbat/model";
+import { ontologyDate, PLACEHOLDER_DIS } from "../orbat/model";
 
 // ─── Auth token ────────────────────────────────────────────────────────────
 
@@ -252,7 +252,7 @@ export async function loadUnits(unitKeys: string[]): Promise<OUnit[]> {
     allegiance: u.allegiance ?? "",
     entityType: u.entityType ?? "organisation",
     owningSimulator: u.owningSimulator ?? "none",
-    dis: u.dis ?? "0.0.0.0.0.0.0",
+    dis: u.dis ?? PLACEHOLDER_DIS,
     canControlDrones: u.canControlDrones ?? false,
     // NxgUnit has no canonical_asset_key property — dis6Code IS the foreign key
     // that drives the NxgCanonicalAsset link. This used to be hardcoded to
