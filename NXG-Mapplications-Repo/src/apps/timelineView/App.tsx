@@ -17,7 +17,7 @@
 
 import "./timelineView.css";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { client } from "../../client";
 import {
   NxgInject,
@@ -676,7 +676,7 @@ function PhaseGraphOverview({
 // ── Main app ─────────────────────────────────────────────────────────────────
 
 export default function TimelineViewApp() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scenario, setScenario] = useState<Osdk.Instance<NxgScenario> | null>(null);

@@ -1,5 +1,4 @@
 // ── hlamap/components/TopBar.tsx ──────────────────────────────────────────
-
 import type { CSSProperties, FC } from "react";
 import { AppSwitcher } from "@/components/AppSwitcher";
 import type { BridgeStatusInfo } from "../types";
@@ -13,6 +12,10 @@ interface Props {
   onStart: () => void;
   onPause: () => void;
   onStop: () => void;
+  /** Demo mode: the federation is simulated in the browser. */
+  mockDemo?: boolean;
+  /** Present when this app owns the setting (standalone); absent in Workshop. */
+  onToggleMockDemo?: (value: boolean) => void;
 }
 
 const DOT_COLOR: Record<ConnState, string> = {
@@ -34,9 +37,18 @@ function btnStyle(color: string): CSSProperties {
   };
 }
 
-const TopBar: FC<Props> = ({ connState, status, onStart, onPause, onStop }) => {
-  const statusLabel =
-    connState === "loading"
+const TopBar: FC<Props> = ({
+  connState,
+  status,
+  onStart,
+  onPause,
+  onStop,
+  mockDemo = false,
+  onToggleMockDemo,
+}) => {
+  const statusLabel = mockDemo
+    ? `simulated federation · ${status?.entityCount ?? 0} entities`
+    : connState === "loading"
       ? "connecting…"
       : connState === "offline"
         ? "bridge unreachable"
@@ -80,18 +92,59 @@ const TopBar: FC<Props> = ({ connState, status, onStart, onPause, onStop }) => {
             flexShrink: 0,
           }}
         />
-        <span style={{ fontSize: 11, color: UI.textDim, fontFamily: UI.fontMono }}>{statusLabel}</span>
+        <span style={{ fontSize: 11, color: UI.textDim, fontFamily: UI.fontMono }}>
+          {statusLabel}
+        </span>
       </div>
 
       <div style={{ width: 1, height: 18, background: UI.border }} />
 
       <div style={{ display: "flex", gap: 6 }}>
-        <button style={btnStyle(UI.green)} onClick={onStart}>▶ Start</button>
-        <button style={btnStyle(UI.amber)} onClick={onPause}>⏸ Pause</button>
-        <button style={btnStyle(UI.red)} onClick={onStop}>■ Stop</button>
+        <button style={btnStyle(UI.green)} onClick={onStart}>
+          ▶ Start
+        </button>
+        <button style={btnStyle(UI.amber)} onClick={onPause}>
+          ⏸ Pause
+        </button>
+        <button style={btnStyle(UI.red)} onClick={onStop}>
+          ■ Stop
+        </button>
       </div>
 
-      <div style={{ marginLeft: "auto" }}>
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+        {onToggleMockDemo ? (
+          <label
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 11,
+              color: UI.textDim,
+            }}
+            title="Simulate the federation in the browser — no simulator, bridge or RTI needed"
+          >
+            <input
+              type="checkbox"
+              checked={mockDemo}
+              onChange={(e) => onToggleMockDemo(e.target.checked)}
+            />
+            Demo mode
+          </label>
+        ) : null}
+        {mockDemo && (
+          <span
+            style={{
+              border: `1px solid ${UI.amber}`,
+              color: UI.amber,
+              fontFamily: UI.fontMono,
+              fontSize: 10,
+              letterSpacing: 1,
+              padding: "2px 8px",
+            }}
+          >
+            ● DEMO — SIMULATED
+          </span>
+        )}
         <AppSwitcher />
       </div>
     </div>

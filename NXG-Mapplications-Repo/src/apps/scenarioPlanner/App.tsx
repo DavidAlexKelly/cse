@@ -1,7 +1,7 @@
 import "./scenarioPlanner.layout.css";
 import "./scenarioPlanner.components.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { PhaseTimeline } from "./components/PhaseTimeline/PhaseTimeline";
 import {
@@ -360,7 +360,7 @@ function toPlacedUnit(u: MapUnitPlacement): PlacedUnitType {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ScenarioPlanWidget() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const workshopCtxAsync = useWorkshopContext(SCENARIO_CONFIG);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = workshopCtxAsync.status === "LOADED" ? (workshopCtxAsync.value as any) : null;

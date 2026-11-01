@@ -11,7 +11,7 @@
 // Plus an opt-in live check of the CSE connection (it only lists
 // compositions). "Copy report" gives the whole result as text.
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { AppSwitcher } from "@/components/AppSwitcher";
 import { probeResource } from "@/shared/lib/platformMetadata";
@@ -77,7 +77,7 @@ function Row({ result }: { result: CheckResult }) {
 }
 
 export default function ReadinessApp() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const workshop = useWorkshopContext(READINESS_CONFIG);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ctx = workshop.status === "LOADED" ? (workshop.value as any) : null;

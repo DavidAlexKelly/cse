@@ -12,7 +12,7 @@
 // and federation call and says so on screen. The phase ORBAT is still read
 // from the ontology when it can be, so the numbers in the demo are real.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { AppSwitcher } from "@/components/AppSwitcher";
@@ -63,7 +63,7 @@ function errorText(err: unknown): string {
 }
 
 export default function ExecuteApp() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const workshop = useWorkshopContext(EXECUTE_CONFIG);
   const contextLoaded = workshop.status === "LOADED";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

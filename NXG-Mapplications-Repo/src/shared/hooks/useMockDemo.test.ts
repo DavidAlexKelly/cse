@@ -52,11 +52,16 @@ describe("isStandalone", () => {
     expect(isStandalone(false, false, false)).toBe(false);
   });
 
-  it("defers to a loaded Workshop context however it is hosted", () => {
+  it("defers to a loaded Workshop context when embedded", () => {
     expect(isStandalone(true, false, false)).toBe(false);
-    expect(isStandalone(true, true, false)).toBe(false);
     // Even if the grace period had already expired before the context landed.
     expect(isStandalone(true, false, true)).toBe(false);
+  });
+});
+
+describe("top-level windows", () => {
+  it("are standalone even though the widget library reports a loaded (default) context", () => {
+    expect(isStandalone(true, true, false)).toBe(true);
   });
 });
 

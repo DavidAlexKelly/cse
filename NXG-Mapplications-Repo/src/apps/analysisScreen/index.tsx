@@ -10,7 +10,7 @@
 // playhead lands on them, so a 16-hour run is navigable without ever pulling
 // 20 million rows into the browser.
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
@@ -176,16 +176,22 @@ const AnalysisScreen: FC = () => {
   // ── Outputs: run and selected entity ──────────────────────────────────────
   // `run` is bidirectional, so writing it back here is what lets a debrief page
   // follow the screen rather than having to be driven separately.
+  // Writes go through a ref: each setLoadedValue hands back a NEW context
+  // object, so depending on `ctx` here re-ran the write forever (React's
+  // "Maximum update depth exceeded"). Only a change of value should write.
+  const ctxRef = useRef(ctx);
+  ctxRef.current = ctx;
+  const hasCtx = ctx != null;
   useEffect(() => {
-    if (!ctx) return;
-    ctx.run?.setLoadedValue?.(selectedRunId ?? "");
-  }, [ctx, selectedRunId]);
+    ctxRef.current?.run?.setLoadedValue?.(selectedRunId ?? "");
+  }, [hasCtx, selectedRunId]);
 
   useEffect(() => {
-    if (!ctx) return;
-    ctx.selectedEntity?.setLoadedValue?.(selectedEntityId ?? "");
-    if (selectedEntityId) ctx.onEntitySelected?.executeEvent?.(undefined);
-  }, [ctx, selectedEntityId]);
+    const current = ctxRef.current;
+    if (!current) return;
+    current.selectedEntity?.setLoadedValue?.(selectedEntityId ?? "");
+    if (selectedEntityId) current.onEntitySelected?.executeEvent?.(undefined);
+  }, [hasCtx, selectedEntityId]);
 
   const selectedRun: RunSummary | null = useMemo(
     () => runs.find((run) => run.id === selectedRunId) ?? null,
@@ -304,7 +310,7 @@ const AnalysisScreen: FC = () => {
   // ── Next phase from actuals ──────────────────────────────────────────────
   // The phase this run executed, the track it produced and which entity each
   // planned unit is — from the live analysis, or from the mock run's own plan.
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const sourcePhase = mockDemo
     ? (phases.find((p) => p.id === BALTIC_SHIELD_PLAN.phaseId) ?? null)
     : phase;

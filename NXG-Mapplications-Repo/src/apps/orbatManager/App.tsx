@@ -37,7 +37,7 @@ import {
   readOrbatDefinitionRequest,
   type OrbatDefineRequest,
 } from "../../shared/orbat/defineHandoff";
-import { useNavigate } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useOrbatStore } from "./store/useOrbatStore";
 import { useCompositionData } from "@/shared/hooks/useCompositionData";
 import { AiTemplateGenerator } from "./components/AiTemplateGenerator";
@@ -1246,7 +1246,7 @@ export default function App() {
   // /orbat?define=1 with a request parked in sessionStorage. We seed a DRAFT
   // hierarchy from the placed unit's type — nothing is written to the ontology
   // until the planner presses Confirm in the banner below.
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [defineRequest, setDefineRequest] = useState<OrbatDefineRequest | null>(null);
   const [defineBusy, setDefineBusy] = useState(false);
   const [defineError, setDefineError] = useState<string | null>(null);

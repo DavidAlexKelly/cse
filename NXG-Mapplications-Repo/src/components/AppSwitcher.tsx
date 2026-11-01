@@ -11,7 +11,8 @@
  * cse-* class names.
  */
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useAppNavigate } from "@/shared/hooks/useAppNavigate";
 import { useEffect, useRef, useState } from "react";
 
 // ── App catalogue ─────────────────────────────────────────────────────────────
@@ -127,7 +128,7 @@ function injectStyle() {
 export function AppSwitcher() {
   injectStyle();
 
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
