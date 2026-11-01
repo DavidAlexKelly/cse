@@ -30,6 +30,7 @@ import { ANALYSIS_CONFIG } from "./analysisConfig";
 import AnalysisMap, { DEFAULT_PLAN_LAYERS, type PlanLayerToggles } from "./components/AnalysisMap";
 import CompliancePanel from "./components/CompliancePanel";
 import DebriefView from "./components/DebriefView";
+import { MatchReview } from "./components/MatchReview";
 import type { NextPhaseState } from "./components/NextPhaseCard";
 import SidePanel from "./components/SidePanel";
 import Timeline from "./components/Timeline";
@@ -40,6 +41,7 @@ import { loadPhaseStartState } from "./data/phasePlanSource";
 import { listRuns } from "./data/tracks";
 import { useAnalystCalls } from "./hooks/useAnalystCalls";
 import { useLivePhaseAnalysis } from "./hooks/useLivePhaseAnalysis";
+import { useMatchOverrides } from "./hooks/useMatchOverrides";
 import { createMockRun, useMockRunPlayback } from "./hooks/useMockRunPlayback";
 import { useRunPlayback } from "./hooks/useRunPlayback";
 import { DEMO_OBJECTIVES } from "./lib/demoObjectives";
@@ -241,7 +243,14 @@ const AnalysisScreen: FC = () => {
   // Mock runs: the checked-in plan and synthetic track. Real runs: the
   // phase's saved plan, measured against the run's whole track with planned
   // units matched to simulated entities (useLivePhaseAnalysis).
-  const live = useLivePhaseAnalysis(mockDemo ? null : selectedRun, scenarioId, phase);
+  const matchOverrides = useMatchOverrides(mockDemo ? null : phaseId);
+  const [reviewingMatches, setReviewingMatches] = useState(false);
+  const live = useLivePhaseAnalysis(
+    mockDemo ? null : selectedRun,
+    scenarioId,
+    phase,
+    matchOverrides.overrides,
+  );
   const analysis = mockDemo
     ? { plan: playback.plan, compliance: playback.compliance, debrief: playback.debrief }
     : { plan: live.plan, compliance: live.compliance, debrief: live.debrief };
@@ -491,7 +500,25 @@ const AnalysisScreen: FC = () => {
       />
 
       {!mockDemo && selectedRun && phase && (
-        <PlanStatus live={live} phaseName={phase.name} launched={launchedPhaseId === phaseId} />
+        <PlanStatus
+          live={live}
+          phaseName={phase.name}
+          launched={launchedPhaseId === phaseId}
+          reviewing={reviewingMatches}
+          onReview={() => setReviewingMatches((v) => !v)}
+        />
+      )}
+      {!mockDemo && reviewingMatches && live.status === "ready" && live.plan && (
+        <MatchReview
+          units={live.plan.units}
+          matches={live.match?.matches ?? []}
+          candidates={live.candidates ?? []}
+          overrides={matchOverrides.overrides}
+          stale={live.staleOverrides ?? []}
+          onChange={matchOverrides.setOverride}
+          onClearAll={matchOverrides.clearAll}
+          onClose={() => setReviewingMatches(false)}
+        />
       )}
 
       {permissionProblem && (
@@ -631,10 +658,14 @@ function PlanStatus({
   live,
   phaseName,
   launched,
+  reviewing,
+  onReview,
 }: {
   live: ReturnType<typeof useLivePhaseAnalysis>;
   phaseName: string;
   launched: boolean;
+  reviewing: boolean;
+  onReview: () => void;
 }) {
   let text: string;
   let tone: string = UI.textDim;
@@ -657,10 +688,20 @@ function PlanStatus({
         `Plan: "${phaseName}"${launched ? " (launched from Execute)" : ""} — ` +
         `${matches.length} of ${live.plannedCount} planned units found in the run` +
         (matches.length > 0
-          ? ` (${by("name")} by name, ${by("position")} by nearest position — position matches are inferred)`
+          ? ` (${[
+              by("manual") > 0 ? `${by("manual")} corrected` : "",
+              `${by("name")} by name`,
+              `${by("position")} by nearest position — position matches are inferred`,
+            ]
+              .filter(Boolean)
+              .join(", ")})`
           : "") +
-        ".";
-      if (matches.length < live.plannedCount) tone = UI.amber;
+        "." +
+        ((live.staleOverrides?.length ?? 0) > 0
+          ? ` ${live.staleOverrides!.length} correction${live.staleOverrides!.length === 1 ? " names" : "s name"} no one in this run.`
+          : "");
+      if (matches.length < live.plannedCount || (live.staleOverrides?.length ?? 0) > 0)
+        tone = UI.amber;
       break;
     }
     default:
@@ -676,10 +717,31 @@ function PlanStatus({
         fontSize: 10,
         padding: "6px 14px",
         flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
       }}
       role="status"
     >
-      {text}
+      <span style={{ flex: 1 }}>{text}</span>
+      {live.status === "ready" && (live.plannedCount ?? 0) > 0 && (
+        <button
+          type="button"
+          onClick={onReview}
+          style={{
+            background: reviewing ? UI.bg2 : "transparent",
+            color: UI.accent,
+            border: `1px solid ${UI.border}`,
+            fontFamily: UI.fontMono,
+            fontSize: 10,
+            padding: "2px 8px",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          {reviewing ? "HIDE MATCHES" : "REVIEW MATCHES"}
+        </button>
+      )}
     </div>
   );
 }

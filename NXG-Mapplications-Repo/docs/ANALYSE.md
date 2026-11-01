@@ -18,7 +18,12 @@ no compliance and no debrief. Now a real run is measured against the plan **save
    windowed.
 3. **Match planned units to simulated entities** (`lib/entityMatch.ts`). Each entity is used once,
    and every match records how it was made:
-   - **manual:** an explicit table, for a rehearsed demo. It always wins.
+   - **manual:** the analyst's corrections (**REVIEW MATCHES** on the plan status line). They always
+     win. A correction names what the simulator calls the unit (callsign, else unit name), not an
+     HLA handle, because handles change every run; so corrections made in rehearsal carry to later
+     runs of the same phase. A unit can also be marked **Not in this run**, which stops a guess by
+     position. Corrections are kept per phase in the browser
+     (`lib/matchOverrides.ts`, `hooks/useMatchOverrides.ts`).
    - **name:** the entity's callsign or unit name is the planned unit's name, ignoring case and
      punctuation. Callsigns derive from ORBAT names, so a name match is evidence.
    - **position:** otherwise, the nearest entity on the same side within 10 km of the planned start,

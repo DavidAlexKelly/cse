@@ -7,7 +7,7 @@
 // the ORBAT rather than carrying our ids through. So the match is inferred,
 // and every match says how it was made:
 //
-//   manual    an explicit table, for a rehearsed demo — always wins
+//   manual    the analyst's corrections (matchOverrides.ts) — always win
 //   name      the entity's callsign or unit name is the planned unit's name
 //   position  nearest same-side entity to the planned start, within maxKm
 //
@@ -70,7 +70,13 @@ function namesMatch(planned: string, entity: string): boolean {
 export function matchPlannedUnits(
   units: readonly PlannedUnit[],
   entities: readonly EntityCandidate[],
-  options: { maxKm?: number; manual?: Readonly<Record<string, string>> } = {},
+  options: {
+    maxKm?: number;
+    /** Planned id → entity id, made by the analyst. */
+    manual?: Readonly<Record<string, string>>;
+    /** Planned ids the analyst says are not in the run: never matched. */
+    exclude?: ReadonlySet<string>;
+  } = {},
 ): MatchResult {
   const maxKm = options.maxKm ?? DEFAULT_MATCH_RADIUS_KM;
   const used = new Set<string>();
@@ -78,6 +84,8 @@ export function matchPlannedUnits(
   const byId = new Map(entities.map((e) => [e.id, e]));
   const dist = (u: PlannedUnit, e: EntityCandidate) =>
     distanceKm({ lat: u.lat, lng: u.lng }, { lat: e.lat, lng: e.lon });
+
+  const excluded = (u: PlannedUnit) => options.exclude?.has(u.id) ?? false;
 
   // 1. Manual.
   for (const unit of units) {
@@ -95,7 +103,7 @@ export function matchPlannedUnits(
 
   // 2. Name — a unique name match per unit; ties go to the nearest same-side entity.
   for (const unit of units) {
-    if (matched.has(unit.id)) continue;
+    if (matched.has(unit.id) || excluded(unit)) continue;
     const candidates = entities
       .filter((e) => !used.has(e.id) && e.force === unit.force)
       .filter((e) => namesMatch(unit.label, e.callsign) || namesMatch(unit.label, e.unit))
@@ -115,7 +123,7 @@ export function matchPlannedUnits(
   //    cannot take another's obvious match just because it came first.
   const pairs: { unit: PlannedUnit; entity: EntityCandidate; km: number }[] = [];
   for (const unit of units) {
-    if (matched.has(unit.id)) continue;
+    if (matched.has(unit.id) || excluded(unit)) continue;
     for (const entity of entities) {
       if (used.has(entity.id) || entity.force !== unit.force) continue;
       const km = dist(unit, entity);
