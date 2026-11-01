@@ -33,6 +33,46 @@ A status line under the top bar shows which phase is being used and how many pla
 in the run, for example: "14 of 19 planned units found in the run (9 by name, 5 by nearest
 position)".
 
+## Training objectives (debrief, first section)
+
+The debrief opens with the phase's training objectives
+(`lib/objectiveAssessment.ts`, `components/TrainingObjectivesSection.tsx`).
+
+- **Which objectives:** those tied to the phase (`NxgTrainingObjective.phaseId`). If none are tied to
+  the phase, the scenario-wide ones are used. They are listed high priority first.
+- **Evidence:** nothing in the ontology links an objective to orders, so the links are **inferred**,
+  and each one says why it was made:
+  - **The objective's functional area:** Manoeuvre, Fires, Intelligence, Sustainment, Protection,
+    C2 or Information. Free-text areas are understood ("J3 Joint Fires & Targeting" counts as Fires).
+  - **The tasked unit's type.** For example, an air defence battery counts for Protection.
+  - **Task wording,** but only for a unit no other area claims. A logistics convoy's "Move" is
+    sustainment, not manoeuvre.
+  - **Shared wording, only when the objective's area isn't recognised.** Otherwise a place name such
+    as "corridor" would tie every unit near it to the objective.
+  - **MEL/MIL injects for the phase,** linked by category (INTEL → Intelligence, LOG → Sustainment,
+    CYBER and CIMIC → Information…).
+- **Only the training audience's orders count** (Blue by default). An enemy battery interdicting on
+  time says nothing about whether the audience demonstrated fires.
+- **Suggested rating, from the measured orders:**
+
+  | Rating | When |
+  |---|---|
+  | **Demonstrated** | Every measured order was on time |
+  | **Not demonstrated** | Most measured orders were not achieved |
+  | **Partially demonstrated** | Anything in between. *Late is not failed:* in practice every arriving order is "late" against the planner's rate-table estimate, which is a finding about the plan, not the audience. |
+  | **Not observed** | Orders exercise the objective, but none could be measured |
+  | **Needs observer judgement** | No order exercises it. Staff work, C2 processes and information activities are invisible to the track feed. |
+
+- **The analyst's call:**
+  - Each objective has a rating override and an observer note.
+  - Where made, the analyst's rating replaces the suggestion everywhere and is marked "analyst".
+  - Calls are kept per run and phase in the browser (localStorage); there is no assessment object
+    type in the ontology yet.
+- **Copy summary** puts plain text on the clipboard for a debrief slide or an email.
+- **Mock mode** uses the scenario's objectives from the ontology. If there are none, it uses four
+  demo objectives written against the Blue Phase 1 plan, badged "DEMO OBJECTIVES". On the mock run
+  they read: 0 of 4 demonstrated, 3 partially, 1 needs observer judgement.
+
 ## Which phase a run is measured against
 
 Highest priority first:

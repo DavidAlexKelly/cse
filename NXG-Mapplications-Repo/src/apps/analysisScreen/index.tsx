@@ -13,6 +13,7 @@ import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "reac
 import { useWorkshopContext } from "@osdk/workshop-iframe-custom-widget";
 import { NxgPhase } from "@nxg-simulation-execution-testing/sdk";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { BALTIC_SHIELD_PLAN } from "@/shared/hla/balticShieldPlan";
 import type { HlaEntity, LatLon } from "@/shared/hla/types";
 import { useMockDemo } from "@/shared/hooks/useMockDemo";
 import {
@@ -21,6 +22,7 @@ import {
 } from "@/shared/hooks/useWorkshopObjectKey";
 import { launchForRun, readLaunchRecords } from "@/shared/lib/launchRecords";
 import { SqlError } from "@/shared/lib/sqlClient";
+import { usePhaseCatalogues } from "../scenarioPlanner/hooks/usePhaseCatalogues";
 import { useScenario } from "../scenarioPlanner/hooks/useScenario";
 import { DEFAULT_SCENARIO_ID } from "../scenarioPlanner/shared/phaseColours";
 import { ANALYSIS_CONFIG } from "./analysisConfig";
@@ -32,9 +34,12 @@ import Timeline from "./components/Timeline";
 import TopBar, { type AnalysisView } from "./components/TopBar";
 import { UI } from "./components/ui";
 import { listRuns } from "./data/tracks";
+import { useAnalystCalls } from "./hooks/useAnalystCalls";
 import { useLivePhaseAnalysis } from "./hooks/useLivePhaseAnalysis";
 import { createMockRun, useMockRunPlayback } from "./hooks/useMockRunPlayback";
 import { useRunPlayback } from "./hooks/useRunPlayback";
+import { DEMO_OBJECTIVES } from "./lib/demoObjectives";
+import { type MeasuredOrder, assessObjectives } from "./lib/objectiveAssessment";
 import { planKeyEvents } from "./lib/planEvents";
 import type { RunSummary } from "./types";
 
@@ -254,6 +259,37 @@ const AnalysisScreen: FC = () => {
 
   const debrief = analysis.debrief;
 
+  // ── Training objectives ──────────────────────────────────────────────────
+  // The phase's objectives (scenario-wide ones when none are tied to a phase),
+  // assessed against the measured orders. Mock mode falls back to demo
+  // objectives only when the ontology has none, and labels them.
+  const catalogues = usePhaseCatalogues(scenarioId);
+  const objectivesPhaseId = mockDemo ? BALTIC_SHIELD_PLAN.phaseId : phaseId;
+  const objectivesFor = useMemo(() => {
+    const forPhase = catalogues.objectives.filter((o) => o.phaseId === objectivesPhaseId);
+    if (forPhase.length > 0) return { list: forPhase, source: "ontology" as const };
+    const scenarioWide = catalogues.objectives.filter((o) => !o.phaseId);
+    if (scenarioWide.length > 0) return { list: scenarioWide, source: "ontology" as const };
+    if (mockDemo && !catalogues.loading) return { list: DEMO_OBJECTIVES, source: "demo" as const };
+    return { list: [], source: "ontology" as const };
+  }, [catalogues.objectives, catalogues.loading, objectivesPhaseId, mockDemo]);
+  const phaseInjects = useMemo(
+    () => catalogues.injects.filter((i) => i.phaseId && i.phaseId === objectivesPhaseId),
+    [catalogues.injects, objectivesPhaseId],
+  );
+  const assessments = useMemo(() => {
+    if (!analysis.compliance) return [];
+    const category = new Map((analysis.plan?.orders ?? []).map((o) => [o.id, o.category]));
+    const measured: MeasuredOrder[] = analysis.compliance.orders.map((c) => ({
+      compliance: c,
+      category: category.get(c.orderId) ?? "Infantry",
+    }));
+    return assessObjectives(objectivesFor.list, measured, phaseInjects);
+  }, [analysis.compliance, analysis.plan, objectivesFor.list, phaseInjects]);
+  const { calls, setCall } = useAnalystCalls(
+    selectedRun && objectivesPhaseId ? `${selectedRun.id}|${objectivesPhaseId}` : null,
+  );
+
   // A run with no event log has nothing to put on a second tab, and an empty
   // tab is worse than no tab. Fall back to the map if one disappears from under
   // the current view — switching runs can take the debrief away.
@@ -411,6 +447,17 @@ const AnalysisScreen: FC = () => {
           events={debrief.events}
           runDurationSec={Math.max(1, selectedRun.endS - selectedRun.startS)}
           onJumpToMoment={handleJumpToMoment}
+          objectives={
+            analysis.compliance
+              ? {
+                  phaseName: analysis.plan?.phaseName ?? phase?.name ?? "this phase",
+                  assessments,
+                  source: objectivesFor.source,
+                  calls,
+                  onCall: setCall,
+                }
+              : undefined
+          }
         />
       )}
 

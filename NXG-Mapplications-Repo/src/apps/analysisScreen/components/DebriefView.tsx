@@ -10,12 +10,12 @@
 //   · the write-up is composed locally from the run data, and says so;
 //   · every statistic is labelled with where it came from, because measured
 //     movement and scripted attrition are not the same kind of fact.
-
-import { type FC, useMemo, useState } from "react";
+import { type ComponentProps, type FC, useMemo, useState } from "react";
 import type { RunEvent, RunEventKind } from "@/shared/hla/runEvents";
 import type { Debrief } from "../lib/debriefNarrative";
 import type { RunStatistics } from "../lib/runStatistics";
-import { formatClock, UI } from "./ui";
+import TrainingObjectivesSection from "./TrainingObjectivesSection";
+import { UI, formatClock } from "./ui";
 
 interface Props {
   debrief: Debrief;
@@ -24,6 +24,8 @@ interface Props {
   runDurationSec: number;
   /** Jump the replay to a moment and show the map. Epoch seconds. */
   onJumpToMoment: (ts: number) => void;
+  /** Training objectives assessed against this run — the section planners read first. */
+  objectives?: ComponentProps<typeof TrainingObjectivesSection>;
 }
 
 const KIND_STYLE: Record<RunEventKind, { colour: string; label: string }> = {
@@ -114,6 +116,7 @@ const DebriefView: FC<Props> = ({
   events,
   runDurationSec,
   onJumpToMoment,
+  objectives,
 }) => {
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
@@ -177,6 +180,8 @@ const DebriefView: FC<Props> = ({
 
           <div style={{ fontSize: 16, color: UI.text, lineHeight: 1.5 }}>{debrief.headline}</div>
         </div>
+
+        {objectives && <TrainingObjectivesSection {...objectives} />}
 
         {/* ── Findings ── */}
         {debrief.findings.length > 0 && (
@@ -286,7 +291,9 @@ const DebriefView: FC<Props> = ({
               <Stat
                 label="EXCHANGE RATIO"
                 value={
-                  attrition.exchangeRatio != null ? `${attrition.exchangeRatio.toFixed(1)} : 1` : "—"
+                  attrition.exchangeRatio != null
+                    ? `${attrition.exchangeRatio.toFixed(1)} : 1`
+                    : "—"
                 }
                 hint="adversary lost per friendly lost"
               />
@@ -468,14 +475,12 @@ const DebriefView: FC<Props> = ({
                     >
                       {event.actor && (
                         <span>
-                          actor{" "}
-                          <span style={{ color: UI.text }}>{event.actor.label}</span>
+                          actor <span style={{ color: UI.text }}>{event.actor.label}</span>
                         </span>
                       )}
                       {event.target && (
                         <span>
-                          target{" "}
-                          <span style={{ color: UI.text }}>{event.target.label}</span>
+                          target <span style={{ color: UI.text }}>{event.target.label}</span>
                         </span>
                       )}
                       {event.means && (
