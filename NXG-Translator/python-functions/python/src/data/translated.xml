@@ -1,0 +1,2111 @@
+<?xml version="1.0" ?>
+<Orbat xmlns="https://accenture.com/2026-03/cse/orbat" xmlns:simworks="https://accenture.com/2026-03/cse/orbat/simworks" xmlns:sword="https://accenture.com/2026-03/cse/orbat/sword" xmlns:vbs4="https://accenture.com/2026-03/cse/orbat/vbs4">
+    <Entities>
+        <Organisation id="230" name="1st Battalion The Princess of Wales's Royal Regiment" sidc="SFGPUCI----F---" isExpanded="true">
+            <Children>
+                <Organisation id="1" name="Close Support Artillery Battery" sidc="SFGPUCFH---D---" isExpanded="true">
+                    <Children/>
+                    <sword:Sword controllable="false" class="Artillery firing battery"/>
+                </Organisation>
+                <Organisation id="67" name="B Company 1PWRR" sidc="SFGPUCI----E---" isExpanded="true">
+                    <Children>
+                        <Organisation id="21" name="5 Platoon B Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Human id="2" name="5 Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.256" longitude="25.959"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Vehicle id="3" name="5 Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                    <Location latitude="59.256" longitude="25.959"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="4" name="5 Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.256" longitude="25.959"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="12" name="9 Section 5 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="5" name="9 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2558" longitude="25.959"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="6" name="9 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2558" longitude="25.959"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="7" name="9 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2558" longitude="25.959"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="8" name="9 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2558" longitude="25.959"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="9" name="9 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2555" longitude="25.9595"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="10" name="9 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2552" longitude="25.9598"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="11" name="9 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2552" longitude="25.9598"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Organisation id="20" name="10 Section 5 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="13" name="10 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2551" longitude="25.9597"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="14" name="10 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2545" longitude="25.9605"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="15" name="10 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2545" longitude="25.9605"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="16" name="10 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2551" longitude="25.9597"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="17" name="10 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2551" longitude="25.9597"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="18" name="10 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2545" longitude="25.9605"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="19" name="10 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2551" longitude="25.9597"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                    </Children>
+                                </Organisation>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="41" name="6 Platoon B Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Organisation id="29" name="12 Section 6 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="22" name="12 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2561" longitude="25.9587"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="23" name="12 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2555" longitude="25.9595"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="24" name="12 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2561" longitude="25.9587"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="25" name="12 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2561" longitude="25.9587"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="26" name="12 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2561" longitude="25.9587"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="27" name="12 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2555" longitude="25.9595"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="28" name="12 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2555" longitude="25.9595"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Vehicle id="30" name="6 Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                    <Location latitude="59.257" longitude="25.958"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="31" name="6 Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.257" longitude="25.958"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="39" name="11 Section 6 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="32" name="11 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2562" longitude="25.9588"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="33" name="11 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2568" longitude="25.958"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="34" name="11 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2568" longitude="25.958"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="35" name="11 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2568" longitude="25.958"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="36" name="11 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2562" longitude="25.9588"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="37" name="11 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2562" longitude="25.9588"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="38" name="11 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2568" longitude="25.958"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Human id="40" name="6 Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.257" longitude="25.958"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="61" name="4 Platoon B Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Human id="42" name="4 Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.254" longitude="25.961"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="50" name="8 Section 4 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="43" name="8 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2525" longitude="25.9625"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="44" name="8 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2531" longitude="25.9617"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="45" name="8 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2525" longitude="25.9625"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Vehicle id="46" name="8 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2528" longitude="25.962"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="47" name="8 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2531" longitude="25.9617"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="48" name="8 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2531" longitude="25.9617"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="49" name="8 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2525" longitude="25.9625"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Vehicle id="51" name="4 Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                    <Location latitude="59.254" longitude="25.961"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="52" name="4 Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.254" longitude="25.961"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="60" name="7 Section 4 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="53" name="7 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2538" longitude="25.961"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="54" name="7 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2538" longitude="25.961"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="55" name="7 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2538" longitude="25.961"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="56" name="7 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2538" longitude="25.961"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="57" name="7 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2532" longitude="25.9618"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="58" name="7 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2532" longitude="25.9618"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="59" name="7 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                            <Location latitude="59.2532" longitude="25.9618"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                    </Children>
+                                </Organisation>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="66" name="B Company HQ" sidc="SFGPUCI--------" isExpanded="true">
+                            <Children>
+                                <Human id="62" name="B Company Second in Command" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.255" longitude="25.96"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Vehicle id="63" name="B Company HQ Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.2.8.0" isDrone="false">
+                                    <Location latitude="59.255" longitude="25.96"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_fv510_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="64" name="B Company Sergeant Major" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.255" longitude="25.96"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="65" name="B Company Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.255" longitude="25.96"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                    </Children>
+                </Organisation>
+                <Organisation id="68" name="Air Defence Battery" sidc="SFGPUCDM---D---" isExpanded="true">
+                    <Children/>
+                    <sword:Sword controllable="false" class="Artillery surface to air battery"/>
+                </Organisation>
+                <Organisation id="69" name="Close Air Support Flight" sidc="SFAPMF---------" isExpanded="true">
+                    <Children/>
+                </Organisation>
+                <Organisation id="83" name="Recce Troop 1PWRR" sidc="SFGPUCR----D---" isExpanded="true">
+                    <Children>
+                        <Vehicle id="72" name="Recce Vehicle Charlie" sidc="SFGPUCR--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2698" longitude="25.9302"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv107_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="70" name="Recce Vehicle Charlie Crew 2" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2698" longitude="25.9302"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="71" name="Recce Vehicle Charlie Crew 1" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2698" longitude="25.9302"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Human id="73" name="Recce Troop Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                            <Location latitude="59.27" longitude="25.93"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="76" name="Recce Vehicle Bravo" sidc="SFGPUCR--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2702" longitude="25.9298"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv107_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="74" name="Recce Vehicle Bravo Crew 2" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2702" longitude="25.9298"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="75" name="Recce Vehicle Bravo Crew 1" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2702" longitude="25.9298"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="79" name="Recce Vehicle Alpha" sidc="SFGPUCR--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.27" longitude="25.93"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv107_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="77" name="Recce Vehicle Alpha Crew 1" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.27" longitude="25.93"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="78" name="Recce Vehicle Alpha Crew 2" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.27" longitude="25.93"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="82" name="Recce Vehicle Delta" sidc="SFGPUCR--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2704" longitude="25.9296"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv107_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="80" name="Recce Vehicle Delta Crew 2" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2704" longitude="25.9296"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="81" name="Recce Vehicle Delta Crew 1" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2704" longitude="25.9296"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="95" name="Mortar Platoon 1PWRR" sidc="SFGPUCF----D---" isExpanded="true">
+                    <Children>
+                        <Human id="84" name="Mortar Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.258" longitude="25.952"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="85" name="Mortar Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.258" longitude="25.952"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="88" name="Mortar Carrier Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2578" longitude="25.9522"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="86" name="Mortar Crew Bravo Number 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2578" longitude="25.9522"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="87" name="Mortar Crew Bravo Number 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2578" longitude="25.9522"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="91" name="Mortar Carrier Charlie" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2584" longitude="25.9516"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="89" name="Mortar Crew Charlie Number 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2584" longitude="25.9516"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="90" name="Mortar Crew Charlie Number 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2584" longitude="25.9516"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="94" name="Mortar Carrier Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2582" longitude="25.9518"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="92" name="Mortar Crew Alpha Number 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2582" longitude="25.9518"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="93" name="Mortar Crew Alpha Number 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2582" longitude="25.9518"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Gunner">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="96" name="D Company (Mechanised Infantry)" sidc="SFGPUCII---E---" isExpanded="true">
+                    <Children/>
+                    <sword:Sword controllable="false" class="Infantry company"/>
+                </Organisation>
+                <Organisation id="106" name="Battlegroup Logistic Company" sidc="SFGPUSS----E---" isExpanded="true">
+                    <Children>
+                        <Human id="97" name="Log Company Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.245" longitude="25.98"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="99" name="Log Vehicle Alpha DROPS" sidc="SFGPUSS--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.225.7.19.14" isDrone="false">
+                            <Location latitude="59.2452" longitude="25.9798"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_army_mmlc_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="98" name="Log Driver Alpha" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2452" longitude="25.9798"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="101" name="Log Vehicle Bravo DROPS" sidc="SFGPUSS--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.225.7.19.14" isDrone="false">
+                            <Location latitude="59.2448" longitude="25.9802"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_army_mmlc_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="100" name="Log Driver Bravo" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2448" longitude="25.9802"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="103" name="Log Vehicle Delta Wolfhound" sidc="SFGPUSS--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.0.0.0" isDrone="false">
+                            <Location latitude="59.2446" longitude="25.9804"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_wolfhound_tsv_grn_l7a2_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="102" name="Log Driver Delta" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2446" longitude="25.9804"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                        <Vehicle id="105" name="Log Vehicle Charlie Wolfhound" sidc="SFGPUSS--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.0.0.0" isDrone="false">
+                            <Location latitude="59.2454" longitude="25.9796"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_wolfhound_tsv_grn_l7a2_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                            <Children>
+                                <Human id="104" name="Log Driver Charlie" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.2454" longitude="25.9796"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="Driver">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="107" name="Aviation Support Flight" sidc="SFGPUCV----D---" isExpanded="true">
+                    <Children/>
+                </Organisation>
+                <Organisation id="113" name="UAS Section 1PWRR" sidc="" isExpanded="true">
+                    <Children>
+                        <Human id="108" name="UAS Operator 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                            <Location latitude="59.2595" longitude="25.9505"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="109" name="UAS Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.2595" longitude="25.9505"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="110" name="UAS Operator 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                            <Location latitude="59.2595" longitude="25.9505"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="111" name="T150 UAS Bravo" sidc="SFAPMFQM------A" isExpanded="true" owningSimulator="none" canControlDrones="false" dis="1.2.224.50.0.0" isDrone="true">
+                            <Location latitude="59.2595" longitude="25.9505"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="bisim_dt_gb_army_malloy_t150_blk_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="CameraTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                        <Vehicle id="112" name="T150 UAS Alpha" sidc="SFAPMFQM------A" isExpanded="true" owningSimulator="none" canControlDrones="false" dis="1.2.224.50.0.0" isDrone="true">
+                            <Location latitude="59.2595" longitude="25.9505"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="bisim_dt_gb_army_malloy_t150_blk_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="CameraTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="151" name="C Squadron Royal Tank Regiment" sidc="SFGPUCA----E---" isExpanded="true">
+                    <Children>
+                        <Organisation id="129" name="1 Troop C Squadron" sidc="SFGPUCA----D---" isExpanded="true">
+                            <Children>
+                                <Vehicle id="118" name="1 Troop Tank Charlie" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.2492" longitude="25.9706"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="114" name="1 Troop Tank Charlie Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2492" longitude="25.9706"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="115" name="1 Troop Tank Charlie Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2492" longitude="25.9706"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="116" name="1 Troop Tank Charlie Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2492" longitude="25.9706"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="117" name="1 Troop Tank Charlie Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2492" longitude="25.9706"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                                <Vehicle id="123" name="1 Troop Tank Bravo" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.2488" longitude="25.9714"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="119" name="1 Troop Tank Bravo Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2488" longitude="25.9714"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="120" name="1 Troop Tank Bravo Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2488" longitude="25.9714"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="121" name="1 Troop Tank Bravo Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2488" longitude="25.9714"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="122" name="1 Troop Tank Bravo Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2488" longitude="25.9714"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                                <Vehicle id="128" name="1 Troop Tank Alpha" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.249" longitude="25.971"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="124" name="1 Troop Leader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.249" longitude="25.971"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="125" name="1 Troop Leader Tank Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.249" longitude="25.971"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="126" name="1 Troop Leader Tank Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.249" longitude="25.971"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="127" name="1 Troop Leader Tank Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.249" longitude="25.971"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="145" name="2 Troop C Squadron" sidc="SFGPUCA----D---" isExpanded="true">
+                            <Children>
+                                <Vehicle id="134" name="2 Troop Tank Bravo" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.2478" longitude="25.9724"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="130" name="2 Troop Tank Bravo Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2478" longitude="25.9724"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="131" name="2 Troop Tank Bravo Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2478" longitude="25.9724"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="132" name="2 Troop Tank Bravo Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2478" longitude="25.9724"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="133" name="2 Troop Tank Bravo Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2478" longitude="25.9724"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                                <Vehicle id="139" name="2 Troop Tank Alpha" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.248" longitude="25.972"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="135" name="2 Troop Leader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.248" longitude="25.972"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="136" name="2 Troop Leader Tank Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.248" longitude="25.972"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="137" name="2 Troop Leader Tank Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.248" longitude="25.972"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="138" name="2 Troop Leader Tank Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.248" longitude="25.972"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                                <Vehicle id="144" name="2 Troop Tank Charlie" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.2482" longitude="25.9716"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                    <Children>
+                                        <Human id="140" name="2 Troop Tank Charlie Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2482" longitude="25.9716"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Driver">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="141" name="2 Troop Tank Charlie Loader" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2482" longitude="25.9716"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="142" name="2 Troop Tank Charlie Driver" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2482" longitude="25.9716"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Gunner">
+                                                <vbs4:GunnerSeat turretIdentifier="0,1" name="Loader"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="143" name="2 Troop Tank Charlie Gunner" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2482" longitude="25.9716"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="Commander">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Vehicle>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="150" name="C Squadron HQ" sidc="SFGPUCA--------" isExpanded="true">
+                            <Children>
+                                <Vehicle id="146" name="C Squadron HQ Tank Bravo" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.2502" longitude="25.9702"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="147" name="C Squadron Commander" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.25" longitude="25.97"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Vehicle id="148" name="C Squadron HQ Tank Alpha" sidc="SFGPUCA--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.1.2.2" isDrone="false">
+                                    <Location latitude="59.25" longitude="25.97"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_challenger2_d_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="maingun"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="149" name="C Squadron Sergeant Major" sidc="SFGPUCA--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                    <Location latitude="59.25" longitude="25.97"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_afvcommander_mtp_m_medium_none_none_none_beret" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                    </Children>
+                </Organisation>
+                <Organisation id="154" name="Light Gun Section" sidc="SFGPUCFH---C---" isExpanded="true">
+                    <Children>
+                        <Vehicle id="152" name="Light Gun Alpha (L118 105mm)" sidc="SFGPUCF-----USG" isExpanded="true" owningSimulator="simworks" canControlDrones="false" dis="1.1.224.5.2.0" isDrone="false">
+                            <Location latitude="59.242" longitude="25.925"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <simworks:Simworks className="GBR L118 (ARTILLERY)"/>
+                            <vbs4:Vbs4 className="vbs2_gb_l118_w_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                        <Vehicle id="153" name="Light Gun Bravo (L118 105mm)" sidc="SFGPUCF-----USG" isExpanded="true" owningSimulator="simworks" canControlDrones="false" dis="1.1.224.5.2.0" isDrone="false">
+                            <Location latitude="59.2418" longitude="25.9255"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <simworks:Simworks className="GBR L118 (ARTILLERY)"/>
+                            <vbs4:Vbs4 className="vbs2_gb_l118_w_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="163" name="Battlegroup HQ 1PWRR" sidc="SFGPUCI--------" isExpanded="true">
+                    <Children>
+                        <Human id="155" name="Regimental Sergeant Major 1PWRR" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="156" name="Second in Command 1PWRR" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="157" name="Commanding Officer 1PWRR" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="158" name="BG HQ Sultan Command Vehicle" sidc="SFGPUCI--------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2598" longitude="25.9498"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_fv105_des_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                        <Vehicle id="159" name="BG HQ Command Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.2602" longitude="25.9502"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv511_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                        <Human id="160" name="Intelligence Officer 1PWRR" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_facjtac_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Human id="161" name="Forward Air Controller 1PWRR" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs_gb_army_facjtac_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Human>
+                        <Vehicle id="162" name="BG HQ Command Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                            <Location latitude="59.26" longitude="25.95"/>
+                            <Behavior/>
+                            <ControlledDroneIds/>
+                            <vbs4:Vbs4 className="vbs2_gb_fv511_d_x" role="None">
+                                <vbs4:GunnerSeat turretIdentifier="0" name="Gunner"/>
+                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                            </vbs4:Vbs4>
+                        </Vehicle>
+                    </Children>
+                </Organisation>
+                <Organisation id="229" name="A Company 1PWRR" sidc="SFGPUCI----E---" isExpanded="true">
+                    <Children>
+                        <Organisation id="183" name="2 Platoon A Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Human id="164" name="2 Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.267" longitude="25.94"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="172" name="3 Section 2 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="165" name="3 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2678" longitude="25.9385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="166" name="3 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2672" longitude="25.9392"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="167" name="3 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2672" longitude="25.9392"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="168" name="3 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2672" longitude="25.9392"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Vehicle id="169" name="3 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2678" longitude="25.9385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="170" name="3 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2678" longitude="25.9385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="171" name="3 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2678" longitude="25.9385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Human id="173" name="2 Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.267" longitude="25.94"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="181" name="4 Section 2 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="174" name="4 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2668" longitude="25.9405"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="175" name="4 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2662" longitude="25.9415"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="176" name="4 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2668" longitude="25.9405"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="177" name="4 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2662" longitude="25.9415"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Vehicle id="178" name="4 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2668" longitude="25.9405"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="179" name="4 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2668" longitude="25.9405"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="180" name="4 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2662" longitude="25.9415"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Vehicle id="182" name="2 Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                    <Location latitude="59.267" longitude="25.94"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="203" name="1 Platoon A Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Human id="184" name="Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.374" longitude="24.741"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Organisation id="192" name="2 Section 1 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Vehicle id="185" name="2 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.3745" longitude="24.7385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="186" name="2 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3749" longitude="24.7375"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="187" name="2 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.3749" longitude="24.7375"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="188" name="2 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3745" longitude="24.7385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="189" name="2 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3749" longitude="24.7375"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="190" name="2 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3745" longitude="24.7385"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="191" name="2 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.3749" longitude="24.7375"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                    </Children>
+                                </Organisation>
+                                <Organisation id="200" name="1 Section 1 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="193" name="1 Section Gunner Alpha" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3758" longitude="24.739"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="194" name="1 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.3758" longitude="24.739"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="195" name="1 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3758" longitude="24.739"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="196" name="1 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3752" longitude="24.74"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="197" name="1 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.3752" longitude="24.74"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="198" name="1 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.3758" longitude="24.739"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="199" name="1 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.3752" longitude="24.74"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Vehicle id="201" name="Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                    <Location latitude="59.374" longitude="24.741"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="202" name="Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.374" longitude="24.741"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="208" name="A Company HQ" sidc="SFGPUCI--------" isExpanded="true">
+                            <Children>
+                                <Human id="204" name="A Company Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.265" longitude="25.942"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="205" name="A Company Second in Command" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.265" longitude="25.942"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Vehicle id="206" name="A Company HQ Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                    <Location latitude="59.265" longitude="25.942"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Human id="207" name="A Company Sergeant Major" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.265" longitude="25.942"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                        <Organisation id="228" name="3 Platoon A Company" sidc="SFGPUCI----D---" isExpanded="true">
+                            <Children>
+                                <Organisation id="216" name="6 Section 3 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Human id="209" name="6 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2651" longitude="25.9443"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="210" name="6 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2645" longitude="25.9452"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="211" name="6 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2645" longitude="25.9452"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="212" name="6 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2651" longitude="25.9443"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="213" name="6 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2651" longitude="25.9443"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="214" name="6 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2645" longitude="25.9452"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="215" name="6 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2651" longitude="25.9443"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                    </Children>
+                                </Organisation>
+                                <Vehicle id="217" name="3 Platoon Commander Vehicle" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                    <Location latitude="59.266" longitude="25.944"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Vehicle>
+                                <Organisation id="225" name="5 Section 3 Platoon" sidc="SFGPUCI----C---" isExpanded="true">
+                                    <Children>
+                                        <Vehicle id="218" name="5 Section Vehicle Bravo" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2652" longitude="25.9438"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="219" name="5 Section Rifleman 3" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2652" longitude="25.9438"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Vehicle id="220" name="5 Section Vehicle Alpha" sidc="SFGPUCIZ-------" isExpanded="true" owningSimulator="vbs4" canControlDrones="false" dis="1.1.224.3.0.0" isDrone="false">
+                                            <Location latitude="59.2658" longitude="25.943"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs2_gb_army_fv432_bulldog_d_l37_x" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="0" name="MainTurret"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Vehicle>
+                                        <Human id="221" name="5 Section Gunner" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2658" longitude="25.943"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_gpmggunner_mtp_m_medium_virtus1_none_l7a2_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="222" name="5 Section Rifleman 1" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2658" longitude="25.943"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="223" name="5 Section Rifleman 2" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.11.0.0">
+                                            <Location latitude="59.2652" longitude="25.9438"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_rifleman_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                        <Human id="224" name="5 Section Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                            <Location latitude="59.2658" longitude="25.943"/>
+                                            <Behavior/>
+                                            <ControlledDroneIds/>
+                                            <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                                <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                                <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                                <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                            </vbs4:Vbs4>
+                                        </Human>
+                                    </Children>
+                                </Organisation>
+                                <Human id="226" name="3 Platoon Sergeant" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.266" longitude="25.944"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                                <Human id="227" name="3 Platoon Commander" sidc="SFGPUCI--------" owningSimulator="vbs4" canControlDrones="false" dis="3.1.224.130.0.0">
+                                    <Location latitude="59.266" longitude="25.944"/>
+                                    <Behavior/>
+                                    <ControlledDroneIds/>
+                                    <vbs4:Vbs4 className="vbs_gb_army_sectioncommander_mtp_m_medium_virtus1_none_l85a3_helmet" role="None">
+                                        <vbs4:GunnerSeat turretIdentifier="" name="None"/>
+                                        <vbs4:SensorStreamingSettings enabled="false" host="127.0.0.1" port="0"/>
+                                        <vbs4:StreamingSettings host="" port="0" framerate="0" bitrate="0" width="0" height="0" fieldOfView="0"/>
+                                    </vbs4:Vbs4>
+                                </Human>
+                            </Children>
+                        </Organisation>
+                    </Children>
+                </Organisation>
+            </Children>
+        </Organisation>
+    </Entities>
+</Orbat>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XSD type definitions for the VBS4 simulator extension to the simulation ORBAT schema.
+  Namespace: https://accenture.com/2026-03/cse/orbat/vbs4
+
+  The <vbs4:Vbs4> element is declared in the substitution group of orbat:UnitExtension,
+  so it slots into the optional extension point on every UnitType (human / vehicle / aircraft)
+  defined in validate.xsd.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://accenture.com/2026-03/cse/orbat/vbs4"
+           xmlns:tns="https://accenture.com/2026-03/cse/orbat/vbs4"
+           xmlns:orbat="https://accenture.com/2026-03/cse/orbat"
+           elementFormDefault="qualified">
+
+    <xs:import namespace="https://accenture.com/2026-03/cse/orbat"
+               schemaLocation="validate.xsd"/>
+
+    <!-- Gunner seat sub-element -->
+    <xs:complexType name="GunnerSeatType">
+        <xs:attribute name="turretIdentifier" type="xs:string" use="required"/>
+        <xs:attribute name="name"             type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Sensor streaming settings sub-element -->
+    <xs:complexType name="SensorStreamingSettingsType">
+        <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+        <xs:attribute name="host"    type="xs:string"  use="required"/>
+        <xs:attribute name="port"    type="xs:integer" use="required"/>
+    </xs:complexType>
+
+    <!-- Video streaming settings sub-element -->
+    <xs:complexType name="StreamingSettingsType">
+        <xs:attribute name="host"        type="xs:string"  use="required"/>
+        <xs:attribute name="port"        type="xs:integer" use="required"/>
+        <xs:attribute name="framerate"   type="xs:integer" use="required"/>
+        <xs:attribute name="bitrate"     type="xs:integer" use="required"/>
+        <xs:attribute name="width"       type="xs:integer" use="required"/>
+        <xs:attribute name="height"      type="xs:integer" use="required"/>
+        <xs:attribute name="fieldOfView" type="xs:decimal" use="required"/>
+    </xs:complexType>
+
+    <!--
+      VBS4 extension block for units (human / vehicle / aircraft).
+      Uses substitutionGroup so it fills the UnitExtension slot in validate.xsd.
+    -->
+    <xs:element
+        name="Vbs4"
+        substitutionGroup="orbat:UnitExtension">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="GunnerSeat"              type="tns:GunnerSeatType"/>
+                <xs:element name="SensorStreamingSettings" type="tns:SensorStreamingSettingsType"/>
+                <xs:element name="StreamingSettings"       type="tns:StreamingSettingsType"/>
+            </xs:sequence>
+            <xs:attribute name="className" type="xs:string" use="required"/>
+            <xs:attribute name="role"      type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
+
+

@@ -1,0 +1,17 @@
+package:
+  name: python-example
+  version: '{{ PACKAGE_VERSION }}'
+source:
+  path: ../python
+requirements:
+  build:
+  - setuptools
+  run:
+  - functions-python-api >={{ FUNCTIONS_PYTHON_API_VERSION }}, <1
+  - h3
+  - defusedxml
+  - ontology_sdk 0.13.0
+  - lxml
+build:
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+  noarch: python

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XSD schema equivalent of simulation-orbat.json
+  Namespace: https://accenture.com/2026-03/cse/orbat
+
+  Describes the ORBAT data structure the CSE-Prep API can consume and assign to a project.
+  The root <Orbat> element contains an <Entities> list of root organisations.
+
+  Simulator-specific extensions are applied through extension XSDs:
+    orbat-mace.xsd     — MACE simulator
+    orbat-sword.xsd    — SWORD simulator
+    orbat-vbs4.xsd     — VBS4 simulator
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="https://accenture.com/2026-03/cse/orbat"
+           targetNamespace="https://accenture.com/2026-03/cse/orbat"
+           elementFormDefault="qualified">
+
+    <!-- Simulator extension schemas — import so substitution groups are resolved -->
+    <xs:import namespace="https://accenture.com/2026-03/cse/orbat/vbs4"
+               schemaLocation="vbs4.xsd"/>
+    <xs:import namespace="https://accenture.com/2026-03/cse/orbat/sword"
+               schemaLocation="sword.xsd"/>
+    <xs:import namespace="https://accenture.com/2026-03/cse/orbat/simworks"
+               schemaLocation="simworks.xsd"/>
+
+    <!-- Root element -->
+    <xs:element name="Orbat">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Entities">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element
+                                name="Organisation"
+                                type="tns:RootOrganisationType"
+                                minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Base types
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- Shared base for all ORBAT entities: id, name, SIDC symbol code -->
+    <xs:complexType name="EntityType" abstract="true">
+        <xs:sequence/>
+        <xs:attribute name="id" type="xs:integer" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="sidc" type="xs:string" use="required"/>
+        <xs:attribute name="isExpanded" type="xs:boolean"/>
+    </xs:complexType>
+
+    <!-- WGS-84 latitude/longitude position -->
+    <xs:complexType name="LatLongType">
+        <xs:attribute name="latitude" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:decimal">
+                    <xs:minInclusive value="-90"/>
+                    <xs:maxInclusive value="90"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="longitude" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:decimal">
+                    <xs:minInclusive value="-180"/>
+                    <xs:maxInclusive value="180"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!--
+      Simulator that owns/controls this unit.
+      Base schema leaves this open (xs:string) so patch XSDs can restrict it to the
+      specific allowed values for each simulator ("none" | "mace" | "vbs4" …).
+    -->
+    <xs:simpleType name="OwningSimulatorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="vbs4"/>
+            <xs:enumeration value="simworks"/>
+            <xs:enumeration value="ascot7"/>
+            <xs:enumeration value="jtls-go"/>
+            <xs:enumeration value="sword"/>
+            <xs:enumeration value="mace"/>
+
+<!--            <xs:enumeration value="onearc/vbs4"/>-->
+<!--            <xs:enumeration value="plexsys/simworks"/>-->
+<!--            <xs:enumeration value="plexsys/ascot7"/>-->
+<!--            <xs:enumeration value="valkyrie/jtls-go"/>-->
+<!--            <xs:enumeration value="masa/sword"/>-->
+<!--            <xs:enumeration value="bsi/mace"/>-->
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Unit hierarchy
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- The place where to extend units -->
+    <xs:element name="UnitExtension" abstract="true"/>
+
+    <!--
+      Unit: abstract base for human, vehicle and aircraft.
+      Simulator-specific extensions are applied using substitution groups
+      referencing the UnitExtension element.
+    -->
+    <xs:complexType name="UnitType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="tns:EntityType">
+                <xs:sequence>
+                    <xs:element name="Location" type="tns:LatLongType"/>
+                    <xs:element name="Behavior">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="ControlledDroneIds">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Id" type="xs:integer" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <!-- This allows for Units to be extended -->
+                    <xs:element ref="tns:UnitExtension"
+                                minOccurs="0"
+                                maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="owningSimulator" type="tns:OwningSimulatorType" use="required"/>
+                <xs:attribute name="canControlDrones" type="xs:boolean" use="required"/>
+                <xs:attribute name="dis" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Human: a dismounted soldier/operator -->
+    <xs:complexType name="HumanType">
+        <xs:complexContent>
+            <xs:extension base="tns:UnitType">
+                <xs:sequence/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Vehicle: a ground vehicle that may carry human crew -->
+    <xs:complexType name="VehicleType">
+        <xs:complexContent>
+            <xs:extension base="tns:UnitType">
+                <xs:sequence>
+                    <xs:element name="Children" minOccurs="0">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Human" type="tns:HumanType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="isDrone" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Aircraft: a flying vehicle; isDrone is required, isExpanded is inherited from EntityType -->
+    <xs:complexType name="AircraftType">
+        <xs:complexContent>
+            <xs:extension base="tns:UnitType">
+                <xs:sequence>
+                    <xs:element name="Children">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Human" type="tns:HumanType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="isDrone" type="xs:boolean" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         Organisation hierarchy
+         ═══════════════════════════════════════════════════════════ -->
+
+    <xs:element name="OrganisationExtension" abstract="true"/>
+
+    <!-- Child discriminator for sub-organisations: any mix of org / human / vehicle / aircraft -->
+    <xs:group name="OrganisationChildGroup">
+        <xs:choice>
+            <xs:element name="Organisation" type="tns:OrganisationType"/>
+            <xs:element name="Human" type="tns:HumanType"/>
+            <xs:element name="Vehicle" type="tns:VehicleType"/>
+            <xs:element name="Aircraft" type="tns:AircraftType"/>
+        </xs:choice>
+    </xs:group>
+
+    <!--
+      Organisation: a tactical command node that groups other organisations and units.
+      Patch XSDs may extend this type to add simulator-specific sub-elements (e.g. <Sword>).
+    -->
+    <xs:complexType name="OrganisationType">
+        <xs:complexContent>
+            <xs:extension base="tns:EntityType">
+                    <xs:sequence>
+                        <xs:element name="Children">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:group ref="tns:OrganisationChildGroup" minOccurs="0" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <!-- This allows for Organisations to be extended -->
+                        <xs:element ref="tns:OrganisationExtension" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!--
+      RootOrganisation: the top-level ORBAT node (directly under <Entities>).
+      Its direct children must be Organisations — not raw units.
+      Patch XSDs may extend this type alongside OrganisationType.
+    -->
+    <xs:complexType name="RootOrganisationType">
+        <xs:complexContent>
+            <xs:extension base="tns:EntityType">
+                <xs:sequence>
+                    <xs:element name="Children">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Organisation" type="tns:OrganisationType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <!-- This allows for Organisations to be extended -->
+                    <xs:element ref="tns:OrganisationExtension" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

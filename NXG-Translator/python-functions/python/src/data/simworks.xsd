@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XSD type definitions for the SIMWORKS simulator extension to the simulation ORBAT schema.
+  Namespace: https://accenture.com/2026-03/cse/orbat/simworks
+  Source equivalent: simulation-orbat-simworks.json
+
+  These types are imported by orbat-simworks.xsd, which wires them into the base ORBAT schema as a required <Simworks> element on every Unit (human / vehicle / aircraft).
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://accenture.com/2026-03/cse/orbat/simworks"
+           xmlns:orbat="https://accenture.com/2026-03/cse/orbat"
+           xmlns:tns="https://accenture.com/2026-03/cse/orbat/simworks"
+           elementFormDefault="qualified">
+
+    <!--
+      SIMWORKS extension block applied to every unit (human, vehicle, aircraft).
+        className  — SIMWORKS asset class identifier
+    -->
+    <xs:element
+        name="Simworks"
+        type="tns:Simworks"
+        substitutionGroup="orbat:UnitExtension">
+    </xs:element>
+
+    <xs:complexType name="Simworks">
+<!--        <xs:sequence>-->
+<!--        </xs:sequence>-->
+        <xs:attribute name="className" type="xs:string" use="required"/>
+<!--        <xs:attribute name="role"      type="xs:string" use="required"/>-->
+    </xs:complexType>
+
+</xs:schema>

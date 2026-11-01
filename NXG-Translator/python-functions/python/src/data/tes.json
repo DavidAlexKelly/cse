@@ -1,0 +1,344 @@
+{
+  "id": "0edd721e-1054-40e9-8281-969b0a25c540",
+  "lastEdit": "2026-07-09T14:06:25.323148+00:00",
+  "started": "2026-07-09T14:03:15.953Z",
+  "ended": "2026-07-09T14:03:15.953Z",
+  "title": "OP-PLACEHOLDER",
+  "terrainName": "unknown",
+  "simulators": [
+    "vbs4"
+  ],
+  "entities": [
+    {
+      "$type": "organisation",
+      "id": 5,
+      "name": "Rifle Platoon",
+      "sidc": "SFGPUCI--D----",
+      "isExpanded": true,
+      "children": [
+        {
+          "$type": "organisation",
+          "id": 1,
+          "name": "Platoon HQ",
+          "sidc": "SFGPUH---D----",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 2,
+          "name": "1 Section",
+          "sidc": "SFGPUCI--D----",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 3,
+          "name": "2 Section",
+          "sidc": "SFGPUCI--D----",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 4,
+          "name": "3 Section",
+          "sidc": "SFGPUCI--D----",
+          "isExpanded": true,
+          "children": []
+        }
+      ]
+    },
+    {
+      "$type": "organisation",
+      "id": 40,
+      "name": "1st Battalion The Princess of Wales's Royal Regiment",
+      "sidc": "SFGPUCI----F---",
+      "isExpanded": true,
+      "children": [
+        {
+          "$type": "organisation",
+          "id": 6,
+          "name": "Close Support Artillery Battery",
+          "sidc": "SFGPUCFH---D---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 17,
+          "name": "B Company 1PWRR",
+          "sidc": "SFGPUCI----E---",
+          "isExpanded": true,
+          "children": [
+            {
+              "$type": "organisation",
+              "id": 9,
+              "name": "5 Platoon B Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 7,
+                  "name": "9 Section 5 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 8,
+                  "name": "10 Section 5 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "$type": "organisation",
+              "id": 12,
+              "name": "6 Platoon B Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 10,
+                  "name": "12 Section 6 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 11,
+                  "name": "11 Section 6 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "$type": "organisation",
+              "id": 15,
+              "name": "4 Platoon B Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 13,
+                  "name": "8 Section 4 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 14,
+                  "name": "7 Section 4 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "$type": "organisation",
+              "id": 16,
+              "name": "B Company HQ",
+              "sidc": "SFGPUCI--------",
+              "isExpanded": true,
+              "children": []
+            }
+          ]
+        },
+        {
+          "$type": "organisation",
+          "id": 18,
+          "name": "Air Defence Battery",
+          "sidc": "SFGPUCDM---D---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 19,
+          "name": "Recce Troop 1PWRR",
+          "sidc": "SFGPUCR----D---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 20,
+          "name": "Mortar Platoon 1PWRR",
+          "sidc": "SFGPUCF----D---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 21,
+          "name": "D Company (Mechanised Infantry)",
+          "sidc": "SFGPUCII---E---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 22,
+          "name": "Battlegroup Logistic Company",
+          "sidc": "SFGPUSS----E---",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 23,
+          "name": "UAS Section 1PWRR",
+          "sidc": null,
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 27,
+          "name": "C Squadron Royal Tank Regiment",
+          "sidc": "SFGPUCA----E---",
+          "isExpanded": true,
+          "children": [
+            {
+              "$type": "organisation",
+              "id": 24,
+              "name": "1 Troop C Squadron",
+              "sidc": "SFGPUCA----D---",
+              "isExpanded": true,
+              "children": []
+            },
+            {
+              "$type": "organisation",
+              "id": 25,
+              "name": "2 Troop C Squadron",
+              "sidc": "SFGPUCA----D---",
+              "isExpanded": true,
+              "children": []
+            },
+            {
+              "$type": "organisation",
+              "id": 26,
+              "name": "C Squadron HQ",
+              "sidc": "SFGPUCA--------",
+              "isExpanded": true,
+              "children": []
+            }
+          ]
+        },
+        {
+          "$type": "organisation",
+          "id": 28,
+          "name": "Battlegroup HQ 1PWRR",
+          "sidc": "SFGPUCI--------",
+          "isExpanded": true,
+          "children": []
+        },
+        {
+          "$type": "organisation",
+          "id": 39,
+          "name": "A Company 1PWRR",
+          "sidc": "SFGPUCI----E---",
+          "isExpanded": true,
+          "children": [
+            {
+              "$type": "organisation",
+              "id": 31,
+              "name": "2 Platoon A Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 29,
+                  "name": "3 Section 2 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 30,
+                  "name": "4 Section 2 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "$type": "organisation",
+              "id": 34,
+              "name": "1 Platoon A Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 32,
+                  "name": "2 Section 1 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 33,
+                  "name": "1 Section 1 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "$type": "organisation",
+              "id": 35,
+              "name": "A Company HQ",
+              "sidc": "SFGPUCI--------",
+              "isExpanded": true,
+              "children": []
+            },
+            {
+              "$type": "organisation",
+              "id": 38,
+              "name": "3 Platoon A Company",
+              "sidc": "SFGPUCI----D---",
+              "isExpanded": true,
+              "children": [
+                {
+                  "$type": "organisation",
+                  "id": 36,
+                  "name": "6 Section 3 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                },
+                {
+                  "$type": "organisation",
+                  "id": 37,
+                  "name": "5 Section 3 Platoon",
+                  "sidc": "SFGPUCI----C---",
+                  "isExpanded": true,
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

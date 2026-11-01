@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XSD type definitions for the SWORD simulator extension to the simulation ORBAT schema.
+  Namespace: https://accenture.com/2026-03/cse/orbat/sword
+  Source equivalent: simulation-orbat-sword.json
+
+  These types are imported by orbat-sword.xsd, which wires them into the base ORBAT schema as a required <Sword> element on every Organisation.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://accenture.com/2026-03/cse/orbat/sword"
+           xmlns:orbat="https://accenture.com/2026-03/cse/orbat"
+           elementFormDefault="qualified">
+
+    <!--
+      SWORD extension block for organisations.
+      controllable  — whether SWORD can control this organisation
+      class         — SWORD force class/template name; omit the attribute when the JSON value is null
+    -->
+    <xs:element
+        name="Sword"
+        substitutionGroup="orbat:OrganisationExtension">
+        <xs:complexType>
+            <xs:attribute name="controllable" type="xs:boolean" use="required"/>
+            <xs:attribute name="class"        type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
