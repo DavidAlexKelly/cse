@@ -1,0 +1,192 @@
+/* ============================================================
+   Global styles
+   ------------------------------------------------------------
+   The design system is @acc/decho-styling. Since 0.4.0 it ships
+   the two layers this file used to carry by hand:
+
+     compat/military.css  the alias layer mapping this repo's
+                          variable names (--bg-panel, --text-primary,
+                          --accent-primary, --shadow-card, --rag-*,
+                          --chart-*, --accent-ai, …) onto tokens
+     blueprint.css        Blueprint 5 wearing those same tokens
+
+   Both existed here and in the Plan & Prepare widget set, written
+   twice, which is what prompted moving them into the package. This
+   file is now only what is genuinely local to these six apps.
+
+   The theme is chosen on <html> in index.html. `decho-root` alone
+   is classic — this repo's original military green, now coming from
+   the package rather than a copy kept here. Add decho-modern,
+   decho-daylight, decho-command, decho-accenture-light or
+   decho-accenture-dark to re-theme every app at once.
+
+   FONTS
+   -----
+   The @fontsource imports stay, and Inter sits in front of the
+   package's stack below. Unlike a Foundry custom widget — where CSP
+   blocks a webfont request — this is a standalone OSDK application
+   and @fontsource ships the files in the bundle, so Inter loads.
+   ============================================================ */
+
+@import "@acc/decho-styling/styles.css";
+@import "@acc/decho-styling/compat/military.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "./animations.css";
+
+/* ============================================================
+   The accent: modern, in green
+   ------------------------------------------------------------
+   GENERATED. To change the colour, or after a package upgrade:
+
+     node -e "import('@acc/decho-styling').then(m => \
+       console.log(Object.entries(m.accentVariables('modern', '#2fbf71')) \
+         .map(([k,v]) => '  ' + k + ': ' + v + ';').join('\n')))"
+
+   Declared on :root so it wins over the .decho-modern block the package
+   ships: <html> matches both, they have equal specificity, and this file
+   is imported after the package's stylesheet — so source order decides
+   and this comes last.
+
+   Only the tokens the accent owns. The shadows keep their near-black
+   stops (a shadow is darkness, not brand) and the hairline keeps its
+   teal stop, so it fades green into teal rather than flattening.
+   ============================================================ */
+:root {
+  --decho-color-accent: #2fbf71;
+  --decho-color-accent-hover: #50c988;
+  --decho-color-accent-soft: rgba(47, 191, 113, 0.2);
+  --decho-color-accent-over-map: #50c988;
+  --decho-color-border-strong: rgba(80, 201, 136, 0.5);
+  --decho-color-link: #9ee1bd;
+  /* Dark ink on green: white on this accent is not readable. */
+  --decho-color-on-accent: #12100c;
+  --decho-gradient-accent: linear-gradient(135deg, #2fbf71 0%, #50c988 52%, #55cb8b 100%);
+  --decho-gradient-app: radial-gradient(120% 90% at 50% -20%, rgba(47, 191, 113, 0.3) 0%, rgba(8, 11, 22, 0) 62%), radial-gradient(80% 70% at 108% 4%, rgba(53, 214, 192, 0.12) 0%, rgba(8, 11, 22, 0) 70%);
+  --decho-gradient-hairline: linear-gradient(90deg, rgba(47, 191, 113, 0) 0%, rgba(80, 201, 136, 0.7) 32%, rgba(53, 214, 192, 0.45) 68%, rgba(47, 191, 113, 0) 100%);
+  --decho-shadow-card-hover: 0 16px 40px rgba(4, 6, 16, 0.6), 0 0 22px rgba(47, 191, 113, 0.2);
+  --decho-shadow-selected: 0 16px 40px rgba(4, 6, 16, 0.55), 0 0 0 1px rgba(80, 201, 136, 0.55), 0 0 28px rgba(47, 191, 113, 0.35);
+}
+
+:root {
+  /* ==========================================================
+     What the compat layer does not cover: this repo's own
+     conventions. Everything else now comes from the package.
+     ========================================================== */
+
+  /* -- Typography --
+     Inter in front of the package's system stack. */
+  --font-sans: "Inter", var(--decho-font-family-sans);
+  --font-mono: "JetBrains Mono", var(--decho-font-family-mono);
+
+  /* The type scale stays local: the package's stops at 15px and
+     these headings do not. Aliasing it would be a visual change
+     dressed up as a rename. */
+  --text-xs:   10px;
+  --text-sm:   12px;
+  --text-md:   13px;
+  --text-lg:   14px;
+  --text-xl:   16px;
+  --text-2xl:  20px;
+  --text-3xl:  24px;
+
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose:   1.7;
+
+  /* -- Spacing --
+     Also local: this repo counts in 4s from 4px, the package in 2s
+     from 2px, and --space-2 meaning 8px here and 4px there is the
+     kind of alias that silently halves every gap in the estate. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* -- Z-index ladder — this repo's own layering contract -- */
+  --z-base:    1;
+  --z-raised:  10;
+  --z-overlay: 100;
+  --z-modal:   1000;
+  --z-toast:   2000;
+}
+
+/* ---- Reset & Base ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  /* Image first, then the colour underneath it. In classic the app
+     gradient is `none` and this is simply the page colour; in the lit
+     themes it is the light every translucent surface is glass
+     against. One declaration serves both. */
+  background: var(--bg-base-grad);
+  background-color: var(--bg-base);
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Universal smooth transitions on interactive elements ---- */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"],
+[tabindex] {
+  transition:
+    background-color var(--transition-fast),
+    background    var(--transition-fast),
+    border-color  var(--transition-fast),
+    box-shadow    var(--transition-fast),
+    color         var(--transition-fast),
+    opacity       var(--transition-fast),
+    transform     var(--transition-fast);
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
