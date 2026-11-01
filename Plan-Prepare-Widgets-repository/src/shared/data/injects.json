@@ -1,0 +1,109 @@
+{
+  "objectType": "Inject",
+  "objects": [
+    {
+      "injectId": "inject_01",
+      "title": "OPFOR crossing of PHASE LINE ODIN detected",
+      "dayOffset": "D+0",
+      "category": "INTEL",
+      "body": "ISR assets report battalion-sized element crossing in sector 2. Triggers INTSUM and fires request. BLUFOR must confirm, produce INTSUM-01, and coordinate counter-fires within 2 hours.",
+      "expectedResponse": "INTSUM production, fires request, sector 2 reinforcement order",
+      "trainingObjectiveLinks": ["to_01", "to_03", "to_07"],
+
+      "__links": {
+        "referencesTerrainFeature": null
+      }
+    },
+    {
+      "injectId": "inject_02",
+      "title": "Cyber attack on HQ communications node",
+      "dayOffset": "D+1",
+      "category": "CYBER",
+      "body": "Primary C2 link degraded to 30% capacity. Backup PACE plan must be activated within 4 hours. SATCOM link also degraded by adversary EW activity.",
+      "expectedResponse": "PACE plan activation, J6 incident report, C2 continuity procedures",
+      "trainingObjectiveLinks": ["to_01", "to_05"],
+
+      "__links": {
+        "referencesTerrainFeature": null
+      }
+    },
+    {
+      "injectId": "inject_03",
+      "title": "IDP column blocks Route AMBER",
+      "dayOffset": "D+2",
+      "category": "CIMIC",
+      "body": "Approximately 4,200 IDPs moving west along Route AMBER — the primary supply route. CIMIC and MP coordination required to establish bypass route and IDP holding area.",
+      "expectedResponse": "CIMIC coordination order, MP tasking, J4 re-routing of resupply convoy",
+      "trainingObjectiveLinks": ["to_04", "to_06"],
+
+      "__links": {
+        "referencesTerrainFeature": "terrain_port_sova"
+      }
+    },
+    {
+      "injectId": "inject_04",
+      "title": "Weather degradation — reduced air support window",
+      "dayOffset": "D+3",
+      "category": "METOC",
+      "body": "Ceiling at 300ft. All CAS sorties cancelled for 18-hour period. Ground-based fires only. Division must replan fire support for ongoing deliberate attack.",
+      "expectedResponse": "Fire support plan revision, JTAR amendment, artillery re-tasking",
+      "trainingObjectiveLinks": ["to_01", "to_03"],
+
+      "__links": {
+        "referencesTerrainFeature": null
+      }
+    },
+    {
+      "injectId": "inject_05",
+      "title": "OPFOR SOF element identified in rear area",
+      "dayOffset": "D+5",
+      "category": "INTEL",
+      "body": "HUMINT report of 6-person team targeting fuel depot at grid 541 882. Counter-SOF response required within 2 hours before team completes recce.",
+      "expectedResponse": "Counter-SOF tasking, force protection order amendment, J2 HUMINT exploitation",
+      "trainingObjectiveLinks": ["to_04", "to_07"],
+
+      "__links": {
+        "referencesTerrainFeature": "terrain_port_sova"
+      }
+    },
+    {
+      "injectId": "inject_06",
+      "title": "Political event — NATO FM emergency session",
+      "dayOffset": "D+7",
+      "category": "POLMIL",
+      "body": "New ROE issued following political decision at NATO HQ. Division must implement updated ROE within 6 hours and disseminate to all subordinate units.",
+      "expectedResponse": "ROE dissemination order, legal review, commander's guidance to subordinates",
+      "trainingObjectiveLinks": ["to_01", "to_02"],
+
+      "__links": {
+        "referencesTerrainFeature": null
+      }
+    },
+    {
+      "injectId": "inject_07",
+      "title": "Logistics crisis — fuel reserves at 15%",
+      "dayOffset": "D+9",
+      "category": "LOG",
+      "body": "Resupply convoy delayed 48 hours by OPFOR interdiction. Fuel reserves across the division at 15%. Combat power vs sustainment trade-off decision required at division level.",
+      "expectedResponse": "J4 priority allocation order, combat power reduction plan, emergency resupply request",
+      "trainingObjectiveLinks": ["to_04"],
+
+      "__links": {
+        "referencesTerrainFeature": "terrain_bridge_delta"
+      }
+    },
+    {
+      "injectId": "inject_08",
+      "title": "OPFOR ceasefire offer — information operation",
+      "dayOffset": "D+12",
+      "category": "INFO OPS",
+      "body": "Media reports ceasefire proposal attributed to OPFOR commander. STRATCOM and legal must respond within 3 hours. Assessed as likely IO deception to slow BLUFOR advance.",
+      "expectedResponse": "STRATCOM response line, legal assessment, J2 deception analysis",
+      "trainingObjectiveLinks": ["to_08"],
+
+      "__links": {
+        "referencesTerrainFeature": null
+      }
+    }
+  ]
+}

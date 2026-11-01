@@ -1,0 +1,578 @@
+/* ============================================================
+   UI Redesign — Shared Additions
+   All new classes only. No existing classes modified.
+   ============================================================ */
+
+/* ── Scenario Hero Header ───────────────────────────────────── */
+
+.scn-hero {
+  background: linear-gradient(180deg, #111a23 0%, #0e1120 100%);
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  padding: 16px 20px 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.scn-hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4c7ef3 30%, #6c5ce7 70%, transparent);
+}
+
+.scn-hero__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.scn-hero__left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.scn-hero__badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.scn-hero__name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f3f5ff;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scn-hero__sub {
+  font-size: 11px;
+  color: #6a7292;
+  letter-spacing: 0.04em;
+}
+
+.scn-hero__right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Progress ring / bar */
+.scn-hero__progress-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.scn-hero__progress-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.scn-hero__progress-track {
+  width: 120px;
+  height: 6px;
+  background: #1a1f36;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.scn-hero__progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #4c7ef3, #6c5ce7);
+  transition: width 0.4s ease;
+}
+
+.scn-hero__progress-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e6eaf8;
+}
+
+/* Stats row */
+.scn-hero__stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid #1a1f36;
+  padding-top: 10px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.scn-hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 18px 0 0;
+  margin-right: 18px;
+  border-right: 1px solid #232a45;
+}
+
+.scn-hero__stat:last-child {
+  border-right: none;
+  margin-right: 0;
+}
+
+.scn-hero__stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1;
+}
+
+.scn-hero__stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+/* Badge variants reused in hero */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge--blue   { background: rgba(76, 126, 243,0.2);  color: #63a2ff;  border: 1px solid rgba(76, 126, 243,0.35); }
+.badge--green  { background: rgba(36, 180, 126,0.2);   color: #24b47e;  border: 1px solid rgba(36, 180, 126,0.35);  }
+.badge--amber  { background: rgba(240, 168, 60,0.2);  color: #f0a83c;  border: 1px solid rgba(240, 168, 60,0.35); }
+.badge--red    { background: rgba(239, 77, 77,0.2);   color: #ef4d4d;  border: 1px solid rgba(239, 77, 77,0.35);  }
+.badge--grey   { background: rgba(106, 114, 146,0.2);   color: #98a1c0;  border: 1px solid rgba(106, 114, 146,0.35);  }
+.badge--purple { background: rgba(196, 122, 245,0.18); color: #c47af5;  border: 1px solid rgba(196, 122, 245,0.3);  }
+
+/* ── MIL/MEL Row-List View ──────────────────────────────────── */
+
+/* Phase tab bar */
+.mel-phase-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 14px;
+  background: #0e1120;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mel-phase-tabs::-webkit-scrollbar { display: none; }
+
+.mel-phase-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #6a7292;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+
+.mel-phase-tab:hover {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.mel-phase-tab--active {
+  background: rgba(76, 126, 243,0.14);
+  border-color: rgba(76, 126, 243,0.5);
+  color: #63a2ff;
+}
+
+.mel-phase-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  background: rgba(106, 114, 146,0.25);
+  color: #98a1c0;
+}
+
+.mel-phase-tab--active .mel-phase-tab__count {
+  background: rgba(76, 126, 243,0.3);
+  color: #63a2ff;
+}
+
+/* Row list container */
+.mel-row-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+}
+
+/* Individual inject row */
+.mel-row-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #141828;
+  border: 1px solid #232a45;
+  border-left: 3px solid #232a45;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  position: relative;
+}
+
+.mel-row-item:hover {
+  background: #1a1f36;
+  border-color: #2f3860;
+  border-left-color: inherit;
+}
+
+.mel-row-item--selected {
+  background: rgba(76, 126, 243,0.07) !important;
+  border-color: rgba(76, 126, 243,0.4) !important;
+  border-left-color: #4c7ef3 !important;
+}
+
+/* Left accent colours by type */
+.mel-row-item--incident { border-left-color: #ef4d4d; }
+.mel-row-item--event    { border-left-color: #4c7ef3; }
+
+/* Dimmed when outside active phase */
+.mel-row-item--dimmed {
+  opacity: 0.38;
+}
+
+.mel-row-item__serial {
+  font-family: monospace;
+  font-size: 10px;
+  color: #6a7292;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  margin-top: 2px;
+  min-width: 64px;
+}
+
+.mel-row-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mel-row-item__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mel-row-item__desc {
+  font-size: 11px;
+  color: #98a1c0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mel-row-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.mel-row-item__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.mel-row-item__day {
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6a7292;
+  white-space: nowrap;
+}
+
+.mel-row-item__open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid #2f3860;
+  border-radius: 4px;
+  background: #0e1120;
+  color: #e6eaf8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.1s, border-color 0.1s;
+  flex-shrink: 0;
+}
+
+.mel-row-item__open-btn:hover {
+  background: #1a1f36;
+  border-color: #3f4a78;
+}
+
+/* Phase label chip on a row */
+.mel-row-item__phase-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(240, 168, 60,0.12);
+  border: 1px solid rgba(240, 168, 60,0.3);
+  color: #f0a83c;
+  white-space: nowrap;
+}
+
+/* Summary / count bar above the list */
+.mel-list-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  background: #0b0e18;
+  border-bottom: 1px solid #1a1f36;
+  font-size: 11px;
+  color: #6a7292;
+  flex-shrink: 0;
+}
+
+.mel-list-summary__sep {
+  color: #232a45;
+}
+
+.mel-list-summary__count {
+  font-weight: 700;
+  color: #98a1c0;
+}
+
+/* Section group header inside the list */
+.mel-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 4px;
+}
+
+.mel-group-header__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #454c68;
+}
+
+.mel-group-header__line {
+  flex: 1;
+  height: 1px;
+  background: #1a1f36;
+}
+
+/* ── Planner Wizard Polish ──────────────────────────────────── */
+
+/* Tighter, more structured step bar */
+.planner-steps-v2 {
+  display: flex;
+  align-items: stretch;
+  background: #0b0e18;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  height: 48px;
+  padding: 0 20px;
+  gap: 0;
+}
+
+.planner-step-v2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 18px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #454c68;
+  position: relative;
+  white-space: nowrap;
+  cursor: default;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.planner-step-v2--done {
+  color: #6c5ce7;
+}
+
+.planner-step-v2--active {
+  color: #e6eaf8;
+  border-bottom-color: #4c7ef3;
+}
+
+.planner-step-v2__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #232a45;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #454c68;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.planner-step-v2--done .planner-step-v2__num {
+  background: #6c5ce7;
+  border-color: #6c5ce7;
+  color: #fff;
+}
+
+.planner-step-v2--active .planner-step-v2__num {
+  background: #4c7ef3;
+  border-color: #4c7ef3;
+  color: #fff;
+}
+
+.planner-step-v2__sep {
+  width: 20px;
+  height: 1px;
+  background: #232a45;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* Exercise type cards — v2 larger, more spacious */
+.ex-type-card-v2 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px 18px;
+  background: #0b0e1a;
+  border: 1px solid #232a45;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  color: inherit;
+  position: relative;
+}
+
+.ex-type-card-v2:hover {
+  background: #1a1f2b;
+  border-color: #2f3860;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.ex-type-card-v2--selected {
+  background: rgba(76, 126, 243,0.1) !important;
+  border-color: #4c7ef3 !important;
+  box-shadow: 0 0 0 1px rgba(76, 126, 243,0.3), 0 4px 16px rgba(76, 126, 243,0.15) !important;
+}
+
+.ex-type-card-v2__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #1a1f36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6a7292;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ex-type-card-v2--selected .ex-type-card-v2__icon {
+  background: rgba(76, 126, 243,0.2);
+  color: #63a2ff;
+}
+
+.ex-type-card-v2__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1.3;
+}
+
+.ex-type-card-v2__desc {
+  font-size: 11px;
+  color: #6a7292;
+  line-height: 1.5;
+}
+
+.ex-type-card-v2--selected::after {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4c7ef3;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

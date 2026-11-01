@@ -1,0 +1,87 @@
+{
+  "objectType": "OrbatNode",
+  "objects": [
+    {
+      "nodeId": "orbat_node_i_corps",
+      "parentNodeId": null,
+      "treeLevel": 0,
+      "strength": 12000,
+      "readiness": "Full",
+      "equipmentStatus": "FMC",
+      "latlng": null,
+
+      "__links": {
+        "instantiatedFrom": "unit_i_corps"
+      }
+    },
+    {
+      "nodeId": "orbat_node_1arm_div",
+      "parentNodeId": "orbat_node_i_corps",
+      "treeLevel": 1,
+      "strength": 8500,
+      "readiness": "Full",
+      "equipmentStatus": "FMC",
+      "latlng": null,
+
+      "__links": {
+        "instantiatedFrom": "unit_1arm_div"
+      }
+    },
+    {
+      "nodeId": "orbat_node_2mech_div",
+      "parentNodeId": "orbat_node_i_corps",
+      "treeLevel": 1,
+      "strength": null,
+      "readiness": null,
+      "equipmentStatus": null,
+      "latlng": null,
+      "parametersPending": true,
+
+      "__links": {
+        "instantiatedFrom": "unit_2mech_div"
+      }
+    },
+    {
+      "nodeId": "orbat_node_1_bde",
+      "parentNodeId": "orbat_node_1arm_div",
+      "treeLevel": 2,
+      "strength": null,
+      "readiness": null,
+      "equipmentStatus": null,
+      "latlng": null,
+      "parametersPending": true,
+
+      "__links": {
+        "instantiatedFrom": "unit_1_bde"
+      }
+    },
+    {
+      "nodeId": "orbat_node_2_bde",
+      "parentNodeId": "orbat_node_1arm_div",
+      "treeLevel": 2,
+      "strength": null,
+      "readiness": null,
+      "equipmentStatus": null,
+      "latlng": null,
+      "parametersPending": true,
+
+      "__links": {
+        "instantiatedFrom": "unit_2_bde"
+      }
+    },
+    {
+      "nodeId": "orbat_node_3_bde",
+      "parentNodeId": "orbat_node_2mech_div",
+      "treeLevel": 2,
+      "strength": null,
+      "readiness": null,
+      "equipmentStatus": null,
+      "latlng": null,
+      "parametersPending": true,
+
+      "__links": {
+        "instantiatedFrom": "unit_3_bde"
+      }
+    }
+  ]
+}

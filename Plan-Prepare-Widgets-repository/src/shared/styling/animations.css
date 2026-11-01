@@ -1,0 +1,190 @@
+/* ============================================================
+   Animations & Keyframes
+   ============================================================
+   All @keyframes and animation utility classes live here.
+   Import this file in global.css.
+
+   Classes:
+     .mil-skeleton          — shimmer placeholder for loading states
+     .mil-pulse-amber       — faint glow pulse for pending/in-review badges
+     .mil-pulse-green       — faint glow pulse for active/live indicators
+     .mil-fade-in           — subtle opacity + translate entrance
+     .mil-slide-down        — height-based expand (use with JS toggling class)
+     .mil-collapsible       — CSS grid-row-based smooth collapse wrapper
+     .mil-collapsible--open — expanded state
+     .mil-spin              — continuous rotation for spinners
+   ============================================================ */
+
+/* ---- Shimmer — skeleton loading state ---- */
+@keyframes mil-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.mil-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-raised-flat) 25%,
+    var(--bg-hover)       50%,
+    var(--bg-raised-flat) 75%
+  );
+  background-size: 200% 100%;
+  animation: mil-shimmer 1.6s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- Pulse glow — amber (pending / in-review) ---- */
+@keyframes mil-pulse-amber {
+  0%,  100% { box-shadow: 0 0 0 0   var(--accent-amber-glow); }
+  50%       { box-shadow: 0 0 0 5px transparent; }
+}
+
+.mil-pulse-amber {
+  animation: mil-pulse-amber 2.4s ease-in-out infinite;
+}
+
+/* ---- Pulse glow — green (active / live) ---- */
+@keyframes mil-pulse-green {
+  0%,  100% { box-shadow: 0 0 0 0   var(--accent-primary-glow); }
+  50%       { box-shadow: 0 0 0 5px transparent; }
+}
+
+.mil-pulse-green {
+  animation: mil-pulse-green 2.4s ease-in-out infinite;
+}
+
+/* ---- Status dot live pulse ---- */
+@keyframes mil-dot-pulse {
+  0%,  100% { transform: scale(1);   opacity: 1;   }
+  50%        { transform: scale(1.5); opacity: 0.6; }
+}
+
+.mil-dot--pulsing {
+  animation: mil-dot-pulse 1.8s ease-in-out infinite;
+}
+
+/* ---- Fade in — entrance animation ---- */
+@keyframes mil-fade-in {
+  from {
+    opacity:   0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity:   1;
+    transform: translateY(0);
+  }
+}
+
+.mil-fade-in {
+  animation: mil-fade-in 0.2s var(--ease-out) both;
+}
+
+/* ---- Fade in fast (for tooltips, dropdowns) ---- */
+@keyframes mil-fade-in-fast {
+  from { opacity: 0; transform: translateY(2px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+.mil-fade-in-fast {
+  animation: mil-fade-in-fast 0.12s var(--ease-out) both;
+}
+
+/* ---- Slide down — expand from top (dropdowns, drawers) ---- */
+@keyframes mil-slide-down {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.mil-slide-down {
+  animation: mil-slide-down 0.18s var(--ease-out) both;
+}
+
+/* ---- Smooth collapse using CSS grid trick ----
+   Usage:
+     <div class="mil-collapsible mil-collapsible--open">
+       <div class="mil-collapsible__inner"> ...content... </div>
+     </div>
+   Toggle mil-collapsible--open to expand / collapse.
+   ------------------------------------------------ */
+.mil-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-normal);
+}
+
+.mil-collapsible--open {
+  grid-template-rows: 1fr;
+}
+
+.mil-collapsible__inner {
+  overflow: hidden;
+}
+
+/* ---- Spinner rotation ---- */
+@keyframes mil-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+.mil-spin {
+  animation: mil-spin 0.75s linear infinite;
+  display:   inline-block;
+}
+
+/* ---- Loading spinner component ---- */
+.mil-spinner {
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
+  width:  16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.mil-spinner__ring {
+  width:  14px;
+  height: 14px;
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--accent-primary);
+  border-radius: var(--radius-full);
+  animation: mil-spin 0.7s linear infinite;
+}
+
+.mil-spinner--sm .mil-spinner__ring { width: 10px; height: 10px; border-width: 1.5px; }
+.mil-spinner--lg .mil-spinner__ring { width: 20px; height: 20px; border-width: 2.5px; }
+
+/* ---- Snap in — for interactive elements (micro bounce) ---- */
+@keyframes mil-snap-in {
+  from { transform: scale(0.94); opacity: 0.6; }
+  to   { transform: scale(1);    opacity: 1;   }
+}
+
+.mil-snap-in {
+  animation: mil-snap-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ---- Pop — subtle scale on appearance (badges, chips) ---- */
+@keyframes mil-pop {
+  0%   { transform: scale(0.8);  opacity: 0; }
+  70%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+.mil-pop {
+  animation: mil-pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ---- Hover lift utility (add to any card/item) ---- */
+.mil-hover-lift {
+  transition:
+    transform    var(--transition-fast),
+    box-shadow   var(--transition-fast) !important;
+}
+
+.mil-hover-lift:hover {
+  transform:  translateY(-1px);
+  box-shadow: var(--shadow-hover) !important;
+}

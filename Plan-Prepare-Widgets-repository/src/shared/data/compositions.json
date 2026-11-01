@@ -1,0 +1,94 @@
+{
+  "objectType": "Composition",
+  "objects": [
+    {
+      "compositionId": "composition_iron_forge_26",
+      "federationProtocol": "IEEE 1516 HLA Evolved",
+      "legacyProtocol": "DIS IEEE 1278.1",
+      "tacticalDataLink": "Link 16 / TADIL J",
+      "topologyType": "Star",
+      "rtiHost": "HQ LANDCOM",
+      "networkBackbone": "NATO Unclassified MPLS",
+      "c2DataExchange": "NFFI/JC3IEDM",
+
+      "simulationNodes": [
+        {
+          "system": "TLS-GO",
+          "nation": "DEU",
+          "type": "Constructive",
+          "aggregationLevel": "Aggregated",
+          "protocol": "HLA",
+          "status": "Confirmed"
+        },
+        {
+          "system": "Ascot7",
+          "nation": "GBR",
+          "type": "Constructive",
+          "aggregationLevel": "Aggregated",
+          "protocol": "HLA / DIS",
+          "status": "Confirmed"
+        },
+        {
+          "system": "VBS4",
+          "nation": "GBR/NLD",
+          "type": "Virtual",
+          "aggregationLevel": "Entity-level",
+          "protocol": "DIS / HLA",
+          "status": "Confirmed"
+        },
+        {
+          "system": "MASA SWORD",
+          "nation": "FRA/POL",
+          "type": "Constructive",
+          "aggregationLevel": "Aggregated",
+          "protocol": "HLA",
+          "status": "Pending"
+        }
+      ],
+
+      "c2Systems": [
+        {
+          "system": "TOPFAS",
+          "nation": "NATO",
+          "function": "Operational planning & orders",
+          "interface": "JC3IEDM / NFFI",
+          "status": "Connected"
+        },
+        {
+          "system": "FACETS",
+          "nation": "DEU",
+          "function": "Force tracking & COP",
+          "interface": "NFFI",
+          "status": "Connected"
+        },
+        {
+          "system": "BMS Aquila",
+          "nation": "POL",
+          "function": "Battlefield management",
+          "interface": "Link 16 / DIS",
+          "status": "In test"
+        },
+        {
+          "system": "Battlespace Next",
+          "nation": "GBR",
+          "function": "Tactical C2 & COP",
+          "interface": "NFFI / Link 16",
+          "status": "In test"
+        }
+      ],
+
+      "supportSystems": [
+        {
+          "system": "VR-TheWorld / STAGE",
+          "role": "Terrain server",
+          "description": "Shared correlated terrain database covering the Sorvian Peninsula AOR, distributed via HLA terrain services object model."
+        },
+        {
+          "system": "JLCCTC AAR / BML Logger",
+          "role": "After Action Review",
+          "description": "Passive HLA logger for post-exercise AAR playback. BML message logging captures all C2 transactions."
+        }
+      ]
+    }
+  ]
+}

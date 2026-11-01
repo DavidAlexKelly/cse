@@ -1,0 +1,50 @@
+{
+  "objectType": "Person",
+  "objects": [
+    {
+      "personId": "person_hartmann",
+      "name": "BGen Hartmann",
+      "rank": "Brigadier General",
+      "role": "Exercise Director",
+      "initials": "BG",
+      "nation": "DEU",
+      "avatarBg": "linear-gradient(135deg,#1a6bff,#8b5cf6)"
+    },
+    {
+      "personId": "person_anderssen",
+      "name": "Col Anderssen",
+      "rank": "Colonel",
+      "role": "Chief EXCON",
+      "initials": "AL",
+      "nation": "NOR",
+      "avatarBg": "#ef4444"
+    },
+    {
+      "personId": "person_kowalski",
+      "name": "LtCol Kowalski",
+      "rank": "Lieutenant Colonel",
+      "role": "Scenario Director",
+      "initials": "MK",
+      "nation": "POL",
+      "avatarBg": "#22c55e"
+    },
+    {
+      "personId": "person_roos",
+      "name": "Maj Roos",
+      "rank": "Major",
+      "role": "J3 Exercise Planner",
+      "initials": "JR",
+      "nation": "NLD",
+      "avatarBg": "#f59e0b"
+    },
+    {
+      "personId": "person_westergaard",
+      "name": "Maj Westergaard",
+      "rank": "Major",
+      "role": "Intel & Scenario SME",
+      "initials": "TW",
+      "nation": "DNK",
+      "avatarBg": "#14b8a6"
+    }
+  ]
+}

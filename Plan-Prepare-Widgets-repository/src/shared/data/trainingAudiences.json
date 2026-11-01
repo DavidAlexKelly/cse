@@ -1,0 +1,77 @@
+{
+  "objectType": "TrainingAudience",
+  "objects": [
+    {
+      "audienceId": "audience_primary_div_hq",
+      "name": "Multinational Division HQ Staff",
+      "audienceType": "primary",
+      "participantCount": 420,
+      "description": "Full J1–J9 directorate staff from all five participating nations. The primary exercise audience covers all HQ functions including operations, intelligence, logistics, plans, fires, CIMIC, and communications.",
+      "directorates": ["J1", "J2", "J3", "J4", "J5", "J6", "J7", "J8", "J9"],
+      "participatingNations": [
+        {
+          "nation": "DEU",
+          "role": "Lead nation",
+          "participantCount": 180,
+          "directorates": ["J3", "J4", "J5", "HQ Cdr"]
+        },
+        {
+          "nation": "POL",
+          "role": "Participant",
+          "participantCount": 80,
+          "directorates": ["J2", "J3", "J9"]
+        },
+        {
+          "nation": "GBR",
+          "role": "Participant",
+          "participantCount": 65,
+          "directorates": ["J3", "J5", "Fires"]
+        },
+        {
+          "nation": "NOR",
+          "role": "Participant",
+          "participantCount": 55,
+          "directorates": ["J2", "J4", "Arty"]
+        },
+        {
+          "nation": "NLD",
+          "role": "Participant",
+          "participantCount": 40,
+          "directorates": ["J6", "Eng", "J1"]
+        }
+      ]
+    },
+    {
+      "audienceId": "audience_j3_ops",
+      "name": "J3 Operations Branch",
+      "audienceType": "secondary",
+      "participantCount": 80,
+      "description": "Operations branch staff with specific focus on battle rhythm, decision cycle, and joint fires integration.",
+      "directorates": ["J3"]
+    },
+    {
+      "audienceId": "audience_j2_intel",
+      "name": "J2 Intelligence Branch",
+      "audienceType": "secondary",
+      "participantCount": 40,
+      "description": "Intelligence staff exercising INTSUM production, ISR coordination, and intelligence support to operations.",
+      "directorates": ["J2"]
+    },
+    {
+      "audienceId": "audience_j4_log",
+      "name": "J4 Logistics Branch",
+      "audienceType": "secondary",
+      "participantCount": 55,
+      "description": "Logistics staff exercising sustainment planning, supply chain management, and logistics synchronisation.",
+      "directorates": ["J4"]
+    },
+    {
+      "audienceId": "audience_j6_comms",
+      "name": "J6 Communications",
+      "audienceType": "secondary",
+      "participantCount": 25,
+      "description": "Signal and communications staff exercising C2 continuity and PACE plan execution under cyber-degraded conditions.",
+      "directorates": ["J6"]
+    }
+  ]
+}

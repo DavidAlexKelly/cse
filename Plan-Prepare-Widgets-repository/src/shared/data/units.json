@@ -1,0 +1,101 @@
+{
+  "objectType": "Unit",
+  "objects": [
+    {
+      "unitId": "unit_i_corps",
+      "name": "I Corps",
+      "echelon": "Corps",
+      "type": "HQ",
+      "nation": "DEU",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_1arm_div",
+      "name": "1st Armoured Division",
+      "echelon": "Division",
+      "type": "ARM",
+      "nation": "DEU",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_2mech_div",
+      "name": "2nd Mechanised Division",
+      "echelon": "Division",
+      "type": "MECH",
+      "nation": "POL",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_1_bde",
+      "name": "1 Brigade",
+      "echelon": "Brigade",
+      "type": "INF",
+      "nation": "DEU",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_2_bde",
+      "name": "2 Brigade",
+      "echelon": "Brigade",
+      "type": "ARM",
+      "nation": "POL",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_3_bde",
+      "name": "3 Brigade",
+      "echelon": "Brigade",
+      "type": "INF",
+      "nation": "GBR",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_4_bde",
+      "name": "4 Brigade",
+      "echelon": "Brigade",
+      "type": "MECH",
+      "nation": "NLD",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_div_arty",
+      "name": "Division Artillery",
+      "echelon": "Brigade",
+      "type": "ARTY",
+      "nation": "NOR",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_div_eng",
+      "name": "Division Engineers",
+      "echelon": "Battalion",
+      "type": "ENG",
+      "nation": "NLD",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_div_sig",
+      "name": "Division Signals",
+      "echelon": "Battalion",
+      "type": "SIG",
+      "nation": "DEU",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_1_12_inf",
+      "name": "1-12 Infantry Battalion",
+      "echelon": "Battalion",
+      "type": "INF",
+      "nation": "DEU",
+      "side": "BLUFOR"
+    },
+    {
+      "unitId": "unit_opfor_3caa",
+      "name": "Dorvian 3rd Combined Arms Army",
+      "echelon": "Corps",
+      "type": "OPFOR",
+      "nation": "Dorvia",
+      "side": "OPFOR"
+    }
+  ]
+}

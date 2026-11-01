@@ -1,0 +1,18 @@
+{
+  "objectType": "Scenario",
+  "objects": [
+    {
+      "scenarioId": "scenario_sorvian_crisis",
+      "title": "The Sorvian Peninsula Crisis",
+      "strategicContext": "The fictional state of Sorvia, bordering the Eastern Flank, has experienced rapid deterioration of the security environment following contested elections and external interference by the Dorvian Federation. NATO has activated Article 4 consultations and deployed a Multinational Division to the region. The exercise begins at D-Day with the division assuming operational control of the assigned area under conditions of a high-intensity conventional threat combined with significant information operations and cyber activity targeting allied C2 nodes.",
+      "tags": ["High intensity", "Information ops", "Eastern Flank", "Article 4"],
+      "aiGenerated": true,
+      "sourceDocuments": ["IRON_FORGE_26_SCENARIO_v3.pdf", "IRON_FORGE_26_EXDIR_v2.pdf"],
+      "lastEdited": "2025-06-02T09:14:00Z",
+
+      "__links": {
+        "hasOPFOR": ["opfor_3caa", "opfor_asymmetric"]
+      }
+    }
+  ]
+}

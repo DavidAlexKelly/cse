@@ -1,0 +1,471 @@
+{
+  "_comment": "Unified seed data for EXERCISE IRON FORGE 26. Single source of truth across the Plan dashboard, Prepare workspace, Task Graph, Task Manager, and ORBAT Manager widgets. Built by merging nato-cax-01plan.html + nato-cax-02prepare.html (the 'populated demo' state shown in the mocks) with plan.json / prepare.json (the 'fresh draft' empty state). This file represents the POPULATED state — i.e. where the project is heading — so every widget has real, matching data to render against. IDs are consistent across all sections: people use the same initials/ids everywhere, workflow task ids match between plan.exerciseCreationWizard, prepare.tasks, prepare.sidenav and the TaskGraph node ids, and ORBAT unit ids match between the unit library and the placed nodes.",
+
+  "exercise": {
+    "id": "ex_iron_forge_26",
+    "name": "Exercise IRON FORGE 26",
+    "type": "CAX",
+    "typeLabel": "CAX Exercise",
+    "classification": "NATO UNCLASSIFIED",
+    "phase": "prepare",
+    "phaseLabel": "Preparation — not yet published",
+    "status": "active",
+    "statusLabel": "Active",
+    "createdDate": "2025-05-28",
+    "overallProgressPct": 42,
+    "lastAccessed": "2 hours ago",
+    "lastAccessedNote": "Phase 2 starting"
+  },
+
+  "people": [
+    { "id": "p_hartmann",    "initials": "BG", "name": "BGen Hartmann",     "role": "Exercise Director",      "bg": "linear-gradient(135deg,#1a6bff,#8b5cf6)" },
+    { "id": "p_anderssen",   "initials": "AL", "name": "Col Anderssen",     "role": "Chief EXCON",             "bg": "#ef4444" },
+    { "id": "p_kowalski",    "initials": "MK", "name": "LtCol Kowalski",    "role": "Scenario Director",       "bg": "#22c55e" },
+    { "id": "p_roos",        "initials": "JR", "name": "Maj Roos",          "role": "J3 Exercise Planner",      "bg": "#f59e0b" },
+    { "id": "p_westergaard", "initials": "TW", "name": "Maj Westergaard",   "role": "Intel & Scenario SME",     "bg": "#14b8a6" }
+  ],
+
+  "currentUserId": "p_hartmann",
+
+  "team": ["p_hartmann", "p_anderssen", "p_kowalski", "p_roos", "p_westergaard"],
+
+  "greeting": {
+    "headline": "Good morning, BGen Hartmann",
+    "subline": "Monday, 2 June 2025 · Week 23 · Exercise IRON FORGE 26 enters Phase 2 today",
+    "kpis": [
+      { "label": "Open tasks", "value": 4 },
+      { "label": "This week", "value": 3 }
+    ]
+  },
+
+  "orgOverview": {
+    "metrics": [
+      { "label": "Active exercises", "value": 1, "trend": "up",  "trendLabel": "↑ 1 this week" },
+      { "label": "Active wargames",  "value": 0, "trend": "neu", "trendLabel": "— unchanged" },
+      { "label": "COA analyses",     "value": 0, "trend": "neu", "trendLabel": "— unchanged" },
+      { "label": "Active users",     "value": 5, "trend": "up",  "trendLabel": "↑ 5 this week" }
+    ]
+  },
+
+  "startNewTiles": [
+    { "id": "new_exercise",      "name": "New Exercise",      "desc": "CAX, CPX, or FTX planning and execution" },
+    { "id": "new_wargame",       "name": "New Wargame",       "desc": "Structured adversarial decision simulation" },
+    { "id": "new_coa",           "name": "New COA Analysis",  "desc": "Course of action development" },
+    { "id": "new_experiment",    "name": "New Experiment",    "desc": "Capability and concept experimentation" },
+    { "id": "mission_rehearsal", "name": "Mission Rehearsal", "desc": "Pre-mission validation and rehearsal" },
+    { "id": "new_scenario",      "name": "New Scenario",      "desc": "Operational scenario design" }
+  ],
+
+  "upcomingEvents": [
+    { "id": "ev_1", "day": "02", "month": "Jun", "name": "Phase 2 Kickoff — IRON FORGE 26",      "meta": "09:00 · HQ LANDCOM · Room C-12",   "tag": "Exercise" },
+    { "id": "ev_2", "day": "04", "month": "Jun", "name": "Scenario Review Conference",            "meta": "14:00 · Video conference",          "tag": "Exercise" },
+    { "id": "ev_3", "day": "06", "month": "Jun", "name": "MEL/MIL Validation Run #3",              "meta": "08:00 · Simulation Centre",          "tag": "Exercise" },
+    { "id": "ev_4", "day": "10", "month": "Jun", "name": "AAR Workshop — Composition Planning",    "meta": "10:00–16:00 · NCI Agency · Hybrid",  "tag": "AAR" }
+  ],
+
+  "_comment_sidenav": "Drives the Prepare workspace left nav. status/progressPct/openTaskCount are derived from the corresponding 'sections' entry below but kept denormalised here to match the original mock's per-item summary fields exactly.",
+  "sidenav": [
+    { "id": "scenario",    "name": "Scenario",            "sub": "Strategic context & OPFOR",   "status": "complete",   "progressPct": 100 },
+    { "id": "tasks",       "name": "Task management",     "sub": "Workflow & assignments",      "status": "attention",  "openTaskCount": 2 },
+    { "id": "audience",    "name": "Training audience",   "sub": "Who the exercise trains",     "status": "empty",      "progressPct": 0 },
+    { "id": "composition", "name": "Composition",         "sub": "Simulation systems",          "status": "empty",      "progressPct": 0 },
+    { "id": "pmesii",      "name": "PMESII variables",    "sub": "Exercise world model",        "status": "attention",  "progressPct": 62 },
+    { "id": "objectives",  "name": "Training objectives", "sub": "8 objectives defined",        "status": "complete",   "progressPct": 100 },
+    { "id": "area",        "name": "Exercise area",       "sub": "AOR & key terrain",            "status": "empty",      "progressPct": 0 },
+    { "id": "mel",         "name": "MEL & MIL",           "sub": "47 injects · D+0–D+14",        "status": "attention",  "openTaskCount": 1 },
+    { "id": "orbat",       "name": "ORBAT & Positions",   "sub": "Force structure & map",        "status": "empty",      "progressPct": 0 }
+  ],
+
+  "_comment_workflowTasks": "Single workflow task list used by: plan.html's exercise-creation wizard (S4), prepare.html's Task Management tab, and the TaskGraph/TaskDetailPanel React components. 'id' matches TaskGraph node ids so pageContentMap keys line up. assignedTo/approver are person ids from 'people' above.",
+  "workflowTasks": [
+    {
+      "id": "scenario",
+      "section": "Planning & Design",
+      "name": "Define / review scenario",
+      "desc": "Strategic context, OPFOR, area narrative",
+      "assignedTo": "p_kowalski",
+      "approver": "p_anderssen",
+      "due": "D-55",
+      "status": "approved",
+      "ai": true,
+      "navTarget": "scenario"
+    },
+    {
+      "id": "training-audience",
+      "section": "Planning & Design",
+      "name": "Define training audience",
+      "desc": "Define who the exercise trains",
+      "assignedTo": "p_anderssen",
+      "approver": "p_hartmann",
+      "due": "D-65",
+      "status": "in-review",
+      "navTarget": "audience"
+    },
+    {
+      "id": "training-objectives",
+      "section": "Planning & Design",
+      "name": "Define / review training objectives",
+      "desc": "Objectives across J-directorates",
+      "assignedTo": "p_anderssen",
+      "approver": "p_hartmann",
+      "due": "D-55",
+      "status": "approved",
+      "ai": true,
+      "navTarget": "objectives"
+    },
+    {
+      "id": "composition",
+      "section": "Planning & Design",
+      "name": "Composition",
+      "desc": "Define force composition and nations",
+      "assignedTo": "p_anderssen",
+      "approver": "p_hartmann",
+      "due": "D-50",
+      "status": "pending",
+      "navTarget": "composition"
+    },
+    {
+      "id": "pmesi-variables",
+      "section": "Scenario & Environment",
+      "name": "Define / review PMESII variables",
+      "desc": "All PMESII-PT domains",
+      "assignedTo": "p_westergaard",
+      "approver": "p_anderssen",
+      "due": "D-45",
+      "status": "in-review",
+      "ai": true,
+      "navTarget": "pmesii"
+    },
+    {
+      "id": "exercise-area",
+      "section": "Scenario & Environment",
+      "name": "Define / review exercise area",
+      "desc": "AOR, key terrain, phase lines",
+      "assignedTo": "p_roos",
+      "approver": "p_anderssen",
+      "due": "D-40",
+      "status": "pending",
+      "navTarget": "area"
+    },
+    {
+      "id": "mel-mil",
+      "section": "Execution Planning",
+      "name": "Define / review MEL/MIL",
+      "desc": "Injects + unit tasks",
+      "assignedTo": "p_kowalski",
+      "approver": "p_anderssen",
+      "due": "D-30",
+      "status": "in-review",
+      "ai": true,
+      "navTarget": "mel"
+    },
+    {
+      "id": "orbat-positions",
+      "section": "Execution Planning",
+      "name": "Define / review ORBAT & Positions",
+      "desc": "Force structure + start positions on map",
+      "assignedTo": "p_roos",
+      "approver": "p_hartmann",
+      "due": "D-21",
+      "status": "pending",
+      "navTarget": "orbat"
+    }
+  ],
+
+  "sections": {
+
+    "scenario": {
+      "task": {
+        "title": "Define & review scenario",
+        "assignedTo": "p_kowalski",
+        "approver": "p_anderssen",
+        "due": "D-55",
+        "description": "Review strategic context, OPFOR definition, and exercise area narrative",
+        "approvalState": "approved",
+        "approvalNote": "Approved by BGen Hartmann · 2 Jun 2025"
+      },
+      "strategicContext": {
+        "title": "The Sorvian Peninsula Crisis",
+        "generated": true,
+        "generatedFrom": "2 source documents",
+        "lastEdited": "09:14",
+        "body": "The fictional state of Sorvia, bordering the Eastern Flank, has experienced rapid deterioration of the security environment following contested elections and external interference by the Dorvian Federation. NATO has activated Article 4 consultations and deployed a Multinational Division to the region. The exercise begins at D-Day with the division assuming operational control of the assigned area under conditions of a high-intensity conventional threat combined with significant information operations and cyber activity targeting allied C2 nodes.",
+        "tags": ["High intensity", "Information ops", "Eastern Flank", "Article 4"]
+      },
+      "opforDefinitions": [
+        {
+          "id": "opfor_3caa",
+          "title": "Dorvian 3rd Combined Arms Army",
+          "generated": true,
+          "meta": "Near-peer · High readiness",
+          "body": "Combined arms force with integrated air defence, EW, and cyber capabilities. Manoeuvre-heavy doctrine with strong ISR and long-range fires. Will challenge BLUFOR across all functional areas simultaneously.",
+          "tags": ["Near-peer", "EW + Cyber", "Long-range fires"]
+        },
+        {
+          "id": "opfor_asymmetric",
+          "title": "Asymmetric threat cells",
+          "meta": "Information environment",
+          "body": "Proxy forces conducting information operations, sabotage of LOCs, and civilian population influence. Active disinformation campaign targeting NATO public opinion and allied cohesion.",
+          "tags": ["IO/PSYOPS", "CIMIC impact"]
+        }
+      ],
+      "comments": [
+        {
+          "personId": "p_anderssen",
+          "time": "Yesterday 16:42",
+          "text": "OPFOR definition looks solid. Please ensure the cyber element is coordinated with J6 — they flagged that the C2 node targeting should reference specific systems in the scenario."
+        },
+        {
+          "personId": "p_kowalski",
+          "time": "Today 08:30",
+          "text": "Updated — referenced SATCOM and primary HF nets as the targeted systems. Also expanded the proxy forces section per the EXDIR guidance."
+        }
+      ]
+    },
+
+    "audience": {
+      "task": {
+        "title": "Define training audience",
+        "assignedTo": "p_anderssen",
+        "approver": "p_hartmann",
+        "due": "D-65",
+        "description": "Define who the exercise trains — primary and secondary audiences, nations, and participant numbers",
+        "approvalState": "submitted",
+        "approvalNote": "Submitted for approval · Awaiting BGen Hartmann"
+      },
+      "primaryAudience": {
+        "title": "Multinational Division HQ Staff",
+        "meta": "Primary · ~420 participants",
+        "body": "Full J1–J9 directorate staff from all five participating nations. The primary exercise audience covers all HQ functions including operations, intelligence, logistics, plans, fires, CIMIC, and communications.",
+        "tags": ["Primary", "~420 participants", "J1–J9"]
+      },
+      "secondaryAudiences": [
+        { "id": "aud_j3", "title": "J3 Operations Branch",    "meta": "Secondary · ~80 participants", "body": "Operations branch staff with specific focus on battle rhythm, decision cycle, and joint fires integration.",                  "participants": 80, "tags": ["Secondary"] },
+        { "id": "aud_j2", "title": "J2 Intelligence Branch",  "meta": "Secondary · ~40 participants", "body": "Intelligence staff exercising INTSUM production, ISR coordination, and intelligence support to operations.",               "participants": 40, "tags": ["Secondary"] },
+        { "id": "aud_j4", "title": "J4 Logistics Branch",     "meta": "Secondary · ~55 participants", "body": "Logistics staff exercising sustainment planning, supply chain management, and logistics synchronisation.",                 "participants": 55, "tags": ["Secondary"] },
+        { "id": "aud_j6", "title": "J6 Communications",       "meta": "Secondary · ~25 participants", "body": "Signal and communications staff exercising C2 continuity and PACE plan execution under cyber-degraded conditions.",        "participants": 25, "tags": ["Secondary"] }
+      ],
+      "participatingNations": [
+        { "nation": "Germany (DEU)",        "role": "Lead nation",  "participants": 180, "directorates": "J3, J4, J5, HQ Cdr" },
+        { "nation": "Poland (POL)",         "role": "Participant",  "participants": 80,  "directorates": "J2, J3, J9" },
+        { "nation": "United Kingdom (GBR)", "role": "Participant",  "participants": 65,  "directorates": "J3, J5, Fires" },
+        { "nation": "Norway (NOR)",         "role": "Participant",  "participants": 55,  "directorates": "J2, J4, Arty" },
+        { "nation": "Netherlands (NLD)",    "role": "Participant",  "participants": 40,  "directorates": "J6, Eng, J1" }
+      ],
+      "comments": []
+    },
+
+    "composition": {
+      "task": {
+        "title": "Define simulation composition",
+        "assignedTo": "p_anderssen",
+        "approver": "p_hartmann",
+        "due": "D-50",
+        "description": "Define which simulation systems, C2 nodes, and federation architecture constitute the exercise environment",
+        "approvalState": "submitted",
+        "approvalNote": "Submitted for approval · Awaiting BGen Hartmann"
+      },
+      "federationArchitecture": {
+        "primaryProtocol": {
+          "title": "Primary federation protocol",
+          "meta": "Interoperability standard",
+          "body": "IEEE 1516 High Level Architecture (HLA) — Evolved. All constructive simulation nodes federate via a central RTI. DIS IEEE 1278.1 used for legacy node compatibility. Link 16 / TADIL J for live and virtual tactical data link integration.",
+          "tags": ["HLA Evolved", "DIS IEEE 1278.1", "Link 16 / TADIL J"]
+        },
+        "topology": {
+          "title": "Federation topology",
+          "meta": "Network architecture",
+          "body": "Star topology with central RTI hosted at HQ LANDCOM. National simulation nodes connect via dedicated MPLS links over the NATO Unclassified network. C2 systems connect via standardised NFFI/JC3IEDM data exchange.",
+          "tags": ["Star topology", "NFFI/JC3IEDM", "MPLS"]
+        }
+      },
+      "constructiveSimNodes": [
+        { "system": "TLS-GO",                          "nation": "DEU",     "type": "Constructive", "aggregationLevel": "Aggregated",  "protocol": "HLA",     "status": "Confirmed" },
+        { "system": "Ascot7",                          "nation": "GBR",     "type": "Constructive", "aggregationLevel": "Aggregated",  "protocol": "HLA / DIS", "status": "Confirmed" },
+        { "system": "VBS4 (Virtual Battlespace 4)",    "nation": "GBR/NLD", "type": "Virtual",       "aggregationLevel": "Entity-level", "protocol": "DIS / HLA", "status": "Confirmed" },
+        { "system": "MASA SWORD",                       "nation": "FRA/POL", "type": "Constructive", "aggregationLevel": "Aggregated",  "protocol": "HLA",     "status": "Pending" }
+      ],
+      "c2Systems": [
+        { "system": "TOPFAS",                  "nation": "NATO", "function": "Operational planning & orders", "interface": "JC3IEDM / NFFI",  "status": "Connected" },
+        { "system": "FACETS",                  "nation": "DEU",  "function": "Force tracking & COP",          "interface": "NFFI",            "status": "Connected" },
+        { "system": "BMS Aquila",               "nation": "POL",  "function": "Battlefield management",       "interface": "Link 16 / DIS",    "status": "In test" },
+        { "system": "Battlespace Next (BSpN)",  "nation": "GBR",  "function": "Tactical C2 & COP",             "interface": "NFFI / Link 16",   "status": "In test" }
+      ],
+      "supportSystems": [
+        { "id": "sup_terrain", "title": "Terrain server",                "meta": "VR-TheWorld / STAGE",       "body": "Shared correlated terrain database covering the Sorvian Peninsula AOR. Hosted at central simulation node. Distributed to all federated simulators via HLA terrain services object model.", "tags": ["VR-TheWorld", "Shared terrain"] },
+        { "id": "sup_aar",     "title": "After Action Review system",    "meta": "JLCCTC AAR / BML Logger",    "body": "All federation traffic logged via passive HLA logger for post-exercise AAR playback. BML message logging captures all C2 transactions for exercise analysis and lessons learned.",         "tags": ["HLA logger", "BML capture"] }
+      ],
+      "comments": []
+    },
+
+    "pmesii": {
+      "task": {
+        "title": "Define & review PMESII variables",
+        "assignedTo": "p_westergaard",
+        "approver": "p_anderssen",
+        "due": "D-45",
+        "description": "5 of 8 domains complete — Political, Military, Economic, Social, Infrastructure",
+        "approvalState": "submitted",
+        "approvalNote": "Submitted for approval · Awaiting Col Anderssen"
+      },
+      "domains": [
+        { "key": "Political",      "color": "red",    "value": "Government in exile. Contested sovereignty. Regional neighbours divided. UN Security Council deadlocked.", "status": "complete" },
+        { "key": "Military",       "color": "amber",  "value": "Near-peer OPFOR. Asymmetric threat cells. Friendly forces at 85% readiness. Air domain contested.",        "status": "complete" },
+        { "key": "Economic",       "color": "blue",   "value": "Critical infrastructure disrupted. Port operations at 40% capacity. Fuel supply degraded by OPFOR interdiction.", "status": "complete" },
+        { "key": "Social",         "color": "green",  "value": "IDPs: ~180,000. Hostile media environment. Pro-Dorvian population 30% in eastern AOR.",                    "status": "complete" },
+        { "key": "Infrastructure", "color": "purple", "value": "Road network degraded in sectors 3–4. 2 bridges destroyed. Rail LOC operational with restrictions.",       "status": "complete" },
+        { "key": "Information",    "color": "teal",   "value": "Draft: Active disinformation campaign. C2 nodes targeted. Needs J6 coordination.",                        "status": "in_review" },
+        { "key": "Physical env.",  "color": "text3",  "value": "",                                                                                                         "status": "empty" },
+        { "key": "Time",           "color": "text3",  "value": "",                                                                                                         "status": "empty" }
+      ],
+      "comments": [
+        {
+          "personId": "p_anderssen",
+          "time": "Today 07:45",
+          "text": "Information domain needs J6 input before we can approve. Physical environment and Time domains still empty — please complete before submitting."
+        }
+      ]
+    },
+
+    "objectives": {
+      "approvalState": "approved",
+      "approvalNote": "Approved by BGen Hartmann · 1 Jun 2025 · No further action required",
+      "trainingObjectives": [
+        { "ref": "TO-01", "objective": "Exercise HQ battle rhythm and decision cycle under degraded communications",              "functionalArea": "C2",                "priority": "High" },
+        { "ref": "TO-02", "objective": "Integrate multinational staff across all functional areas with full interoperability",   "functionalArea": "Staff integration", "priority": "High" },
+        { "ref": "TO-03", "objective": "Conduct joint fires planning and coordination including air-land integration",           "functionalArea": "Fires",             "priority": "High" },
+        { "ref": "TO-04", "objective": "Execute sustainment planning across a 14-day high-intensity campaign",                   "functionalArea": "Logistics",          "priority": "Medium" },
+        { "ref": "TO-05", "objective": "Respond to cyber incidents affecting C2 nodes and ISR assets",                            "functionalArea": "Cyber / IM",         "priority": "High" },
+        { "ref": "TO-06", "objective": "Coordinate CIMIC activities and manage civilian-military interface in AOR",               "functionalArea": "CIMIC",              "priority": "Medium" },
+        { "ref": "TO-07", "objective": "Produce and disseminate intelligence products to support manoeuvre decisions",           "functionalArea": "Intelligence",       "priority": "Medium" },
+        { "ref": "TO-08", "objective": "Conduct media operations and strategic communication under information pressure",        "functionalArea": "STRATCOM",           "priority": "Low" }
+      ]
+    },
+
+    "area": {
+      "task": {
+        "title": "Define exercise area",
+        "assignedTo": "p_roos",
+        "approver": "p_anderssen",
+        "due": "D-40",
+        "description": "Search for a country or region, then adjust the AOR on the map. Add key terrain features below.",
+        "approvalState": "not_started"
+      },
+      "locationSearchOptions": [
+        { "name": "Poland",             "region": "Eastern Europe",         "lat": 52.0, "lng": 19.0, "zoom": 6,  "sizeKm2": 312000 },
+        { "name": "Germany",            "region": "Central Europe",         "lat": 51.2, "lng": 10.5, "zoom": 6,  "sizeKm2": 357000 },
+        { "name": "Lithuania",          "region": "Baltic States",          "lat": 55.9, "lng": 23.9, "zoom": 7,  "sizeKm2": 65300 },
+        { "name": "Latvia",             "region": "Baltic States",          "lat": 56.9, "lng": 24.6, "zoom": 7,  "sizeKm2": 64500 },
+        { "name": "Estonia",            "region": "Baltic States",          "lat": 58.6, "lng": 25.0, "zoom": 7,  "sizeKm2": 45200 },
+        { "name": "Norway",             "region": "Northern Europe",        "lat": 64.5, "lng": 17.5, "zoom": 5,  "sizeKm2": 385000 },
+        { "name": "Sweden",             "region": "Northern Europe",        "lat": 62.0, "lng": 15.0, "zoom": 5,  "sizeKm2": 450000 },
+        { "name": "Finland",            "region": "Northern Europe",        "lat": 64.0, "lng": 26.0, "zoom": 5,  "sizeKm2": 338000 },
+        { "name": "Romania",            "region": "Eastern Europe",         "lat": 45.9, "lng": 25.0, "zoom": 6,  "sizeKm2": 238000 },
+        { "name": "Bulgaria",           "region": "Eastern Europe",         "lat": 42.7, "lng": 25.5, "zoom": 7,  "sizeKm2": 111000 },
+        { "name": "Kaliningrad Oblast", "region": "Russia (exclave)",       "lat": 54.7, "lng": 20.5, "zoom": 8,  "sizeKm2": 15100 },
+        { "name": "Pomerania",          "region": "Northern Poland",        "lat": 54.2, "lng": 17.0, "zoom": 8,  "sizeKm2": 31200 },
+        { "name": "Masuria",            "region": "NE Poland",              "lat": 53.8, "lng": 21.5, "zoom": 8,  "sizeKm2": 24000 },
+        { "name": "Suwalki Gap",        "region": "Poland–Lithuania border","lat": 54.2, "lng": 23.0, "zoom": 9,  "sizeKm2": 5000 },
+        { "name": "Gotland",            "region": "Swedish island",         "lat": 57.5, "lng": 18.5, "zoom": 9,  "sizeKm2": 3180 },
+        { "name": "Bornholm",           "region": "Danish island",          "lat": 55.1, "lng": 14.9, "zoom": 10, "sizeKm2": 590 },
+        { "name": "Baltic Sea region",  "region": "Multi-nation",           "lat": 57.0, "lng": 19.0, "zoom": 5,  "sizeKm2": 415000 },
+        { "name": "Ukraine",            "region": "Eastern Europe",         "lat": 49.0, "lng": 32.0, "zoom": 5,  "sizeKm2": 603500 },
+        { "name": "Hungary",            "region": "Central Europe",         "lat": 47.2, "lng": 19.5, "zoom": 7,  "sizeKm2": 93000 },
+        { "name": "Slovakia",           "region": "Central Europe",         "lat": 48.7, "lng": 19.7, "zoom": 7,  "sizeKm2": 49000 },
+        { "name": "Czech Republic",     "region": "Central Europe",         "lat": 49.8, "lng": 15.5, "zoom": 7,  "sizeKm2": 79000 },
+        { "name": "North Macedonia",    "region": "Balkans",                "lat": 41.6, "lng": 21.7, "zoom": 8,  "sizeKm2": 25700 },
+        { "name": "Montenegro",         "region": "Balkans",                "lat": 42.7, "lng": 19.4, "zoom": 8,  "sizeKm2": 13800 },
+        { "name": "Albania",            "region": "Balkans",                "lat": 41.1, "lng": 20.2, "zoom": 8,  "sizeKm2": 28700 },
+        { "name": "Kosovo",             "region": "Balkans",                "lat": 42.6, "lng": 21.0, "zoom": 9,  "sizeKm2": 10900 }
+      ],
+      "_comment_unselected": "The mock shows the exercise area as NOT YET PLACED on the map (search box empty, 'No regions selected yet', AOR stats all dashes) even though the label overlay reads 'EXERCISE AREA — IRON FORGE 26' and key terrain features ARE already populated. This mixed state is reproduced faithfully below: selectedRegions empty, keyTerrainFeatures populated.",
+      "selectedRegions": [],
+      "keyTerrainFeatures": [
+        { "id": "terr_port_sova",    "name": "PORT SOVA",            "type": "LOC hub",        "color": "blue" },
+        { "id": "terr_ridge_amber",  "name": "RIDGELINE AMBER",      "type": "Dominant ground", "color": "amber" },
+        { "id": "terr_bridge_delta", "name": "BRIDGE CLUSTER DELTA", "type": "Crossing sites",  "color": "teal" }
+      ],
+      "stats": { "aorSizeKm2": null, "regionCount": 0, "terrainPointCount": 3 },
+      "mapLabel": "EXERCISE AREA — IRON FORGE 26",
+      "mapCentre": { "lat": 54.0, "lng": 15.0 }
+    },
+
+    "mel": {
+      "task": {
+        "title": "Review and validate MEL/MIL",
+        "assignedTo": "p_kowalski",
+        "approver": "p_anderssen",
+        "due": "D-30",
+        "description": "47 injects generated — review for realism, sequencing, and training load balance",
+        "approvalState": "submitted",
+        "approvalNote": "Submitted for approval · Awaiting Col Anderssen"
+      },
+      "categories": ["INTEL", "CYBER", "LOG", "CIMIC", "METOC", "POLMIL", "INFO OPS"],
+      "totalInjects": 47,
+      "_comment_injects": "8 of the 47 total injects are detailed in the mock; remainder are summarised by category count below to match the original S3 'MEL summary' chip totals (12 INTEL, 9 CYBER, 8 LOG, 18 other).",
+      "categoryCounts": [
+        { "category": "INTEL", "count": 12 },
+        { "category": "CYBER", "count": 9 },
+        { "category": "LOG",   "count": 8 },
+        { "category": "other", "count": 18 }
+      ],
+      "injects": [
+        { "id": "inj_1", "day": "D+0",  "title": "OPFOR crossing of PHASE LINE ODIN detected",          "body": "ISR assets report battalion-sized element crossing in sector 2. Triggers INTSUM and fires request.",                 "tag": "INTEL" },
+        { "id": "inj_2", "day": "D+1",  "title": "Cyber attack on HQ communications node",               "body": "Primary C2 link degraded to 30% capacity. Backup PACE plan must be activated within 4 hours.",                       "tag": "CYBER" },
+        { "id": "inj_3", "day": "D+2",  "title": "IDP column blocks Route AMBER",                         "body": "~4,200 IDPs moving west on primary supply route. CIMIC and MP coordination required.",                              "tag": "CIMIC" },
+        { "id": "inj_4", "day": "D+3",  "title": "Weather degradation — reduced air support window",      "body": "Ceiling at 300ft. All CAS sorties cancelled for 18-hour period. Ground-based fires only.",                          "tag": "METOC" },
+        { "id": "inj_5", "day": "D+5",  "title": "OPFOR SOF element identified in rear area",             "body": "HUMINT: 6-person team targeting fuel depot. Counter-SOF response required within 2 hours.",                        "tag": "INTEL" },
+        { "id": "inj_6", "day": "D+7",  "title": "Political event — NATO FM emergency session",           "body": "New ROE issued following political decision. Division must implement updated ROE within 6 hours.",                  "tag": "POLMIL" },
+        { "id": "inj_7", "day": "D+9",  "title": "Logistics crisis — fuel reserves at 15%",                "body": "Resupply convoy delayed 48h. Priority allocation required. Combat power vs sustainment trade-off.",                  "tag": "LOG" },
+        { "id": "inj_8", "day": "D+12", "title": "OPFOR ceasefire offer — information operation",          "body": "Media reports ceasefire proposal. STRATCOM and legal must respond within 3 hours. Likely IO deception.",             "tag": "INFO OPS" }
+      ],
+      "comments": []
+    },
+
+    "orbat": {
+      "task": {
+        "title": "Define ORBAT & start positions",
+        "assignedTo": "p_roos",
+        "approver": "p_hartmann",
+        "due": "D-21",
+        "description": "Build force structure, then assign start positions on the map",
+        "approvalState": "not_started"
+      },
+      "unitLibrary": [
+        { "id": "u1",  "name": "I Corps",      "echelon": "Corps", "type": "HQ",    "nation": "DEU" },
+        { "id": "u2",  "name": "1st ARM DIV",  "echelon": "Div",   "type": "ARM",   "nation": "DEU" },
+        { "id": "u3",  "name": "2nd MECH DIV", "echelon": "Div",   "type": "MECH",  "nation": "POL" },
+        { "id": "u4",  "name": "1 BDE",        "echelon": "Bde",   "type": "INF",   "nation": "DEU" },
+        { "id": "u5",  "name": "2 BDE",        "echelon": "Bde",   "type": "ARM",   "nation": "POL" },
+        { "id": "u6",  "name": "3 BDE",        "echelon": "Bde",   "type": "INF",   "nation": "GBR" },
+        { "id": "u7",  "name": "4 BDE",        "echelon": "Bde",   "type": "MECH",  "nation": "NLD" },
+        { "id": "u8",  "name": "DIV ARTY",     "echelon": "Bde",   "type": "ARTY",  "nation": "NOR" },
+        { "id": "u9",  "name": "DIV ENG",      "echelon": "Bn",    "type": "ENG",   "nation": "NLD" },
+        { "id": "u10", "name": "DIV SIG",      "echelon": "Bn",    "type": "SIG",   "nation": "DEU" },
+        { "id": "u11", "name": "1-12 INF BN",  "echelon": "Bn",    "type": "INF",   "nation": "DEU" },
+        { "id": "u12", "name": "OPFOR 3 CAA",  "echelon": "Corps", "type": "OPFOR", "nation": "—"   }
+      ],
+      "_comment_orbatNodes": "Nodes currently placed in the ORBAT builder, drawn from the unit library above (unitId links back to unitLibrary[].id). 'level' is the tree depth (0=Corps,1=Div,2=Bde,3=Bn) used for the org-chart layout. 'params' are unit-specific readiness fields filled in via the side panel; an empty {} plus warn:true means the unit was added but parameters haven't been completed yet — exactly as in the mock. 'latlng' is null/absent until the unit is placed on the Positions map tab (none are placed yet in this state, matching 'posUnitCount: 0/6').",
+      "orbatNodes": [
+        { "id": "n1", "unitId": "u1", "name": "I Corps",      "echelon": "Corps", "type": "HQ",   "nation": "DEU", "level": 0, "params": { "strength": 12000, "readiness": "Full", "equip": "FMC" }, "warn": false, "latlng": null },
+        { "id": "n2", "unitId": "u2", "name": "1st ARM DIV",  "echelon": "Div",   "type": "ARM",  "nation": "DEU", "level": 1, "params": { "strength": 8500,  "readiness": "Full", "equip": "FMC" }, "warn": false, "latlng": null },
+        { "id": "n3", "unitId": "u3", "name": "2nd MECH DIV", "echelon": "Div",   "type": "MECH", "nation": "POL", "level": 1, "params": {}, "warn": true, "latlng": null },
+        { "id": "n4", "unitId": "u4", "name": "1 BDE",        "echelon": "Bde",   "type": "INF",  "nation": "DEU", "level": 2, "params": {}, "warn": true, "latlng": null },
+        { "id": "n5", "unitId": "u5", "name": "2 BDE",        "echelon": "Bde",   "type": "ARM",  "nation": "POL", "level": 2, "params": {}, "warn": true, "latlng": null },
+        { "id": "n6", "unitId": "u6", "name": "3 BDE",        "echelon": "Bde",   "type": "INF",  "nation": "GBR", "level": 2, "params": {}, "warn": true, "latlng": null }
+      ],
+      "positionsMapLabel": "START POSITIONS — IRON FORGE 26",
+      "positionsMapCentre": { "lat": 54.0, "lng": 18.0 },
+      "stats": {
+        "unitCount": 6,
+        "placedCount": 0,
+        "warnCount": 4
+      },
+      "comments": []
+    }
+  },
+
+  "_comment_taskGraphNotes": "For the TaskGraph/TaskNodeComponent React widgets: map each workflowTasks[] entry above to a TaskNodeData node using id -> node id, assignedTo/approver -> assignee/reviewer (resolve person id to name via 'people'), status -> {approved:'approved', 'in-review':'in-review', pending:'pending'} (no current case maps to 'save' until exercise-area/orbat enter review), and derive 'progress' from sections[id].task or domain completion (e.g. pmesii 5/8 domains = 0.625, mel 0/47 reviewed injects vs total = proportion reviewed). Dependency edges should mirror navTarget order: scenario -> pmesi-variables, scenario -> training-objectives, training-audience -> training-objectives, pmesi-variables -> exercise-area, training-objectives -> exercise-area, training-objectives -> mel-mil, training-audience -> mel-mil, exercise-area -> orbat-positions, mel-mil -> orbat-positions — i.e. identical to the existing data.ts taskEdges, just renamed to match workflowTasks ids 1:1.",
+
+  "_comment_taskManagerNotes": "TaskManager.tsx currently renders tactical field tasks (MOCK_TASKS) which are a DIFFERENT concept from workflowTasks above (exercise-prep workflow vs in-exercise tactical taskings generated from MEL/MIL injects). This file does not invent tactical taskings since none exist in either source; if TaskManager should visualise exercise-prep tasks instead, point it at 'workflowTasks' and resolve assignedTo/approver via 'people'. If it should show MEL/MIL-driven tactical taskings once the exercise runs, those will need to be generated per-inject (e.g. one task per sections.mel.injects[] entry, assignee = the responding J-cell) — not present in source mocks and not fabricated here."
+}

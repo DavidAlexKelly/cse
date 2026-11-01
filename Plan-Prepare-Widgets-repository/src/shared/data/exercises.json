@@ -1,0 +1,68 @@
+{
+  "objectType": "Exercise",
+  "objects": [
+    {
+      "exerciseId": "exercise_iron_forge_26",
+      "name": "Exercise IRON FORGE 26",
+      "type": "CAX",
+      "classification": "NATO UNCLASSIFIED",
+      "phase": "prepare",
+      "status": "active",
+      "overallProgressPct": 42,
+      "createdDate": "2025-05-28",
+
+      "__links": {
+        "hasTeamMember": [
+          "person_hartmann",
+          "person_anderssen",
+          "person_kowalski",
+          "person_roos",
+          "person_westergaard"
+        ],
+        "hasWorkflowTask": [
+          "task_scenario",
+          "task_training_audience",
+          "task_training_objectives",
+          "task_composition",
+          "task_pmesii",
+          "task_exercise_area",
+          "task_mel_mil",
+          "task_orbat_positions"
+        ]
+      }
+    },
+    {
+      "exerciseId": "exercise_steadfast_dagger_25",
+      "name": "Exercise STEADFAST DAGGER 25",
+      "type": "CAX",
+      "classification": "NATO UNCLASSIFIED",
+      "phase": "plan",
+      "status": "draft",
+      "overallProgressPct": 0,
+      "createdDate": "2025-09-12",
+      "__links": { "hasTeamMember": [], "hasWorkflowTask": [] }
+    },
+    {
+      "exerciseId": "exercise_noble_defender_25",
+      "name": "Exercise NOBLE DEFENDER 25",
+      "type": "CAX",
+      "classification": "NATO UNCLASSIFIED",
+      "phase": "plan",
+      "status": "draft",
+      "overallProgressPct": 0,
+      "createdDate": "2025-10-04",
+      "__links": { "hasTeamMember": [], "hasWorkflowTask": [] }
+    },
+    {
+      "exerciseId": "exercise_arctic_shield_26",
+      "name": "Exercise ARCTIC SHIELD 26",
+      "type": "CAX",
+      "classification": "NATO UNCLASSIFIED",
+      "phase": "plan",
+      "status": "draft",
+      "overallProgressPct": 0,
+      "createdDate": "2025-11-19",
+      "__links": { "hasTeamMember": [], "hasWorkflowTask": [] }
+    }
+  ]
+}

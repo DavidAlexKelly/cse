@@ -1,0 +1,29 @@
+{
+  "objectType": "OPFORDefinition",
+  "objects": [
+    {
+      "opforId": "opfor_3caa",
+      "title": "Dorvian 3rd Combined Arms Army",
+      "tier": "Near-peer",
+      "readiness": "High",
+      "body": "Combined arms force with integrated air defence, EW, and cyber capabilities. Manoeuvre-heavy doctrine with strong ISR and long-range fires. Will challenge BLUFOR across all functional areas simultaneously.",
+      "tags": ["Near-peer", "EW + Cyber", "Long-range fires"],
+
+      "__links": {
+        "instantiatedAs": "unit_opfor_3caa"
+      }
+    },
+    {
+      "opforId": "opfor_asymmetric",
+      "title": "Asymmetric threat cells",
+      "tier": "Sub-state",
+      "readiness": "Medium",
+      "body": "Proxy forces conducting information operations, sabotage of LOCs, and civilian population influence. Active disinformation campaign targeting NATO public opinion and allied cohesion.",
+      "tags": ["IO/PSYOPS", "CIMIC impact"],
+
+      "__links": {
+        "instantiatedAs": null
+      }
+    }
+  ]
+}

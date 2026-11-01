@@ -1,0 +1,174 @@
+/* ============================================================
+   Global styles
+   ------------------------------------------------------------
+   The design system is @acc/decho-styling. Since 0.4.0 it ships
+   the two layers this file used to carry by hand:
+
+     compat/military.css  the alias layer mapping this repo's
+                          variable names (--bg-panel, --text-primary,
+                          --accent-primary, --shadow-card, --rag-*,
+                          --chart-*, …) onto the package's tokens
+     blueprint.css        Blueprint 5 wearing those same tokens
+
+   Both were written here first, then written again in the
+   Mapplications repo, which is what prompted moving them into the
+   package. This file is now only what is genuinely local to this
+   widget set.
+
+   The theme is chosen on <html> in each widget's entry HTML
+   (`class="decho-root decho-modern"`). Swap that one class —
+   decho-classic, decho-daylight, decho-command,
+   decho-accenture-light, decho-accenture-dark — to re-theme all
+   eighteen widgets.
+   ============================================================ */
+
+@import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "@blueprintjs/core/lib/css/blueprint.css";
+@import "@acc/decho-styling/styles.css";
+@import "@acc/decho-styling/compat/military.css";
+/* After Blueprint's own stylesheet, or it loses to it. */
+@import "@acc/decho-styling/blueprint.css";
+@import "./animations.css";
+
+:root {
+  /* ==========================================================
+     What the compat layer does not cover: this repo's own
+     conventions, and two accents the package has no token for.
+     Everything else now comes from the package.
+     ========================================================== */
+
+  /* -- Violet and teal --
+     Not design-system tokens: they are the stops of the package's
+     hairline gradient, kept here because this widget set uses them
+     directly for the spectrum rule and a handful of AI pills. */
+  --accent-violet:       #c47af5;
+  --accent-violet-muted: rgba(196, 122, 245, 0.16);
+  --accent-violet-glow:  rgba(196, 122, 245, 0.35);
+  --accent-violet-grad:  var(--decho-gradient-hairline);
+  --accent-cyan:         #35d6c0;
+  --accent-cyan-muted:   rgba(53, 214, 192, 0.14);
+
+  /* A Mission-Control-era extra: the brighter green used for "live" and
+     "approved" pills, where the tone colour reads too dark at 10px. Not in the
+     compat layer because it was never part of the legacy palette. */
+  --accent-green-bright: var(--decho-color-success);
+  --status-violet:       var(--accent-violet);
+
+  /* -- Type scale --
+     Local: the package's stops at 15px and these headings do not.
+     Aliasing it would be a visual change dressed up as a rename. */
+  --text-xs:   10px;
+  --text-sm:   12px;
+  --text-md:   13px;
+  --text-lg:   14px;
+  --text-xl:   16px;
+  --text-2xl:  20px;
+  --text-3xl:  24px;
+
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose:   1.7;
+
+  --tracking-wide:   0.06em;
+  --tracking-widest: 0.14em;
+
+  /* -- Spacing --
+     Also local: this repo counts in 4s from 4px, the package in 2s
+     from 2px, and --space-2 meaning 8px here and 4px there is the
+     kind of alias that silently halves every gap in the estate. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* -- The one radius the package has no equivalent for -- */
+  --radius-xl: 16px;
+
+  /* -- Z-index ladder — this repo's own layering contract -- */
+  --z-base:    1;
+  --z-raised:  10;
+  --z-overlay: 100;
+  --z-modal:   1000;
+  --z-toast:   2000;
+}
+
+/* ---- Reset & Base ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  /* Image first, then the colour underneath it: in the lit themes the
+     app gradient is what every translucent surface is glass against;
+     in classic it is `none` and this is simply the page colour. */
+  background: var(--bg-base-grad);
+  background-color: var(--bg-base);
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Universal smooth transitions on interactive elements ---- */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="tab"],
+[tabindex] {
+  transition:
+    background-color var(--transition-fast),
+    background    var(--transition-fast),
+    border-color  var(--transition-fast),
+    box-shadow    var(--transition-fast),
+    color         var(--transition-fast),
+    opacity       var(--transition-fast),
+    transform     var(--transition-fast);
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ---- Selection ---- */
+::selection {
+  background: var(--accent-primary-muted);
+  color: var(--text-primary);
+}

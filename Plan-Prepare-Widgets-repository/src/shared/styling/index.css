@@ -1,0 +1,33 @@
+/* ============================================================
+   Shared styling entry point — import THIS from every widget
+   ------------------------------------------------------------
+   import "../shared/styling/index.css";
+   ------------------------------------------------------------
+   The design system is @acc/decho-styling. What is left in this
+   folder is the part that is genuinely this repo's:
+
+     1. global.css      — the package's CSS, plus the alias layer
+                          that maps this repo's variable names onto
+                          its tokens, plus the Blueprint overrides
+     2. components.css  — MilButton / MilLabel / MilList / MilModal,
+                          the shared React components' styles
+     3. ui-redesign.css — hero, badge and list patterns shared by
+                          the scenario-shaped widgets
+
+   The package's own classes (.decho-card, .decho-tag, .decho-panel,
+   .decho-nav-item …) come in through global.css and are available
+   everywhere. New markup should prefer them; the files above exist
+   because eighteen widgets already depend on them.
+
+   surfaces.css is gone: it held a `.mc-*` layer written a fortnight
+   before the package existed, no widget ever used a class from it,
+   and every one of its primitives now has a `.decho-*` equivalent
+   that is tested against the tokens.
+
+   Widget-specific stylesheets should be imported AFTER this file so
+   they can still override shared rules.
+   ============================================================ */
+
+@import "./global.css";
+@import "./components.css";
+@import "./ui-redesign.css";

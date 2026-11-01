@@ -1,0 +1,29 @@
+{
+  "objectType": "TerrainFeature",
+  "objects": [
+    {
+      "featureId": "terrain_port_sova",
+      "name": "PORT SOVA",
+      "featureType": "LOC hub",
+      "description": "Primary deep-water port and logistics hub for resupply of the division. Control of Port Sova is essential to sustaining operations beyond D+5.",
+      "latlng": { "lat": 54.35, "lng": 18.65 },
+      "tacticalSignificance": "High"
+    },
+    {
+      "featureId": "terrain_ridgeline_amber",
+      "name": "RIDGELINE AMBER",
+      "featureType": "Dominant ground",
+      "description": "East-west ridgeline offering observation across sectors 2 and 3. Loss of RIDGELINE AMBER exposes the divisional flank to direct fire and long-range observation.",
+      "latlng": { "lat": 54.12, "lng": 19.40 },
+      "tacticalSignificance": "High"
+    },
+    {
+      "featureId": "terrain_bridge_delta",
+      "name": "BRIDGE CLUSTER DELTA",
+      "featureType": "Crossing sites",
+      "description": "Three road bridges over the Sorva River within a 4km stretch. The only crossing sites capable of supporting MBT traffic in sector 4. Two of three bridges are in OPFOR-threatened area.",
+      "latlng": { "lat": 53.88, "lng": 20.10 },
+      "tacticalSignificance": "Critical"
+    }
+  ]
+}

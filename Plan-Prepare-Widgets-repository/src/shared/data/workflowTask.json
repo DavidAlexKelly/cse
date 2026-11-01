@@ -1,0 +1,206 @@
+{
+  "objectType": "WorkflowTask",
+  "objects": [
+    {
+      "taskId": "task_scenario",
+      "name": "Define / review scenario",
+      "description": "Strategic context, OPFOR definition, and exercise area narrative",
+      "section": "Planning & Design",
+      "dueOffset": "D-55",
+      "status": "approved",
+      "aiAssisted": true,
+      "subtasks": [
+        {
+          "subtaskId": "st_scenario_opfor_card",
+          "text": "Write OPFOR doctrine card (Dorvian 3rd CAA TTPs, EW, cyber)",
+          "done": true
+        },
+        {
+          "subtaskId": "st_scenario_j6_signoff",
+          "text": "Lock J6 sign-off on specific C2 systems targeted in scenario",
+          "done": true
+        }
+      ],
+
+      "__links": {
+        "assignedTo": "person_kowalski",
+        "approvedBy": "person_anderssen",
+        "definesContent": ["scenario_sorvian_crisis"],
+        "hasComment": ["comment_anderssen_01", "comment_kowalski_01"]
+      }
+    },
+    {
+      "taskId": "task_training_audience",
+      "name": "Define training audience",
+      "description": "Primary and secondary audiences, participating nations, and participant numbers",
+      "section": "Planning & Design",
+      "dueOffset": "D-65",
+      "status": "in-review",
+      "aiAssisted": false,
+      "subtasks": [
+        {
+          "subtaskId": "st_ta_confirm_primary",
+          "text": "Confirm primary audience scope with HQ Commander",
+          "done": true
+        },
+        {
+          "subtaskId": "st_ta_lock_nations",
+          "text": "Lock participating nations and lead-nation role",
+          "done": true
+        },
+        {
+          "subtaskId": "st_ta_validate_numbers",
+          "text": "Validate participant numbers per directorate with each nation",
+          "done": false
+        }
+      ],
+
+      "__links": {
+        "assignedTo": "person_anderssen",
+        "approvedBy": "person_hartmann",
+        "definesContent": [
+          "audience_primary_div_hq",
+          "audience_j3_ops",
+          "audience_j2_intel",
+          "audience_j4_log",
+          "audience_j6_comms"
+        ],
+        "hasComment": []
+      }
+    },
+    {
+      "taskId": "task_training_objectives",
+      "name": "Define / review training objectives",
+      "description": "Training objectives across J-directorates",
+      "section": "Planning & Design",
+      "dueOffset": "D-55",
+      "status": "approved",
+      "aiAssisted": true,
+      "subtasks": [
+        {
+          "subtaskId": "st_to_lock_priorities",
+          "text": "Lock priorities (High / Medium / Low) with J7",
+          "done": true
+        },
+        {
+          "subtaskId": "st_to_map_to_injects",
+          "text": "Map each objective to at least one MEL/MIL inject",
+          "done": false
+        },
+        {
+          "subtaskId": "st_to_signoff_fa_leads",
+          "text": "Get sign-off from each functional-area lead",
+          "done": true
+        }
+      ],
+
+      "__links": {
+        "assignedTo": "person_anderssen",
+        "approvedBy": "person_hartmann",
+        "definesContent": [
+          "to_01", "to_02", "to_03", "to_04",
+          "to_05", "to_06", "to_07", "to_08"
+        ],
+        "hasComment": []
+      }
+    },
+    {
+      "taskId": "task_composition",
+      "name": "Composition",
+      "description": "Simulation systems, C2 nodes, and federation architecture",
+      "section": "Planning & Design",
+      "dueOffset": "D-50",
+      "status": "pending",
+      "aiAssisted": false,
+
+      "__links": {
+        "assignedTo": "person_anderssen",
+        "approvedBy": "person_hartmann",
+        "definesContent": ["composition_iron_forge_26"],
+        "hasComment": []
+      }
+    },
+    {
+      "taskId": "task_pmesii",
+      "name": "Define / review PMESII variables",
+      "description": "All PMESII-PT domains — 5 of 8 complete",
+      "section": "Scenario & Environment",
+      "dueOffset": "D-45",
+      "status": "in-review",
+      "aiAssisted": true,
+
+      "__links": {
+        "assignedTo": "person_westergaard",
+        "approvedBy": "person_anderssen",
+        "definesContent": [
+          "pmesii_political", "pmesii_military", "pmesii_economic",
+          "pmesii_social", "pmesii_infrastructure",
+          "pmesii_information", "pmesii_physical_env", "pmesii_time"
+        ],
+        "hasComment": ["comment_anderssen_02"]
+      }
+    },
+    {
+      "taskId": "task_exercise_area",
+      "name": "Define / review exercise area",
+      "description": "AOR, key terrain features, and phase lines",
+      "section": "Scenario & Environment",
+      "dueOffset": "D-40",
+      "status": "pending",
+      "aiAssisted": false,
+
+      "__links": {
+        "assignedTo": "person_roos",
+        "approvedBy": "person_anderssen",
+        "definesContent": [
+          "terrain_port_sova",
+          "terrain_ridgeline_amber",
+          "terrain_bridge_delta"
+        ],
+        "hasComment": []
+      }
+    },
+    {
+      "taskId": "task_mel_mil",
+      "name": "Define / review MEL/MIL",
+      "description": "Master Events List injects and unit tasks — 47 total",
+      "section": "Execution Planning",
+      "dueOffset": "D-30",
+      "status": "in-review",
+      "aiAssisted": true,
+
+      "__links": {
+        "assignedTo": "person_kowalski",
+        "approvedBy": "person_anderssen",
+        "definesContent": [
+          "inject_01", "inject_02", "inject_03", "inject_04",
+          "inject_05", "inject_06", "inject_07", "inject_08"
+        ],
+        "hasComment": []
+      }
+    },
+    {
+      "taskId": "task_orbat_positions",
+      "name": "Define / review ORBAT & Positions",
+      "description": "Force structure and start positions on map",
+      "section": "Execution Planning",
+      "dueOffset": "D-21",
+      "status": "pending",
+      "aiAssisted": false,
+
+      "__links": {
+        "assignedTo": "person_roos",
+        "approvedBy": "person_hartmann",
+        "definesContent": [
+          "orbat_node_i_corps",
+          "orbat_node_1arm_div",
+          "orbat_node_2mech_div",
+          "orbat_node_1_bde",
+          "orbat_node_2_bde",
+          "orbat_node_3_bde"
+        ],
+        "hasComment": []
+      }
+    }
+  ]
+}

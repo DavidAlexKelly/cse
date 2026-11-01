@@ -1,0 +1,32 @@
+{
+  "objectType": "Comment",
+  "objects": [
+    {
+      "commentId": "comment_anderssen_01",
+      "body": "OPFOR definition looks solid. Please ensure the cyber element is coordinated with J6 — they flagged that the C2 node targeting should reference specific systems in the scenario.",
+      "timestamp": "2025-06-01T16:42:00Z",
+
+      "__links": {
+        "authoredBy": "person_anderssen"
+      }
+    },
+    {
+      "commentId": "comment_kowalski_01",
+      "body": "Updated — referenced SATCOM and primary HF nets as the targeted systems. Also expanded the proxy forces section per the EXDIR guidance.",
+      "timestamp": "2025-06-02T08:30:00Z",
+
+      "__links": {
+        "authoredBy": "person_kowalski"
+      }
+    },
+    {
+      "commentId": "comment_anderssen_02",
+      "body": "Information domain needs J6 input before we can approve. Physical environment and Time domains still empty — please complete before submitting.",
+      "timestamp": "2025-06-02T07:45:00Z",
+
+      "__links": {
+        "authoredBy": "person_anderssen"
+      }
+    }
+  ]
+}

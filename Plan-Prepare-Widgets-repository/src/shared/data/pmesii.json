@@ -1,0 +1,61 @@
+{
+  "objectType": "PMESIIDomain",
+  "objects": [
+    {
+      "domainId": "pmesii_political",
+      "key": "Political",
+      "value": "Government in exile. Contested sovereignty. Regional neighbours divided. UN Security Council deadlocked.",
+      "status": "complete",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_military",
+      "key": "Military",
+      "value": "Near-peer OPFOR. Asymmetric threat cells. Friendly forces at 85% readiness. Air domain contested.",
+      "status": "complete",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_economic",
+      "key": "Economic",
+      "value": "Critical infrastructure disrupted. Port operations at 40% capacity. Fuel supply degraded by OPFOR interdiction.",
+      "status": "complete",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_social",
+      "key": "Social",
+      "value": "IDPs: ~180,000. Hostile media environment. Pro-Dorvian population 30% in eastern AOR.",
+      "status": "complete",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_infrastructure",
+      "key": "Infrastructure",
+      "value": "Road network degraded in sectors 3–4. 2 bridges destroyed. Rail LOC operational with restrictions.",
+      "status": "complete",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_information",
+      "key": "Information",
+      "value": "Active disinformation campaign targeting NATO public opinion. C2 nodes targeted by cyber operations. Needs J6 coordination.",
+      "status": "in_review",
+      "aiGenerated": true
+    },
+    {
+      "domainId": "pmesii_physical_env",
+      "key": "Physical environment",
+      "value": null,
+      "status": "empty",
+      "aiGenerated": false
+    },
+    {
+      "domainId": "pmesii_time",
+      "key": "Time",
+      "value": null,
+      "status": "empty",
+      "aiGenerated": false
+    }
+  ]
+}

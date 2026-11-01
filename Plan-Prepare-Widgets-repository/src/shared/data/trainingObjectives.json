@@ -1,0 +1,61 @@
+{
+  "objectType": "TrainingObjective",
+  "objects": [
+    {
+      "objectiveId": "to_01",
+      "ref": "TO-01",
+      "objective": "Exercise HQ battle rhythm and decision cycle under degraded communications",
+      "functionalArea": "C2",
+      "priority": "High"
+    },
+    {
+      "objectiveId": "to_02",
+      "ref": "TO-02",
+      "objective": "Integrate multinational staff across all functional areas with full interoperability",
+      "functionalArea": "Staff integration",
+      "priority": "High"
+    },
+    {
+      "objectiveId": "to_03",
+      "ref": "TO-03",
+      "objective": "Conduct joint fires planning and coordination including air-land integration",
+      "functionalArea": "Fires",
+      "priority": "High"
+    },
+    {
+      "objectiveId": "to_04",
+      "ref": "TO-04",
+      "objective": "Execute sustainment planning across a 14-day high-intensity campaign",
+      "functionalArea": "Logistics",
+      "priority": "Medium"
+    },
+    {
+      "objectiveId": "to_05",
+      "ref": "TO-05",
+      "objective": "Respond to cyber incidents affecting C2 nodes and ISR assets",
+      "functionalArea": "Cyber / IM",
+      "priority": "High"
+    },
+    {
+      "objectiveId": "to_06",
+      "ref": "TO-06",
+      "objective": "Coordinate CIMIC activities and manage civilian-military interface in AOR",
+      "functionalArea": "CIMIC",
+      "priority": "Medium"
+    },
+    {
+      "objectiveId": "to_07",
+      "ref": "TO-07",
+      "objective": "Produce and disseminate intelligence products to support manoeuvre decisions",
+      "functionalArea": "Intelligence",
+      "priority": "Medium"
+    },
+    {
+      "objectiveId": "to_08",
+      "ref": "TO-08",
+      "objective": "Conduct media operations and strategic communication under information pressure",
+      "functionalArea": "STRATCOM",
+      "priority": "Low"
+    }
+  ]
+}
