@@ -1,0 +1,330 @@
+/* ============================================================
+   Task Graph – React Flow overrides for military dark theme
+   ============================================================ */
+
+.task-graph-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #080a12;
+  color: #e6eaf8;
+  overflow: hidden;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---- React Flow canvas ---- */
+.task-graph-wrapper .react-flow {
+  background-color: #080a12 !important;
+}
+
+/* Grid dots */
+.task-graph-wrapper .react-flow__background {
+  background-color: #080a12 !important;
+}
+
+/* Edges */
+.task-graph-wrapper .react-flow__edge-path {
+  stroke: #2f3860 !important;
+  stroke-width: 2 !important;
+}
+
+.task-graph-wrapper .react-flow__edge.animated .react-flow__edge-path {
+  stroke: #6c5ce7 !important;
+  stroke-dasharray: 5 5 !important;
+}
+
+.task-graph-wrapper .react-flow__edge:hover .react-flow__edge-path,
+.task-graph-wrapper .react-flow__edge.selected .react-flow__edge-path {
+  stroke: #8b7cf6 !important;
+  stroke-width: 2.5 !important;
+}
+
+/* Edge marker (arrow) */
+.task-graph-wrapper .react-flow__arrowhead polyline {
+  stroke: #2f3860;
+  fill: #2f3860;
+}
+
+/* Selection rectangle */
+.task-graph-wrapper .react-flow__selection {
+  background: rgba(108, 92, 231, 0.08) !important;
+  border: 1px dashed #6c5ce7 !important;
+}
+
+/* Mini map */
+.task-graph-wrapper .react-flow__minimap {
+  background-color: #0e1120 !important;
+  border: 1px solid #232a45 !important;
+  border-radius: 6px !important;
+}
+
+.task-graph-wrapper .react-flow__minimap-mask {
+  fill: rgba(108, 92, 231, 0.1) !important;
+  stroke: #6c5ce7 !important;
+  stroke-width: 1 !important;
+}
+
+.task-graph-wrapper .react-flow__minimap-node {
+  fill: #1a1f36 !important;
+  stroke: #2f3860 !important;
+}
+
+/* Controls */
+.task-graph-wrapper .react-flow__controls {
+  border: 1px solid #232a45 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden;
+}
+
+.task-graph-wrapper .react-flow__controls-button {
+  background-color: #141828 !important;
+  border-bottom: 1px solid #232a45 !important;
+  fill: #98a1c0 !important;
+  color: #98a1c0 !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.task-graph-wrapper .react-flow__controls-button:hover {
+  background-color: #1a1f36 !important;
+  fill: #e6eaf8 !important;
+}
+
+.task-graph-wrapper .react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+
+/* Attribution hide */
+.task-graph-wrapper .react-flow__attribution {
+  display: none !important;
+}
+
+/* ---- Header bar ---- */
+.tg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background-color: #0e1120;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.tg-header__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e6eaf8;
+}
+
+.tg-header__title-icon {
+  color: #6c5ce7;
+}
+
+.tg-header__subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #98a1c0;
+  text-transform: uppercase;
+}
+
+.tg-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Legend ---- */
+.tg-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 5px 16px;
+  background-color: #0e1120;
+  border-top: 1px solid #232a45;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #98a1c0;
+}
+
+.tg-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tg-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* ---- Embedded compact toolbar (no header) ---- */
+.tg-embedded-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: #0e1120;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+}
+
+/* ---- Toolbar buttons ---- */
+.tg-btn-group {
+  display: flex;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #1a1f36;
+  border: none;
+  border-right: 1px solid #232a45;
+  color: #98a1c0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+
+.tg-btn:last-child {
+  border-right: none;
+}
+
+.tg-btn:hover {
+  background: #202641;
+  color: #e6eaf8;
+}
+
+.tg-btn--active {
+  background: rgba(108, 92, 231, 0.15) !important;
+  color: #6c5ce7 !important;
+}
+
+.tg-btn--primary {
+  background: #6c5ce7;
+  color: #fff;
+  border: 1px solid #6c5ce7;
+  border-radius: 4px;
+  padding: 4px 12px;
+}
+
+.tg-btn--primary:hover {
+  background: #8b7cf6;
+  border-color: #8b7cf6;
+}
+
+/* ---- Breadcrumb / back navigation bar ---- */
+.tg-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background-color: #0b0e18;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.tg-breadcrumb__back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #6c5ce7;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: inherit;
+  transition: background 0.1s, color 0.1s;
+}
+
+.tg-breadcrumb__back:hover {
+  background: rgba(108, 92, 231, 0.12);
+  color: #8b7cf6;
+}
+
+.tg-breadcrumb__sep {
+  color: #232a45;
+  font-size: 12px;
+}
+
+.tg-breadcrumb__current {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #98a1c0;
+}
+
+/* ---- Phase legend strip ---- */
+.tg-phase-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 16px;
+  background-color: #0b0e18;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.tg-phase-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border: 1px solid;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tg-phase-pill__seq {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #6a7292;
+}
+
+.tg-phase-pill__name {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #ccd3ea;
+}
+
+.tg-phase-pill__offsets {
+  font-size: 9px;
+  color: #6a7292;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}

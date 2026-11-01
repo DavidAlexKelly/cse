@@ -1,0 +1,29 @@
+import { NxgScenario } from "@custom-widget/sdk";
+import { defineConfig } from "@osdk/widget.client";
+
+export default defineConfig({
+  id: "trainingAudience",
+  name: "Training Audience",
+  description:
+    "Define training audience — primary and secondary audiences, nations, and participant numbers.",
+  type: "workshop",
+  parameters: {
+    scenario: {
+      displayName: "Scenario",
+      type: "objectSet",
+      allowedType: NxgScenario,
+    },
+  },
+  events: {
+    // Signal-only: lets Workshop refresh sibling widgets after this one
+    // writes. refreshHostDataOnAction covers Workshop's own queries, but
+    // another widget showing the same data would otherwise go stale.
+    onDataChanged: {
+      displayName: "Data Changed",
+      parameterUpdateIds: [],
+    },
+  },
+  // The widget writes to the ontology, so let Workshop re-read its
+  // own queries once an action lands.
+  refreshHostDataOnAction: true,
+});

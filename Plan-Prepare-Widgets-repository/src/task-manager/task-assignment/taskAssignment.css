@@ -1,0 +1,955 @@
+/* ============================================================
+   Task Assignment — Layout-only styles
+   All component styles come from shared/styling/components.css
+   ============================================================ */
+
+/* ---- Root layout: sidebar + table side by side ---- */
+.ta-layout {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ---- Left sidebar ---- */
+.ta-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #0e1120;
+  border-right: 1px solid #232a45;
+  overflow-y: auto;
+  padding: 12px 12px 8px;
+  gap: 6px;
+}
+
+.ta-sidebar__heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #232a45;
+  margin-bottom: 4px;
+}
+
+/* ---- Team member card ---- */
+.ta-member-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  position: relative;
+}
+
+.ta-member-card:hover {
+  background-color: #1a1f36;
+  border-color: #232a45;
+}
+
+/* ---- Team member card — active/filter state ---- */
+.ta-member-card--active {
+  background-color: rgba(108, 92, 231, 0.12) !important;
+  border-color: #6c5ce7 !important;
+}
+
+.ta-member-card--active .ta-member-name {
+  color: #8b7cf6;
+}
+
+/* ---- Deselect (×) button on active member card ---- */
+.ta-member-card__deselect {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(108, 92, 231, 0.25);
+  border: 1px solid rgba(108, 92, 231, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  color: #8b7cf6;
+  font-size: 9px;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.1s ease, color 0.1s ease;
+  flex-shrink: 0;
+}
+
+.ta-member-card__deselect:hover {
+  background: rgba(108, 92, 231, 0.45);
+  color: #ffffff;
+}
+
+.ta-member-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.ta-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.ta-member-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6eaf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-member-role {
+  font-size: 10px;
+  color: #6a7292;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Section toggle (collapse/expand) ---- */
+.ta-section-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 12px 0 6px;
+  border-bottom: 1px solid #232a45;
+  margin-bottom: 8px;
+  transition: color 0.1s ease;
+}
+
+.ta-section-toggle:hover .ta-section-toggle__label {
+  color: #98a1c0;
+}
+
+.ta-section-toggle__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+  flex: 1;
+}
+
+.ta-section-toggle__count {
+  font-size: 10px;
+  color: #454c68;
+  letter-spacing: 0.05em;
+}
+
+.ta-section-toggle__chevron {
+  color: #454c68;
+  transition: transform 0.15s ease, color 0.1s ease;
+  flex-shrink: 0;
+}
+
+.ta-section-toggle:hover .ta-section-toggle__chevron {
+  color: #6a7292;
+}
+
+/* ---- Right table panel ---- */
+.ta-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ---- Column header row ---- */
+.ta-table__header {
+  display: grid;
+  grid-template-columns: 1fr 160px 160px 60px 100px 72px;
+  align-items: center;
+  padding: 0 16px;
+  height: 34px;
+  background-color: #0e1120;
+  border-bottom: 1px solid #232a45;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.ta-table__col-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+/* ---- Scrollable body ---- */
+.ta-table__body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Row wrapper — holds the row + subtask panel ---- */
+.ta-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.1s ease;
+}
+
+.ta-row-wrapper--expanded {
+  border-color: #2f3860;
+}
+
+/* ---- Workflow task row ---- */
+.ta-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 160px 60px 100px 72px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background-color: #141828;
+  border: none;
+  border-radius: 0;
+  transition: background-color 0.1s ease;
+}
+
+.ta-row:hover {
+  background-color: #1a1f36;
+}
+
+.ta-row__task-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6eaf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-row__task-desc {
+  font-size: 11px;
+  color: #6a7292;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Sub-task progress bar (inside task cell) ---- */
+.ta-row__subtask-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.ta-row__subtask-progress-bar {
+  flex: 1;
+  height: 3px;
+  background-color: #232a45;
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.ta-row__subtask-progress-fill {
+  height: 100%;
+  background-color: #6c5ce7;
+  border-radius: 4px;
+  transition: width 0.2s ease;
+}
+
+.ta-row__subtask-count {
+  font-size: 10px;
+  color: #6a7292;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.ta-row__due {
+  font-size: 12px;
+  color: #98a1c0;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* ---- Row actions column — expand + edit + delete ---- */
+.ta-row__actions {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.ta-row__expand-btn {
+  color: #6a7292;
+}
+
+.ta-row__expand-btn:hover {
+  color: #98a1c0;
+}
+
+/* ---- Sub-task panel (below the row) ---- */
+.ta-subtask-panel {
+  background-color: #0e1120;
+  border-top: 1px solid #232a45;
+  padding: 6px 12px 8px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ---- Individual sub-task item ---- */
+.ta-subtask-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.ta-subtask-item:hover {
+  background-color: #1a1f36;
+}
+
+.ta-subtask-checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #454c68;
+  border-radius: 4px;
+  background-color: #141828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  color: #ffffff;
+}
+
+.ta-subtask-checkbox--done {
+  background-color: #6c5ce7;
+  border-color: #6c5ce7;
+}
+
+.ta-subtask-label {
+  font-size: 11.5px;
+  color: #98a1c0;
+  line-height: 1.4;
+}
+
+.ta-subtask-label--done {
+  color: #454c68;
+  text-decoration: line-through;
+}
+
+/* ---- Member detail modal — task row ---- */
+.ta-member-task-row {
+  display: grid;
+  grid-template-columns: 1fr 130px 130px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background-color: #0e1120;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  transition: background-color 0.1s ease;
+}
+
+.ta-member-task-row:hover {
+  background-color: #141828;
+  border-color: #2f3860;
+}
+
+.ta-member-task-row__title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6eaf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-member-task-row__section {
+  font-size: 10px;
+  color: #6a7292;
+  margin-top: 1px;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Phase group ---- */
+.ta-phase-group {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+/* ---- Phase header bar ---- */
+.ta-phase-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background-color: #13182a;
+  border-bottom: 1px solid #232a45;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s ease;
+  flex-wrap: nowrap;
+}
+
+.ta-phase-header:hover {
+  background-color: #171d2f;
+}
+
+.ta-phase-header__chevron {
+  color: #6a7292;
+  flex-shrink: 0;
+  transition: color 0.1s ease;
+}
+
+.ta-phase-header:hover .ta-phase-header__chevron {
+  color: #98a1c0;
+}
+
+.ta-phase-header__identity {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.ta-phase-header__name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ccd3ea;
+  white-space: nowrap;
+}
+
+.ta-phase-header__offsets {
+  font-size: 10px;
+  color: #6a7292;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+.ta-phase-header__objective {
+  font-size: 11px;
+  color: #98a1c0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+  font-style: italic;
+}
+
+.ta-phase-header__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* ── Phase task count chips ── */
+.ta-phase-chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.ta-phase-chip--green {
+  background-color: rgba(108, 92, 231, 0.18);
+  color: #8b7cf6;
+  border: 1px solid rgba(108, 92, 231, 0.3);
+}
+
+.ta-phase-chip--amber {
+  background-color: rgba(240, 168, 60, 0.15);
+  color: #f0a83c;
+  border: 1px solid rgba(240, 168, 60, 0.25);
+}
+
+.ta-phase-chip--grey {
+  background-color: rgba(106, 114, 146, 0.15);
+  color: #6a7292;
+  border: 1px solid rgba(106, 114, 146, 0.2);
+}
+
+/* ── Phase group body ── */
+.ta-phase-group__body {
+  padding: 10px 14px;
+  background-color: #111620;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Task list (shared between phase body and section body) ── */
+.ta-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+/* ── Empty section text ── */
+.ta-empty-section {
+  padding: 8px 0;
+  font-size: 11px;
+  color: #454c68;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Filter banner ── */
+.ta-filter-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  background: rgba(108, 92, 231, 0.08);
+  border-bottom: 1px solid rgba(108, 92, 231, 0.25);
+  font-size: 11px;
+  color: #8b7cf6;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Task card (read-only default view) ---- */
+.ta-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  background-color: #141828;
+  overflow: hidden;
+  transition: border-color 0.1s ease;
+}
+
+.ta-card:hover {
+  border-color: #2f3860;
+}
+
+.ta-card--expanded {
+  border-color: #2f3860;
+}
+
+.ta-card__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+/* Left: title + description + progress bar */
+.ta-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ta-card__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e6eaf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-card__desc {
+  font-size: 11px;
+  color: #6a7292;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Centre: assignee pills */
+.ta-card__assignees {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.ta-card__assignee {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 100px;
+}
+
+.ta-card__assignee-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #454c68;
+}
+
+.ta-card__assignee-name {
+  font-size: 11.5px;
+  color: #98a1c0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ta-card__assignee-empty {
+  font-size: 11px;
+  color: #454c68;
+  font-style: italic;
+}
+
+/* Right: due + status badge */
+.ta-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ta-card__due {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #6a7292;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Action buttons group */
+.ta-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+/* ================================================================
+   Task Detail Modal (TaskDetailModal.tsx)
+   ================================================================ */
+
+.tdm-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Status / section badge row ── */
+.tdm-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Labelled section block ── */
+.tdm-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tdm-section__heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #232a45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tdm-section__count {
+  font-size: 10px;
+  font-weight: 600;
+  color: #454c68;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Description text ── */
+.tdm-description {
+  font-size: 13px;
+  color: #ccd3ea;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tdm-description--empty {
+  color: #454c68;
+  font-style: italic;
+}
+
+/* ── Detail grid (label : value pairs) ── */
+.tdm-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tdm-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  background-color: #0e1120;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+}
+
+.tdm-detail-row__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.tdm-detail-row__value {
+  font-size: 12px;
+  color: #e6eaf8;
+  display: flex;
+  align-items: center;
+}
+
+.tdm-unassigned {
+  color: #454c68;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* ── Progress bar ── */
+.tdm-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tdm-progress__bar {
+  flex: 1;
+  height: 5px;
+  background-color: #232a45;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tdm-progress__fill {
+  height: 100%;
+  background-color: #6c5ce7;
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+
+.tdm-progress__label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6a7292;
+  font-variant-numeric: tabular-nums;
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Subtask list ── */
+.tdm-subtask-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tdm-subtask-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 10px;
+  background: #0e1120;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.tdm-subtask-item:hover {
+  background-color: #1a1f36;
+  border-color: #2f3860;
+}
+
+.tdm-subtask-item--done {
+  opacity: 0.65;
+}
+
+.tdm-subtask-check {
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #454c68;
+  border-radius: 4px;
+  background-color: #141828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #ffffff;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.tdm-subtask-check--done {
+  background-color: #6c5ce7;
+  border-color: #6c5ce7;
+}
+
+.tdm-subtask-label {
+  font-size: 12.5px;
+  color: #ccd3ea;
+  line-height: 1.5;
+}
+
+.tdm-subtask-item--done .tdm-subtask-label {
+  text-decoration: line-through;
+  color: #454c68;
+}
+
+/* ---- Footer action bar ---- */
+.ta-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background-color: #0e1120;
+  border-top: 1px solid #232a45;
+  flex-shrink: 0;
+}
+
+.ta-footer__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ta-footer__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Graph embed container ---- */
+.ta-graph-embed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Let the embedded TaskGraph fill its container without its own border/chrome */
+.ta-graph-embed .task-graph-wrapper--embedded {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* ---- View toggle (List / Graph) ---- */
+.ta-view-toggle {
+  display: flex;
+  align-items: center;
+  background-color: #0b0e18;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ta-view-toggle__btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6a7292;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.1s ease, background-color 0.1s ease;
+  white-space: nowrap;
+}
+
+.ta-view-toggle__btn:hover {
+  color: #98a1c0;
+  background-color: #1a1f36;
+}
+
+.ta-view-toggle__btn--active {
+  color: #e6eaf8;
+  background-color: #1a1f36;
+}
+
+.ta-view-toggle__divider {
+  width: 1px;
+  height: 20px;
+  background-color: #232a45;
+  flex-shrink: 0;
+}
