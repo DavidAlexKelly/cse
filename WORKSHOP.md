@@ -1,677 +1,558 @@
-# Common Simulation Platform (CSP) — Project Overview
+# CSP Workshop Modules — JSON Definitions, Descriptions & Wiring
 
-> **Audience:** engineers, demo leads and new joiners on the [NEXGEN] Common Simulation Platform.
-> **Location of this file:** `[NXG] Translator` functions repository, `docs/CSP_PROJECT_OVERVIEW.md`.
-> **Snapshot date:** 2026-11-01. Counts and resource lists below were taken from the live Foundry
-> project on that date — treat them as indicative, not authoritative.
+> Companion to [`CSP_PROJECT_OVERVIEW.md`](./CSP_PROJECT_OVERVIEW.md).
+> **Snapshot date:** 2026-11-01, main branch of each module.
 
----
+## About the JSON in this document
 
-## Table of contents
+Foundry does not expose a Workshop module's raw internal save format through the tools used to write this
+document. Each module was read as its **Workshop DSL definition** and then **converted by hand into the
+structured JSON below**. The JSON keeps everything that matters for understanding and rebuilding the module:
 
-1. [What CSP is](#1-what-csp-is)
-2. [The exercise lifecycle CSP supports](#2-the-exercise-lifecycle-csp-supports)
-3. [End-to-end architecture](#3-end-to-end-architecture)
-4. [Project layout in Foundry](#4-project-layout-in-foundry)
-5. [Data layer](#5-data-layer)
-6. [Ontology layer](#6-ontology-layer)
-7. [Functions & AI logic](#7-functions--ai-logic)
-8. [The Translator (this repository)](#8-the-translator-this-repository)
-9. [Applications](#9-applications)
-10. [Connections, compute modules & simulator federation](#10-connections-compute-modules--simulator-federation)
-11. [AI agents & MCP integrations](#11-ai-agents--mcp-integrations)
-12. [PMESII sub-project](#12-pmesii-sub-project)
-13. [How it all fits together — key flows](#13-how-it-all-fits-together--key-flows)
-14. [Live data snapshot](#14-live-data-snapshot)
-15. [Roadmap](#15-roadmap)
-16. [Known issues & housekeeping](#16-known-issues--housekeeping)
-17. [Glossary](#17-glossary)
-18. [Resource index](#18-resource-index)
+* pages, sections, tabs and layout
+* widgets: type, editor label, widget id, inputs and outputs
+* variables: type, default values and how they are derived (object-set definitions, link traversals, function-backed variables)
+* events: page/tab navigation and actions
 
----
+It leaves out cosmetic defaults such as export timezone settings and "fit columns" flags. Where the
+Workshop exporter could not represent part of the configuration, the JSON shows
+`"<unsupported-in-export>"`. This affects iframe URL paths, iframe bidirectional field mappings and the
+AIP agent reference.
 
-## 1. What CSP is
+**This JSON is a readable description of each module. Workshop cannot import it.**
 
-The **Common Simulation Platform (CSP)** is a Palantir Foundry–based platform for designing, planning,
-resolving and launching **Computer-Assisted Exercises (CAX)** and related military training events.
+### Modules covered
 
-Its core proposition:
-
-* **One authoritative model of the exercise** — scenario, phases, objectives, injects, participating
-  nations, OPFOR, and the Order of Battle (ORBAT) — held in the Foundry Ontology.
-* **AI for the mechanical work, humans for the judgement** — LLM-backed functions draft scenarios from
-  planning documents, write orders from a commander's intent, generate phase map states, run a lightweight
-  war-game to resolve a phase end state, and build structured ORBATs. Every output is editable.
-* **Simulator-agnostic force definition** — a unit is defined once against a *canonical asset* and then
-  projected into whichever simulators are federated (VBS4, SWORD, SimWorks, and via CSE/HLA others),
-  without re-entry.
-
-The tagline used in demos: *"CSP doesn't replace your planners or your simulators — it connects them, and
-keeps a human in the loop at every step."*
+| # | Module | RID | Folder | Role |
+|---|---|---|---|---|
+| 1 | **Plan & Prepare** | `ri.workshop.main.module.8bfbb4f7-c40b-46c7-9bab-0def4c809f80` | `3. Applications/Plan & Prepare` | **Main CSP user interface.** Shell around custom widgets and the Mapplications app |
+| 2 | [NXG-P] Plan and Prepare Data Browser (WIP) | `ri.workshop.main.module.e6add568-f3ab-4cc4-b22e-a9444ec7d082` | `2. Ontology/Plan And Prepare/Object Types` | Admin/debug object tables for the `[NXG-P]` types |
+| 3 | [NXG] Map test Workshop | `ri.workshop.main.module.c8587b80-0304-413b-b1eb-0d5fad85c0ff` | `3. Applications/Mapplications` | Test harness: pick an Operation and render Translator output |
+| 4 | [NXG] UI Prototype | `ri.workshop.main.module.593a9fd4-ee57-464c-afdc-2797c24e47e1` | `0. Prototyping` | Early prototype (custom widget only) |
+| 5 | [NXG] PMESII Workshop | `ri.workshop.main.module.da53844d-a252-4736-8575-96c7a55fc647` | `PMESII/Applications` | Full-screen wrapper around the PMESII frontend |
 
 ---
 
-## 2. The exercise lifecycle CSP supports
-
-| Stage | What happens | Main CSP components |
-|---|---|---|
-| **Design** | Create an exercise (CAX, wargame, plan, analysis). Upload planning documents (EXDIR, OPORD, scenario PDF) + prompt; AI drafts the world. | Plan & Prepare Workshop, `Generate Exercise Scenario from Documents` (AIP Logic) |
-| **Prepare** | Review strategic context, PMESII, training audiences/objectives, MEL/MIL injects, tasks & approvers. | `[NXG-P]` object types + Create/Modify/Delete actions |
-| **Plan a phase** | Add a phase (optionally *based on* a previous phase), type the commander's intent, generate orders, place units / graphics on the map. | Mapplications, `Generate Orders`, `Generate Phase Draft`, `Generate Phase Map`, Phase Map State |
-| **Resolve** | "Generate End State" runs a lightweight AI war-game (LLM commanders per side) resolving movement, engagements and outcomes. | `[NXG] BGWS LLM Commanders`, `[NXG] Commander` compute module, `[BGWS] Events` dataset |
-| **Compose ORBAT** | Publish map composition to the ORBAT Manager; AI builds a structured hierarchy per side, units matched to canonical assets. | `[NXG-O] Generate ORBAT`, `Reconcile Scenario ORBAT`, Translator import functions |
-| **Validate** | Preflight checks: completeness, simulator coverage, composition fit, schema validity. | Translator `preflight_*` and `validate_orbat_xml` |
-| **Simulate** | Export ORBAT XML per operation or per phase and submit with a composition to CSE; stream back via HLA. | Translator `translate_orbat_to_xml_*`, CSE-Prep functions, HLA Streamer |
-
----
-
-## 3. End-to-end architecture
+## 0. How the Workshops fit together
 
 ```mermaid
-flowchart TD
-  subgraph External["External systems"]
-    SIM[VBS4 / SWORD / SimWorks]
-    CSE[CSE - Constructive Simulation Environment]
-    HLA[HLA federation - Pitch RTI]
-    DIS[DIS reference data]
-    MACE[MACE]
+flowchart LR
+  subgraph PP["Plan & Prepare Workshop"]
+    P1["Page 1 - Planner (scenario list)"]
+    P0["Page - Scenario workspace (sidebar + 14 tabs)"]
+    P2["Page 2 - PMESII (iframe)"]
   end
 
-  subgraph Conn["5. Connections"]
-    SRC[Data Connection sources: gRPC, SMB, HLA Pitch, MACE MCP, Foundry]
-    CM[Compute Modules: Commander, HLA Streamer]
-  end
+  P1 -- onOpenScenario / onOpenPreparePhase --> P0
+  P1 -- onOpenPmesii --> P2
+  P2 -- Back button --> P1
+  P0 -- header Home button --> P1
 
-  subgraph Data["1. Data"]
-    RAW[raw/]
-    CONS[consolidated/]
-    BACK[Backing Datasets]
-    TER[terrain / tactical symbology]
-  end
+  P0 -- "iframes: Map, ORBAT & Positions, Execute, Analyse" --> MAPP["[NXG] Mapplications (OSDK app)"]
+  P2 -- iframe --> PMF["[NXG-PM] PMESII Frontend (OSDK app)"]
+  PMW["[NXG] PMESII Workshop"] -- iframe --> PMF
+  P0 -- custom widgets --> WS["Plan & Prepare Widgets widget set"]
+  UIP["[NXG] UI Prototype"] -- custom widget --> PROTO["UI Prototype widget set"]
 
-  subgraph Onto["2. Ontology"]
-    ORBAT[ORBAT domain NXG-O]
-    PP[Plan & Prepare domain NXG-P]
-  end
-
-  subgraph Fn["4. Functions"]
-    LOGIC[AIP Logic: orders, phase drafts, phase maps, scenario-from-docs]
-    TRANS[Translator - this repo]
-    EDIT[Ontology Edit Functions]
-    XF[Transforms: Canon-Sim Matching, terrain]
-  end
-
-  subgraph Apps["3. Applications"]
-    WS[Plan & Prepare Workshop + widgets]
-    MAP[Mapplications OSDK app]
-    AG[Operations Chatbot]
-  end
-
-  SIM --> SRC --> RAW --> XF --> CONS --> BACK --> Onto
-  DIS --> RAW
-  TER --> MAP
-  Onto <--> Fn
-  Onto --> Apps
-  Apps -->|actions| Onto
-  LOGIC --> Onto
-  TRANS -->|ORBAT XML| CSE
-  CSE --> HLA --> CM --> Onto
-  MACE --> SRC
+  WS --> ONT[("Ontology: NXG-P / NXG-O objects")]
+  MAPP --> ONT
+  MAPP --> TR["Translator functions"]
+  MAPT["[NXG] Map test Workshop"] --> TR
+  DB["[NXG-P] Data Browser"] --> ONT
 ```
 
-**Layering principle:** data lands in datasets, is reconciled across simulators in transforms, and backs the
-Ontology. From then on *the Ontology is the system of record*: applications and AI write to it through
-**Actions** (many backed by functions), and the Translator reads from it to produce simulator payloads.
-Note that most operational data (e.g. units) now originates from user/AI edits rather than the backing
-datasets — see [§14](#14-live-data-snapshot).
+**Main pattern:** the **Plan & Prepare** Workshop is mostly a *shell*. It provides the dark-themed page
+frame, a custom sidebar, a custom header and tab-based navigation. The real UI lives in two places:
+
+1. **Custom widgets** from the *Plan & Prepare Widgets* widget set
+   (`ri.widgetregistry..widget-set.dcda86f7-09a6-4ca8-8d36-3f98e2dbe788`). These are React widgets that
+   read and write the `[NXG-P]` ontology through OSDK.
+2. **The [NXG] Mapplications OSDK app** (`ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581`).
+   It is embedded through bidirectional iframes, each pointing at a different static route: map, ORBAT,
+   execute and analyse.
+
+Most business logic (AI generation, orders, end-state resolution, ORBAT publishing) runs inside those
+widgets and the Mapplications app, not in Workshop variables or events.
 
 ---
 
-## 4. Project layout in Foundry
+## 1. Plan & Prepare (main application)
 
-Project: `/Gotham Defence Demo Space-8e3f0e/[NEXGEN] Common Simulation Platform`
-(namespace `ri.compass.main.folder.551c269a-b107-4b00-9484-3f59ab09e926`,
-ontology *Gotham Defense Demo Space Ontology* `ri.ontology.main.ontology.cc5e8302-efb1-44a0-b5ed-94c47bef6b9e`).
+**RID:** `ri.workshop.main.module.8bfbb4f7-c40b-46c7-9bab-0def4c809f80`
 
-```
-[NEXGEN] Common Simulation Platform/
-├── CSP/
-│   ├── 0. Prototyping/        UI prototype Workshop + widget set
-│   ├── 1. Data/               raw, consolidated, reference, terrain, symbology, Backing Datasets
-│   ├── 2. Ontology/           ORBAT/, Plan And Prepare/, PMESII (depr)/, Ontology Hygiene (admin only)/
-│   ├── 3. Applications/       Plan & Prepare/, Mapplications/
-│   ├── 4. functions/          AIP Logic Functions/, Functions/, Python Transforms/, terrain/pathfinding datasets
-│   ├── 5. Connections/        Data Connections/, Compute Modules/, Compute Module Streams/, Artifacts/, _depr/
-│   ├── 6. AI Agents/          Operations Chatbot + Agents Repo
-│   ├── Documentation/         Notepads, solution design diagrams, demo docs, external docs media set
-│   └── Experimentation/       personal / ORBAT sandboxes
-└── PMESII/                    Applications/, Datasets/, Documentation/, Functions/, Ontology/
-```
+### 1.1 Description
+This is the CSP front door. Users land on **Page 1 (Planner)**, a custom widget that lists every
+scenario and lets the user pick or create one. Picking a scenario opens **Page (Scenario workspace)**.
+The workspace has:
 
-Naming conventions:
+* a 200 px collapsible custom sidebar titled **"CSE 2.0"**, with 13 items
+* a custom header showing the selected tab's name and a **Home** button
+* a **tabbed section with the tab headers hidden**. The sidebar drives the active tab through the
+  `[s] selected sidebar tab` variable (`activeTabDisplayName` is bound to it).
 
-| Prefix | Meaning |
+The PMESII deep-dive opens on **Page 2**, which iframes the PMESII Frontend and has a **Back** button.
+
+### 1.2 Navigation model
+
+| Trigger | Effect |
 |---|---|
-| `[NXG]` | NEXGEN / CSP resource (general) |
-| `[NXG-O]` | ORBAT domain ontology entity |
-| `[NXG-P]` | Plan & Prepare domain ontology entity |
-| `[NXG-SC]` | Symbology / common (tactical graphics) |
-| `[NXG-PM]` | PMESII sub-project |
-| `[BGWS]` | Battle-group war-game simulation (end-state resolution) |
+| Planner `onOpenScenario` | Open **Page** (scenario workspace) |
+| Planner `onOpenPreparePhase` | Open **Page** (scenario workspace) |
+| Planner `onOpenPmesii` | Open **Page 2** (PMESII) |
+| Custom header `buttonClicked` (Home) | Open **Page 1** (Planner) |
+| Page 2 "Back" button | Open **Page 1** |
+| Sidebar item click | Writes `[s] selected sidebar tab`, which switches the tab in the workspace |
+| Scenario Dashboard `onViewMap` | Open the **Scenario** tab (its first inner tab is the Map) |
+| Scenario Dashboard `onViewTasks` | Open the **Task Management** tab |
+| Scenario Dashboard `onViewPhases` | Open the **Phases** tab |
+| Scenario Dashboard `onOpenChatbot` | Open the **AI Assistant** tab |
+
+### 1.3 Workspace tabs → content
+
+| Tab (display name) | Widget | Kind | Input bound |
+|---|---|---|---|
+| Dashboard | `scenarioDashboard` v4.4.0 | Custom widget | `scenario` ← `[NXG-P] Selected Scenario` |
+| Scenario › Map | Iframe 1 → Mapplications (static path) | Iframe | — |
+| Scenario › Overview | `scenario` v4.0.79 | Custom widget | `scenario` ← `[NXG-P] Selected Phase` |
+| Phases | `phasesWidget` v4.4.0 | Custom widget | `scenario` ← Selected Scenario, `selectedPhase` ← Selected Phase |
+| Task Management | `taskAssignment` v4.2.0 | Custom widget | `scenario` ← Selected Phase |
+| Training Audience | `trainingAudience` v4.2.0 | Custom widget | `scenario` ← Selected Phase |
+| Composition | `composition` v0.7.9 | Custom widget | — |
+| PMSEII Variables | `pmesiiAnalysis` v4.2.0 | Custom widget | `scenario` ← Selected Phase |
+| Exercise Area | *(empty section)* | — | — |
+| MIL & MEL | `milMel` v4.2.0 | Custom widget | — |
+| ORBAT & Positions | Iframe 2 → Mapplications (static path) | Iframe | — |
+| Training Objectives | `trainingObjectives` v4.2.0 | Custom widget | `scenario` ← Selected Phase |
+| AI Assistant | AIP Agent chatbot (Operations Chatbot) | AIP Agent widget | — |
+| Execute | Iframe 6 → Mapplications (static path) | Iframe | — |
+| Analyse | Iframe 7 → Mapplications (static path) | Iframe | — |
+
+### 1.4 JSON definition
+
+```json
+{
+  "module": {
+    "name": "Plan & Prepare",
+    "rid": "ri.workshop.main.module.8bfbb4f7-c40b-46c7-9bab-0def4c809f80",
+    "moduleHeader": "default (hidden)",
+    "scenarios": { "enableScenariosV1": false, "enableScenariosV2": false },
+    "homePageId": "a0270544-33f9-3be7-5677-c1bad3ae9e26"
+  },
+  "variables": [
+    { "id": "0516a7ab-94c7-328f-f0a3-e471728e4a6b", "name": "[s] Header Icon", "type": "string", "default": "shield" },
+    { "id": "26295ee0-1b6e-f99d-57b3-f70fc25c2aec", "name": "[s] Sidebar Tab Names", "type": "list<string>",
+      "default": ["Dashboard", "Scenario", "Phases", "Task Management", "Training Audience", "Composition", "PMSEII Variables", "Training Objectives", "MIL & MEL", "ORBAT & Positions", "Execute", "Analyse", "AI Assistant"] },
+    { "id": "89911f86-bdb6-97a0-de0f-8935e4979c08", "name": "Custom Sidebar undefined", "type": "list<string>", "purpose": "sidebar item icons",
+      "default": ["dashboard", "map", "flow-branch", "many-to-one", "people", "document", "globe", "chart", "calendar", "diagram-tree", "run-history", "series-search", "predictive-analysis"] },
+    { "id": "c4278269-bb6c-a9d2-be0a-d0fbd65d20a7", "name": "Custom Sidebar undefined1", "type": "string", "purpose": "sidebar title", "default": "CSE 2.0" },
+    { "id": "d67b35d9-e39c-8c17-9c5f-eee83a1f9ed1", "name": "[s] selected sidebar tab", "type": "string", "default": "Dashboard",
+      "writtenBy": ["Custom Sidebar.selectedItem"], "readBy": ["Custom Header.title", "Workspace tabbed section.activeTabDisplayName"] },
+    { "id": "a32bca04-7cfd-d415-1c7e-cdedbfb9590c", "name": "[s] Header Buttons", "type": "list<string>", "default": ["Home"] },
+    { "id": "8695cf00-0573-4a8a-b5a8-75efb31cd1a0", "name": "[s] Header Button Icons", "type": "list<string>", "default": ["home"] },
+    { "id": "7a92140a-be62-8950-8335-1bfe60f670d2", "name": "[b] True", "type": "boolean", "default": true },
+    { "id": "8a917a34-8bc5-c99a-fd12-ddc0652de78b", "name": "[b] False", "type": "boolean", "default": false },
+    { "id": "a5009f52-9812-5ca1-7748-18efc3086dab", "name": "[b] Mock Data?", "type": "boolean", "default": true, "usedBy": [] },
+    { "id": "72f4b6bc-aa97-2f13-dd59-93cb15e26167", "name": "[s] Operation Name", "type": "string", "default": "OP-BALTIC-SHIELD-2026", "usedBy": [] },
+    { "id": "5b520837-9fcd-5429-adbb-156e37f485ea", "name": "[s] Output orbat", "type": "string", "default": null },
+    { "id": "fff2ecd4-a8a5-7c59-68df-33089bd0f9cc", "name": "var", "type": "string", "kind": "variableTransformation",
+      "logic": "if [b] False then [s] Output orbat else [s] Output orbat" },
+    { "id": "a00498ef-9523-bf6a-3569-cf279424dce7", "name": "Iframe 2 undefined2", "type": "string", "kind": "function",
+      "function": { "rid": "ri.function-registry.main.function.9decf95d-c95d-4bc8-b2d9-7a1f798e60e1", "name": "translate_orbat_from_json", "version": "0.3.1",
+                    "inputs": { "ontology_json": "var" } } },
+    { "id": "0ec1b40d-9053-69c8-6ade-e243f9b9d013", "name": "[NXG-P] Selected Scenario", "type": "objectSet<[NXG-P] Scenario>",
+      "definition": { "base": "pdvwbiwn.nxg-scenario-bf310667", "transforms": [] },
+      "writtenBy": ["Planner.selectedScenario"], "readBy": ["Scenario Dashboard.scenario", "Phases widget.scenario"] },
+    { "id": "0ec0e6f6-9206-93b3-1e56-d3c6385e94dd", "name": "[NXG-P] All Scenarios", "type": "objectSet<[NXG-P] Scenario>", "definition": "unbound (constrained object set)",
+      "readBy": ["Planner.scenarios"] },
+    { "id": "4327eb1a-25f7-433b-2334-b1fdda7b98a9", "name": "Selected Scenario", "type": "objectSet<[NXG-P] Scenario>", "definition": "unbound (constrained object set)" },
+    { "id": "5ebff705-6256-0921-a80c-a7153c995bc6", "name": "[NXG-P] Selected Phase", "type": "objectSet<[NXG-P] Phase>",
+      "definition": { "input": "Selected Scenario", "transforms": [ { "linkTraversal": { "relation": "pdvwbiwn.nxg-scenario-has-phases", "side": "SOURCE", "to": "pdvwbiwn.nxg-phase-2c100d65" } } ] },
+      "readBy": ["Phases widget.selectedPhase", "scenario.scenario", "taskAssignment.scenario", "trainingAudience.scenario", "pmesiiAnalysis.scenario", "trainingObjectives.scenario"] }
+  ],
+  "widgets": [
+    { "id": "3bccf830-347d-41c4-b049-44733866adf2", "label": "Planner", "type": "customWidget",
+      "widgetSet": "ri.widgetregistry..widget-set.dcda86f7-09a6-4ca8-8d36-3f98e2dbe788", "customWidgetId": "planner", "version": "4.4.0",
+      "parameters": { "scenarios": "[NXG-P] All Scenarios", "selectedScenario": "[NXG-P] Selected Scenario" },
+      "events": { "onOpenScenario": "OPEN_PAGE Page", "onOpenPreparePhase": "OPEN_PAGE Page", "onOpenPmesii": "OPEN_PAGE Page 2" } },
+    { "id": "60a5c65a-dfe3-4797-b48b-5f4e9d64b0c2", "label": "Custom Sidebar", "type": "customWidget", "customWidgetId": "customSidebar", "version": "4.4.0",
+      "parameters": { "itemIcons": "Custom Sidebar undefined", "itemLabels": "[s] Sidebar Tab Names", "selectedItem": "[s] selected sidebar tab",
+                      "sidebarIcon": "[s] Header Icon", "showCollapseToggle": "[b] True", "sidebarTitle": "Custom Sidebar undefined1" },
+      "events": { "collapseToggled": [] } },
+    { "id": "02e90812-99a3-486d-aabb-f6e63282ae82", "label": "Custom widget 3 (Header)", "type": "customWidget", "customWidgetId": "customHeader", "version": "4.4.0",
+      "parameters": { "title": "[s] selected sidebar tab", "buttonLabels": "[s] Header Buttons", "buttonIcons": "[s] Header Button Icons" },
+      "events": { "buttonClicked": "OPEN_PAGE Page 1" } },
+    { "id": "eb8914e9-162b-4d1f-8e7b-8c8fe30794ce", "label": "Custom widget 11 (Scenario Dashboard)", "type": "customWidget", "customWidgetId": "scenarioDashboard", "version": "4.4.0",
+      "parameters": { "scenario": "[NXG-P] Selected Scenario" },
+      "events": { "onViewMap": "OPEN_TAB Scenario", "onViewTasks": "OPEN_TAB Task Management", "onViewPhases": "OPEN_TAB Phases", "onOpenChatbot": "OPEN_TAB AI Assistant" } },
+    { "id": "2502b5be-3dcd-45b4-81fe-fafdf06edd3a", "label": "Custom widget 5 (Scenario overview)", "type": "customWidget", "customWidgetId": "scenario", "version": "4.0.79",
+      "parameters": { "scenario": "[NXG-P] Selected Phase" } },
+    { "id": "d538f548-fd9e-4a39-bcf8-a3ec5ee57956", "label": "Custom widget 12 (Phases)", "type": "customWidget", "customWidgetId": "phasesWidget", "version": "4.4.0",
+      "parameters": { "scenario": "[NXG-P] Selected Scenario", "selectedPhase": "[NXG-P] Selected Phase" } },
+    { "id": "c73fb0c4-4aaa-407f-9b6c-2138f0ff5b71", "label": "Custom widget 8 (Task Assignment)", "type": "customWidget", "customWidgetId": "taskAssignment", "version": "4.2.0",
+      "parameters": { "scenario": "[NXG-P] Selected Phase" } },
+    { "id": "acae6da1-a68a-48ce-bf8d-1feaaad55b71", "label": "Custom widget 9 (Training Audience)", "type": "customWidget", "customWidgetId": "trainingAudience", "version": "4.2.0",
+      "parameters": { "scenario": "[NXG-P] Selected Phase" } },
+    { "id": "6f48e088-752b-4d32-93dd-5b69fc972496", "label": "Custom widget 11 (Composition)", "type": "customWidget", "customWidgetId": "composition", "version": "0.7.9",
+      "parameters": {} },
+    { "id": "867b8ad2-4a3b-408b-be5b-cb66aa90bedf", "label": "Custom widget 6 (PMESII Analysis)", "type": "customWidget", "customWidgetId": "pmesiiAnalysis", "version": "4.2.0",
+      "parameters": { "scenario": "[NXG-P] Selected Phase" } },
+    { "id": "95243cd1-0510-457e-a023-02892e793128", "label": "Custom widget 2 (MIL & MEL)", "type": "customWidget", "customWidgetId": "milMel", "version": "4.2.0",
+      "parameters": {} },
+    { "id": "d2e5ae7a-919b-4d52-a557-f4d3c7aad35e", "label": "Custom widget 10 (Training Objectives)", "type": "customWidget", "customWidgetId": "trainingObjectives", "version": "4.2.0",
+      "parameters": { "scenario": "[NXG-P] Selected Phase" } },
+    { "id": "dd47e892-73ec-4562-ab13-7206a376d3fd", "label": "Operation AIP Chatbot", "type": "aipChatbotWidget",
+      "agent": "<unsupported-in-export> (Operations Chatbot)",
+      "sessions": { "showReasoningProcessWhileLoading": true, "hideSessionHistory": false, "createNewSessionOnMount": false } },
+    { "id": "c4bec8c1-c6a2-43cd-ac01-cac60e9a88e3", "label": "Iframe 1 (Map)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581", "path": "<unsupported-in-export>" }, "fields": "<unsupported-in-export>" },
+    { "id": "c37abe66-98b1-4e75-9a80-acfe37532ac2", "label": "Iframe 2 (ORBAT & Positions)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581", "path": "<unsupported-in-export>" }, "fields": "<unsupported-in-export>" },
+    { "id": "70ca60d6-c7a9-4346-9180-43c6e0a31473", "label": "Iframe 6 (Execute)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581", "path": "<unsupported-in-export>" }, "fields": "<unsupported-in-export>" },
+    { "id": "42f1924b-8f43-49e9-857f-6e0139d7b535", "label": "Iframe 7 (Analyse)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581", "path": "<unsupported-in-export>" }, "fields": "<unsupported-in-export>" },
+    { "id": "37fe9437-e388-4ffc-9307-ec095d12a5c3", "label": "Iframe 6 (duplicate, not placed)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581", "path": "<unsupported-in-export>" }, "placed": false },
+    { "id": "21057a47-cdb8-4630-94f4-cb3d034c635d", "label": "Iframe 5 (PMESII Frontend)", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.99104577-3f15-4225-ab34-f226e0b842d1" }, "fields": "<unsupported-in-export>" },
+    { "id": "182b3422-3824-4db3-98f4-26e97f79c8fe", "label": "Button group 1", "type": "buttonGroup",
+      "buttons": [ { "text": "Back", "onClick": "OPEN_PAGE Page 1" } ] }
+  ],
+  "pages": [
+    { "id": "a0270544-33f9-3be7-5677-c1bad3ae9e26", "name": "Page 1", "userDefinedId": "page-1", "isHome": true,
+      "layout": { "hstack": [ { "section": "93b9213c-0037-4829-9680-dd4dcc4d9969", "flex": true, "content": ["Planner"] } ] } },
+    { "id": "59bb5f73-90e7-405c-8140-52e6879b9309", "name": "Page", "userDefinedId": "page", "background": "#111418",
+      "layout": { "hstack": [ { "section": "2b92e395-736d-4d56-a0c1-85320ad4a985", "content": { "hstack": [
+        { "section": "0666ffc5-87fe-4805-b429-e4ae87fc4530", "width": "200px", "resizable": "100-800px", "background": "#111418", "content": ["Custom Sidebar"] },
+        { "section": "8b4cdfe7-c0bb-4a04-bf27-1c1a5f4f002a", "flex": true, "background": "#111418", "content": { "vstack": [
+          { "box": { "height": "55px" }, "content": ["Custom Header"] },
+          { "tabbedSection": "2b9331e6-a4ef-4b85-b9d5-b2d4699acb4e", "headerHeight": 0, "activeTabDisplayName": "[s] selected sidebar tab", "tabs": [
+            { "id": "abf3431a-16d7-4484-992e-183768287080", "name": "Dashboard", "content": ["Scenario Dashboard"] },
+            { "id": "bff58f93-f702-4b30-af30-c22fb64644c1", "name": "Scenario", "content": { "innerTabs": [
+              { "id": "85502176-686c-49d1-af04-f897056ec3aa", "name": "Map", "content": ["Iframe 1 (Map)"] },
+              { "id": "16c2435a-c2cc-4799-b9c4-44e19c47ac95", "name": "Overview", "content": ["Scenario overview"] } ] } },
+            { "id": "05c2fbf6-63de-40c7-9798-d9058f1c55be", "name": "Phases", "content": ["Phases widget"] },
+            { "id": "dd799e7b-eeef-4b97-b1b9-9eb36923f66b", "name": "Task Management", "content": ["Task Assignment"] },
+            { "id": "6f5a07b7-995b-4a59-843b-da74b3bcfd1d", "name": "Training Audience", "content": ["Training Audience"] },
+            { "id": "58430899-ca5a-41ed-859c-018218afb1c1", "name": "Composition", "content": ["Composition"] },
+            { "id": "1e0cec93-7730-4e11-9167-5302ef20a75c", "name": "PMSEII Variables", "content": ["PMESII Analysis"] },
+            { "id": "6562f79b-4d56-42f7-88a3-de4bde7592fb", "name": "Exercise Area", "content": [] },
+            { "id": "a0dee5c7-18f8-4cbd-8156-eed67fd940a2", "name": "MIL & MEL", "content": ["MIL & MEL"] },
+            { "id": "5632d60e-088d-404b-b3f5-c504ab000c30", "name": "ORBAT & Positions", "content": ["Iframe 2 (ORBAT & Positions)"] },
+            { "id": "9b7b91eb-106a-46ce-addf-e14c44410199", "name": "Training Objectives", "content": ["Training Objectives"] },
+            { "id": "f1732a50-e8e3-4337-b663-7c12fe45c8f7", "name": "AI Assistant", "content": ["Operation AIP Chatbot"] },
+            { "id": "a024a82e-c803-4d22-9b84-f8bee33c4e99", "name": "Execute", "content": ["Iframe 6 (Execute)"] },
+            { "id": "bc35a76a-0083-4664-b68e-c946edace5a0", "name": "Analyse", "content": ["Iframe 7 (Analyse)"] }
+          ] } ] } } ] } } ] } },
+    { "id": "4cc37c31-b9b2-12cd-0182-3470d1d7b7c9", "name": "Page 2", "userDefinedId": "page-2",
+      "layout": { "section": "729de8e9-ff20-4771-93fb-77ed3b515f44", "header": { "style": "callout/prominent", "color": "#1C2127", "leftComponents": ["Button group 1 (Back)"] },
+                  "content": ["Iframe 5 (PMESII Frontend)"] } }
+  ]
+}
+```
+
+### 1.5 Observations & potential issues
+1. **The Selected Phase chain may be empty.** `[NXG-P] Selected Phase` is derived from the variable
+   **`Selected Scenario`** (id `4327eb1a…`), not from **`[NXG-P] Selected Scenario`**, which is the one the
+   Planner writes to. If nothing sets `Selected Scenario`, every widget fed by Selected Phase receives an
+   empty set. That covers Overview, Tasks, Training Audience, PMESII and Training Objectives. They
+   probably work today by loading their own data, but the binding looks unintentional.
+2. **Phase sets are passed into `scenario` parameters.** Several widgets declare a `scenario` parameter
+   but are given a Phase object set. Check the widget manifests to confirm what they expect.
+3. **The sidebar and the tabs don't match.** The tab *Exercise Area* has no sidebar entry, so it can't be
+   reached, and its section is empty. The label "PMSEII" is a typo for PMESII and appears in both the
+   sidebar and the tab name. Because tabs are selected by display name, the two spellings must stay
+   identical.
+4. **Dead variables and widgets.** These are unused: `[b] Mock Data?`, `[s] Operation Name`, `var` (both
+   branches return the same value), `Iframe 2 undefined2` (calls `translate_orbat_from_json` v0.3.1 on an
+   empty string) and a duplicate "Iframe 6" that is never placed on a page.
+5. **Mixed widget-set versions.** The widgets are pinned to 4.4.0, 4.2.0, 4.0.79 and 0.7.9
+   (Composition). Old pins, Composition especially, may lack recent fixes.
+6. **Variable names.** Sidebar variables have auto-generated names (`Custom Sidebar undefined`,
+   `…undefined1`). Renaming them would make the module easier to maintain.
 
 ---
 
-## 5. Data layer
+## 2. [NXG-P] Plan and Prepare Data Browser (WIP)
 
-### 5.1 `1. Data/raw`
-Raw inputs per origin system, ingested through Data Connection:
+**RID:** `ri.workshop.main.module.e6add568-f3ab-4cc4-b22e-a9444ec7d082`
 
-* **CSE PREP DATA** — CCLM, CSE and VBS4 preparation material.
-* **DIS Reference** — Distributed Interactive Simulation enumeration XML (entity kind/domain/country/category codes).
-* **SWORD** — the 029 SWORD model (also `029 - SWORD model folder`) incl. `Automats.xml`-derived catalogue.
-* **VBS4 Reference** — VBS4 asset/class catalogues.
-* **SIMWORKS** — SimWorks catalogue and classification data.
+### 2.1 Description
+An admin/debug browser over the `[NXG-P]` object types, with **one object table per page**. A module
+header button bar (8 buttons, all labelled "Button") switches between pages. The Scenario page has a
+**delete** button that runs *Delete [NXG-P] Scenario*. It is marked **WIP**: buttons are unlabelled, the
+selection variables are not consumed anywhere, and a "Create Scenario" button group is defined but not
+placed. It is useful for checking raw data the AI has generated, and for cleanup such as removing
+duplicate draft scenarios.
 
-### 5.2 `1. Data/consolidated`
-Cross-simulator reconciled outputs, produced primarily by `[NXG] Canon <-> Sim Matching`:
+### 2.2 JSON definition
 
-* `master_asset_catalogue` — unified catalogue across simulators.
-* `vbs4_asset_catalogue`, `sword_asset_catalogue`, `simworks_asset_catalogue`.
-* `consolidated_unique_dis_entities` — de-duplicated DIS entities.
+```json
+{
+  "module": {
+    "name": "[NXG-P] Plan and Prepare Data Browser (WIP)",
+    "rid": "ri.workshop.main.module.e6add568-f3ab-4cc4-b22e-a9444ec7d082",
+    "moduleHeader": { "logo": { "icon": "application", "color": "#8F99A8" }, "orientation": "horizontal", "height": 50, "startComponents": ["Button group 2"] },
+    "homePageId": "a700c520-5f88-42cb-b921-3cd5ddfc864f"
+  },
+  "variables": [
+    { "id": "3b4911fa-c659-8449-05ad-4e7e81b96086", "name": "[NXG-P] Scenario", "type": "objectSet", "base": "pdvwbiwn.nxg-scenario-bf310667" },
+    { "id": "df639409-895e-cf50-eca1-014f70cdd3d8", "name": "[NXG-P] Task", "type": "objectSet", "base": "pdvwbiwn.nxg-task-580166e1" },
+    { "id": "d5d7b298-51e2-f478-4f8b-bfbf7b4e85d5", "name": "[NXG-P] Phase", "type": "objectSet", "base": "pdvwbiwn.nxg-phase-2c100d65" },
+    { "id": "77a7641c-21d6-b17d-b175-a8a0995c9264", "name": "[NXG-P] Inject", "type": "objectSet", "base": "pdvwbiwn.nxg-inject-f3baa249" },
+    { "id": "48c939e8-837f-c12b-3b7b-3e0f3f08617d", "name": "[NXG-P] Training Objective", "type": "objectSet", "base": "pdvwbiwn.nxg-training-objective-29f4e616" },
+    { "id": "93fcba10-7277-8346-4b3d-e87e957bada9", "name": "[NXG-P] Phase Map State", "type": "objectSet", "base": "pdvwbiwn.nxg-phase-map-state-e235fc2b" },
+    { "id": "4cf6332a-0fe5-06ec-c4af-18ab35dc746f", "name": "[NXG-P] PMESII Domain", "type": "objectSet", "base": "pdvwbiwn.nxg-pmesii-domain-1f6ec101" },
+    { "id": "35e7d238-2d1c-ddce-0f73-bccf8f7297b3", "name": "[NXG-P] Training Audience", "type": "objectSet", "base": "pdvwbiwn.nxg-training-audience-223a182d" },
+    { "name": "Object table 1..8 Active object", "type": "objectSet", "note": "8 active-object outputs, one per table; not consumed" }
+  ],
+  "widgets": [
+    { "id": "4069853b-cbe5-4308-9f51-da93217efdff", "label": "[NXG-P] Scenario Object table", "type": "objectTable", "input": "[NXG-P] Scenario", "rowLines": 4,
+      "columns": ["Title", "AI Generated", "Current Phase", "Scenario Type", "Strategic Context Body", "Created Date", "Overall Progress (%)", "Classification", "Status", "Source Documents", "Strategic Context Title", "Name", "Overall Progress (%) [dup]", "Scenario ID"],
+      "activeObject": "Object table 1 Active object" },
+    { "id": "15ea18e5-5863-463a-93db-fe052f5c38c2", "label": "[NXG-P] Task Object table", "type": "objectTable", "input": "[NXG-P] Task", "defaultSort": "task-name asc",
+      "columns": ["Title", "Assigned To Person ID", "Description", "AI Assisted", "Due Offset", "Approved By Person ID", "Status", "Section", "Name", "Phase ID", "Scenario ID", "Task ID"] },
+    { "id": "500a5f41-6470-4608-9804-8d139398bed1", "label": "[NXG-P] Phase Object table", "type": "objectTable", "input": "[NXG-P] Phase",
+      "columns": ["Title", "Description", "Objective Statement", "Start Offset", "Sequence Number", "Status", "End Offset", "Name", "Phase ID", "Scenario ID", "Name [dup]"] },
+    { "id": "a0d51249-d7e7-4c08-b1c5-226a63794085", "label": "[NXG-P] Inject Object table", "type": "objectTable", "input": "[NXG-P] Inject",
+      "columns": ["Title", "Body", "Terrain Feature Reference", "Expected Response", "Category", "Day Offset"] },
+    { "id": "cc9489dc-bbda-4196-853f-3953d0fdc1d1", "label": "[NXG-P] Training Objective Object table", "type": "objectTable", "input": "[NXG-P] Training Objective",
+      "columns": ["Title", "Functional Area", "Reference", "Priority", "Objective", "Reference [dup]", "Phase ID", "Scenario ID", "Objective ID"] },
+    { "id": "9115bd36-b6f8-4560-a828-54fb5aa50893", "label": "[NXG-P] Phase Map State Object table", "type": "objectTable", "input": "[NXG-P] Phase Map State",
+      "columns": ["Title", "Start State Map Json", "End State Map Json", "Phase Id", "Map State ID"] },
+    { "id": "5d493c1c-1a6f-4766-9978-b2772cb4f3bd", "label": "[NXG-P] PMESII Domain Object table", "type": "objectTable", "input": "[NXG-P] PMESII Domain",
+      "columns": ["Title", "Status", "AI Generated", "Value", "Domain ID", "Scenario ID"] },
+    { "id": "5019b218-a9e2-4a2a-bdef-5f2db004de56", "label": "[NXG-P] Training Audience Object table", "type": "objectTable", "input": "[NXG-P] Training Audience",
+      "columns": ["Title", "Description", "Participant Count", "Directorates", "Audience Type", "Name", "Audience ID", "Scenario ID"] },
+    { "id": "97eb16d2-955f-4312-9dc6-a5bc5260840a", "label": "Button group 3", "type": "buttonGroup",
+      "buttons": [ { "text": "delete", "onClick": { "action": "ri.actions.main.action-type.bbd0c3b5-012d-45bd-a39a-afb2f2777242", "actionName": "Delete [NXG-P] Scenario", "layout": "FORM" } } ] },
+    { "id": "104d7b84-05d4-4d3b-b764-77ad92c28ff6", "label": "[NXG-P] Scenario Button group", "type": "buttonGroup", "placed": false,
+      "buttons": [ { "text": "Button", "onClick": { "action": "ri.actions.main.action-type.fc578623-548d-4e3d-9729-3cc5420855c8", "actionName": "Create [NXG-P] Scenario", "outputObjectSet": "[NXG-P] Scenario" } } ] },
+    { "id": "6317a51f-8622-4407-ae39-72328f2e9c72", "label": "Button group 2 (module header nav)", "type": "buttonGroup",
+      "buttons": [
+        { "text": "Button", "onClick": "OPEN_PAGE Page (Scenario)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 1 (Task)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 2 (Phase)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 3 (Inject)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 4 (Training Objective)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 5 (Phase Map State)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 6 (PMESII Domain)" },
+        { "text": "Button", "onClick": "OPEN_PAGE Page 7 (Training Audience)" } ] }
+  ],
+  "pages": [
+    { "id": "a700c520-5f88-42cb-b921-3cd5ddfc864f", "name": "Page", "isHome": true, "content": ["[NXG-P] Scenario Object table"], "sectionHeaderLeft": ["Button group 3 (delete)"] },
+    { "id": "0ad5d752-8ada-d702-f3bb-1d848411ca21", "name": "Page 1", "content": ["[NXG-P] Task Object table"] },
+    { "id": "90c5cf5c-7fb9-27b9-90de-a32155724af7", "name": "Page 2", "content": ["[NXG-P] Phase Object table"] },
+    { "id": "a633aa18-77fe-483e-1e38-5295e652d52c", "name": "Page 3", "content": ["[NXG-P] Inject Object table"] },
+    { "id": "eafbd516-7d98-d3a1-b0e6-9b89a2fee1fc", "name": "Page 4", "content": ["[NXG-P] Training Objective Object table"] },
+    { "id": "8f97a054-0df6-80b9-6feb-2195877e2db5", "name": "Page 5", "content": ["[NXG-P] Phase Map State Object table"] },
+    { "id": "00f6b233-0e26-86ca-007a-16cc13a8d224", "name": "Page 6", "content": ["[NXG-P] PMESII Domain Object table"] },
+    { "id": "bcf641c7-4c67-3a57-4159-29b786edbbcb", "name": "Page 7", "content": ["[NXG-P] Training Audience Object table"] }
+  ]
+}
+```
 
-### 5.3 `1. Data/Backing Datasets`
-Datasets that back ontology object types (36 resources), grouped by prefix:
-
-* **ORBAT (`[NXG-O]`)**: Canonical Asset, Operation(s), Units, Unit Hierarchy, Unit Hierarchy Edges,
-  Hierarchy Templates, ORBAT Templates, Force Structure Snapshots, VBS4 Asset Catalogue — plus `(Legacy)`
-  variants of Units and Edges.
-* **Plan & Prepare (`[NXG-P]`)**: Scenario, Phase, Task, Subtask, Inject, Training Audience, Training
-  Objective, PMESII Domain, Participating Nation, OPFOR Definition, Composition, Phase Map State
-  (+ a *Baltic Shield* variant), and the **Plan and Prepare Documents** media set (uploaded EXDIR/OPORD PDFs).
-* **Symbology (`[NXG-SC]`)**: Tactical Graphic Symbols.
-* **Config**: `[NXG] Simulator Config` (legacy — simulator fields now live on `NxgUnit`, see §8.4).
-* **Materialisations**: `_NxgUnit_materialization`, `_NxgUnitType_…`, `_NxgEquipmentType_…`,
-  `_NxgUnitHierachyEdge_…`, `_NxgTacticalGraphicSymbol_…` (ontology state including user edits).
-* `nxg-exercise-data` — code repository generating seed exercise data.
-
-### 5.4 Terrain & geospatial
-* `1. Data/terrain` and `Terrain Data/` — generated terrain, PMTiles, profiles and schemas used by the map.
-* `4. functions/` outputs: `[NXG] ASC Binary Grid` (+ Kaliningrad), `[NXG] Pathfinding (Kaliningrad)`,
-  `[NXG] Graph Analysis`, `[NXG] PMTiles to Pathfinding` — a mobility/route-finding grid derived from terrain tiles,
-  produced by the `terrain functions` transforms repo.
-* `tactical symbology/` — APP-6 / NATO symbol dataset + image media set for rendering.
+### 2.3 Observations
+* The delete button does not pass the selected scenario into the action, so the user has to pick it again
+  in the form. Binding `nxgScenario` to `Object table 1 Active object` would make it one click.
+* All navigation buttons are labelled "Button". Label them with the object type names.
+* Several tables show the same column twice (Scenario › Overall Progress, Phase › Name, Training Objective › Reference).
+* Newer `[NXG-P]` types are not covered: Subtask, Participating Nation, OPFOR Definition and Composition.
+* The module sits in an *Object Types* folder. `3. Applications` would be a better home.
 
 ---
 
-## 6. Ontology layer
+## 3. [NXG] Map test Workshop
 
-The ontology is split into two domains plus a few shared types.
+**RID:** `ri.workshop.main.module.c8587b80-0304-413b-b1eb-0d5fad85c0ff`
 
-### 6.1 ORBAT domain (`[NXG-O]`)
+### 3.1 Description
+A two-pane harness for the Translator. The left pane (300 px) is an object table of `[NXG-O] Operation`;
+the first row is selected automatically. The selected operation's primary key goes into a
+**function-backed variable** that calls a Translator function. The returned string (ORBAT JSON) is shown
+in a Markdown widget on the right.
 
-| Object type | Role |
-|---|---|
-| **Operation** | Top-level container an ORBAT belongs to (start/end time, terrain name). Keyed e.g. `OPERATION-BALTIC-SHIELD`. |
-| **Unit** (`NxgUnit`) | A node in a force: organisation, vehicle, human or aircraft. Carries location (lat/long), `entityType`, `owningSimulator`, `dis`, `simulatorIdentifierCode`, `canControlDrones`, echelon, nation, symbol code. |
-| **Unit Hierarchy** | A tree of units — typically one per side per phase. Carries `phaseKey`. |
-| **Unit Hierarchy Edge** (`NxgUnitHierachyEdge` — note historical spelling) | Parent → child edge in a hierarchy, with a relationship type. |
-| **Unit Hierarchy Node Relationship Type** | Edge type vocabulary (command, support, attached…). |
-| **Unit Type**, **Equipment Type** | Classification templates. |
-| **Canonical Asset** | Simulator-agnostic asset (e.g. *Warrior IFV*) — the hinge between military reality and simulator models. |
-| **VBS4 / SWORD / SimWorks Asset Catalogue** | Per-simulator models, linked to Canonical Asset. |
-| **Template ORBAT Graph** | Reusable ORBAT templates (instantiated into hierarchies). |
-| **Force Structure Snapshot** | Point-in-time copy of a force structure. |
-| **Tactical Graphic Symbol** | Map graphics (arrows, boundaries, objectives). |
+### 3.2 JSON definition
 
-Links of note: Unit ↔ Hierarchy (via edges), Hierarchy ↔ Operation, **Phase ↔ Unit Hierarchy**
-(`Phase - Unit Hierarchy` relation), Catalogues ↔ Canonical Asset.
+```json
+{
+  "module": { "name": "[NXG] Map test Workshop", "rid": "ri.workshop.main.module.c8587b80-0304-413b-b1eb-0d5fad85c0ff", "homePageId": "212f84b1-b899-4240-8b52-493b5a4e72de" },
+  "variables": [
+    { "id": "0b20a6b1-00bb-d689-4c3a-b993b374dbb6", "name": "[NXG] Operation", "type": "objectSet", "base": "pdvwbiwn.id-c4ef3133-9204-2eb2-a9c2-ca2ed75c279f" },
+    { "id": "044eaa40-96ef-15d3-e235-ab079d446a5f", "name": "Object table 1 Active object", "type": "objectSet", "writtenBy": ["[NXG] Operation Object table.activeObject"] },
+    { "id": "6ca22a4f-6a8b-2754-77d9-b49ffeb6128e", "name": "[s] Selected Op", "type": "string", "kind": "objectProperty",
+      "source": { "objectSet": "Object table 1 Active object", "property": "primary_key" } },
+    { "id": "9abf2180-3959-8eec-b176-b3fe83faa9c7", "name": "Markdown 1 Variable", "type": "string", "kind": "function",
+      "function": { "rid": "ri.function-registry.main.function.ab0dbd4a-a099-48d1-99d5-8437fff9cddb", "name": "generate_vbs4_orbat", "version": "0.1.4",
+                    "inputs": { "operation_key": "[s] Selected Op" } } }
+  ],
+  "widgets": [
+    { "id": "53f44a50-af77-41d9-95e7-73be42b11e29", "label": "[NXG] Operation Object table", "type": "objectTable", "input": "[NXG] Operation",
+      "activeObject": "Object table 1 Active object", "autoSelect": true },
+    { "id": "a86cba90-ad02-405a-9ea3-69cd8aa11f8c", "label": "Markdown 1", "type": "markdown", "input": "Markdown 1 Variable",
+      "display": { "scrolling": true, "breakNewlines": true, "longWordWrap": true } }
+  ],
+  "pages": [
+    { "id": "212f84b1-b899-4240-8b52-493b5a4e72de", "name": "Page", "isHome": true,
+      "layout": { "hstack": [ { "box": { "width": "300px" }, "content": ["[NXG] Operation Object table"] }, { "flex": true, "content": ["Markdown 1"] } ] } }
+  ]
+}
+```
 
-**Actions (19):** CRUD for Operation, Unit, Unit Hierarchy, Unit Hierarchy Edge, Template ORBAT Graph and
-Tactical Graphic Symbol, plus the important function-backed ones:
+### 3.3 Observations
+* It calls **`generate_vbs4_orbat` v0.1.4**, a legacy function that no longer exists in the Translator
+  source. To test current behaviour, repoint it to `translate_orbat_from_operation`, or to
+  `translate_orbat_to_xml_from_operation` / `preflight_orbat_from_operation`.
+* A Markdown widget is a poor fit for raw JSON or XML. Wrapping the output in a fenced code block, or
+  using a code/text widget, would make it easier to read.
 
-* `[NXG-O] Generate ORBAT` and `[NXG-O] Generate ORBAT (compressed payload)` → Translator
-  `import_ontology_orbat_from_json` / `import_ontology_orbat_from_gzip_base64`.
-* `[NXG-O] Reconcile Scenario ORBAT` → Translator `reconcile_scenario_orbat`.
-* `[NXG-O] Validate Phase ORBAT with CSE` → preflight + CSE validation.
+---
 
-### 6.2 Plan & Prepare domain (`[NXG-P]`)
+## 4. [NXG] UI Prototype
 
-| Object type | Role |
-|---|---|
-| **Scenario** | The exercise. Name, type (CAX…), status, classification, D-Day, nations, strategic context title/body, source documents, `aiGenerated`, overall progress. |
-| **Phase** | Time-bounded phase of a scenario; `basedOnPhaseId` records lineage (each phase holds a *full standing force*). Linked to its Unit Hierarchies. |
-| **Phase Map State** | Map state (unit placements, graphics, orders) per phase — what the map renders. |
-| **Task / Subtask** | Planning work items with owners, approvers, due dates (AI-proposed). |
-| **Inject** | MEL/MIL event that drives training-audience activity. |
-| **Training Audience / Training Objective** | Who is trained and on what; objectives are traced to injects. |
-| **PMESII Domain** | Per-dimension operational-environment description. |
-| **Participating Nation** | Nations in the exercise (linked to training audiences). |
-| **OPFOR Definition** | Opposing force description. |
-| **Composition** | CSE composition (which simulators/services, scale, echelon span). |
+**RID:** `ri.workshop.main.module.593a9fd4-ee57-464c-afdc-2797c24e47e1`
 
-Every type has **Create / Modify / Delete** actions (Phase Map State's live in `Plan And Prepare/Actions`).
-Supporting resources in the folder: AIP Logic `Generate Exercise Scenario from Documents`,
-`Delete a scenario path`, and a `[NXG-P] Plan and Prepare Data Browser (WIP)` Workshop.
+### 4.1 Description
+An early prototype. A single page shows one custom widget, *"NATO NextGen Exercise Planner"*, from the
+prototype widget set. A second copy of the widget is defined but not placed. It has no variables or
+events. This is where Plan & Prepare started; it was later replaced by the Plan & Prepare Widgets set.
 
-### 6.3 Shared / other
-* `[NXG-SC] Tactical Task Symbols` — NATO tactical task symbols.
-* `Create PMESII Media` action.
-* `PMESII (depr)` — deprecated first PMESII model (superseded by `[NXG-P] PMESII Domain` and the PMESII sub-project).
+### 4.2 JSON definition
 
-```mermaid
-erDiagram
-  Scenario ||--o{ Phase : has
-  Scenario ||--o{ Inject : has
-  Scenario ||--o{ TrainingObjective : has
-  Scenario ||--o{ TrainingAudience : has
-  Scenario ||--o{ PmesiiDomain : has
-  Scenario ||--o{ ParticipatingNation : has
-  Scenario ||--o{ OpforDefinition : has
-  Scenario ||--o{ Composition : has
-  Scenario ||--o{ Task : has
-  Task ||--o{ Subtask : has
-  TrainingAudience }o--o{ ParticipatingNation : from
-  Phase ||--o| PhaseMapState : renders
-  Phase ||--o{ UnitHierarchy : "standing force"
-  Operation ||--o{ UnitHierarchy : contains
-  UnitHierarchy ||--o{ UnitHierarchyEdge : contains
-  UnitHierarchyEdge }o--|| Unit : parent
-  UnitHierarchyEdge }o--|| Unit : child
-  Unit }o--o| CanonicalAsset : "is a"
-  CanonicalAsset ||--o{ Vbs4Asset : maps
-  CanonicalAsset ||--o{ SwordAsset : maps
-  CanonicalAsset ||--o{ SimworksAsset : maps
+```json
+{
+  "module": { "name": "[NXG] UI Prototype", "rid": "ri.workshop.main.module.593a9fd4-ee57-464c-afdc-2797c24e47e1", "homePageId": "e8aa2bad-6d43-4b9c-955b-8a6b63272ccb" },
+  "variables": [],
+  "widgets": [
+    { "id": "66f9c4a5-da5f-4e33-9b98-6f4b7b5bced6", "label": "NATO NextGen Exercise Planner", "type": "customWidget",
+      "widgetSet": "ri.widgetregistry..widget-set.daece645-c2b5-47c6-9bd2-7d4339c7a84e", "customWidgetId": "widgetId", "version": "0.0.7", "parameters": {}, "events": {} },
+    { "id": "f8dadca4-24b9-46a3-a291-5152de4daec3", "label": "NATO NextGen Exercise Planner (copy)", "type": "customWidget",
+      "widgetSet": "ri.widgetregistry..widget-set.daece645-c2b5-47c6-9bd2-7d4339c7a84e", "customWidgetId": "widgetId", "version": "0.0.7", "placed": false }
+  ],
+  "pages": [
+    { "id": "e8aa2bad-6d43-4b9c-955b-8a6b63272ccb", "name": "Page", "isHome": true, "layout": { "hstack": [ { "flex": true, "content": ["NATO NextGen Exercise Planner"] } ] } }
+  ]
+}
 ```
 
 ---
 
-## 7. Functions & AI logic
+## 5. [NXG] PMESII Workshop
 
-### 7.1 AIP Logic (`4. functions/AIP Logic Functions`)
+**RID:** `ri.workshop.main.module.da53844d-a252-4736-8575-96c7a55fc647`
 
-| Function | Purpose |
-|---|---|
-| `[NXG] Generate Orders` | Turns a commander's intent prompt into orders for every unit of both sides in a phase; produces arrows/objectives on the map. |
-| `[NXG] Generate Phase Draft` / `[NXG] Phase Draft Generator` | Drafts a new phase (description, objectives, timing) from scenario context. |
-| `[NXG] Generate Phase Map` / `[NXG] Phase Map Generator` | Produces a Phase Map State (placements + graphics). |
-| `Generate Exercise Scenario from Documents` (in Ontology folder) | From uploaded EXDIR/OPORD + prompt, drafts the scenario, strategic context, PMESII, objectives, 14-day MEL/MIL and task list. |
-| `Delete a scenario path` | Cleans up a scenario branch of AI-generated content. |
+### 5.1 Description
+A single full-page bidirectional iframe around the **`[NXG-PM] PMESII Frontend`** OSDK app
+(`ri.third-party-applications.main.application.99104577-3f15-4225-ab34-f226e0b842d1`). Page 2 of
+Plan & Prepare embeds the same app. This Workshop lets PMESII be opened on its own, outside a CSP scenario.
 
-Paired "Generate X" vs "X Generator" functions are alternative implementations kept side by side.
+### 5.2 JSON definition
 
-### 7.2 Code repositories (`4. functions/Functions`)
+```json
+{
+  "module": { "name": "[NXG] PMESII Workshop", "rid": "ri.workshop.main.module.da53844d-a252-4736-8575-96c7a55fc647", "homePageId": "c54e98b9-80cc-401e-aa1b-1e9339f3cb0b" },
+  "variables": [],
+  "widgets": [
+    { "id": "06ba49ff-485a-4f0c-8094-acf339d8bf6b", "label": "Iframe 1", "type": "iframe", "mode": "bidirectional",
+      "src": { "devConsoleApp": "ri.third-party-applications.main.application.99104577-3f15-4225-ab34-f226e0b842d1" }, "fields": "<unsupported-in-export>" }
+  ],
+  "pages": [
+    { "id": "c54e98b9-80cc-401e-aa1b-1e9339f3cb0b", "name": "Page", "isHome": true, "layout": { "hstack": [ { "flex": true, "content": ["Iframe 1"] } ] } }
+  ]
+}
+```
 
-| Repository | Type | Purpose |
+---
+
+## 6. Cross-module wiring reference
+
+### 6.1 Ontology objects touched by each module
+
+| Module | Reads | Writes |
 |---|---|---|
-| **`[NXG] Translator`** (this repo) | Python functions | Ontology ORBAT ⇄ JSON ⇄ CSE ORBAT XML; preflight; import/reconcile. See §8. |
-| `[NXG] Ontology Edit Functions` | Functions | Edit functions behind action types (create/update/delete objects and links). |
-| `NXG CSE-Prep Functions` | Functions | Calls into the CSE-Prep service (compositions, run/validate). |
-| `mace mcp` | Functions | Integration with MACE via MCP. |
+| Plan & Prepare | Scenario, Phase (via variables); everything else through custom widgets and Mapplications | Through custom widgets, Mapplications and the AI agent (actions & AIP Logic) |
+| Data Browser | Scenario, Task, Phase, Inject, Training Objective, Phase Map State, PMESII Domain, Training Audience | Scenario (delete; create is wired but not placed) |
+| Map test | Operation (+ Units/Hierarchies/catalogues inside the Translator) | — |
+| UI Prototype | (inside widget) | — |
+| PMESII Workshop | (inside the PMESII frontend) | — |
 
-### 7.3 Python transforms (`4. functions/Python Transforms`)
+### 6.2 Functions and actions referenced directly by Workshop config
 
-| Repository | Purpose |
-|---|---|
-| `[NXG] Canon <-> Sim Matching` | Matches canonical assets to VBS4 / SWORD / SimWorks catalogue entries; builds consolidated catalogues. |
-| `terrain functions` | Terrain tiling/profiles, ASC binary grid, pathfinding & graph analysis datasets. |
+| Module | Reference | Kind | Note |
+|---|---|---|---|
+| Plan & Prepare | `translate_orbat_from_json` v0.3.1 (`ri.function-registry.main.function.9decf95d-…`) | Function variable | Not consumed by any widget |
+| Map test | `generate_vbs4_orbat` v0.1.4 (`ri.function-registry.main.function.ab0dbd4a-…`) | Function variable | Legacy function |
+| Data Browser | `Delete [NXG-P] Scenario` (`ri.actions.main.action-type.bbd0c3b5-…`) | Action button | Placed |
+| Data Browser | `Create [NXG-P] Scenario` (`ri.actions.main.action-type.fc578623-…`) | Action button | Not placed |
+
+All other function and action calls (`Generate Orders`, `Generate Phase Draft/Map`,
+`Generate Exercise Scenario from Documents`, `Generate ORBAT`, `Reconcile Scenario ORBAT`,
+`nxgPreflightOrbatFromPhase`, `nxgTranslateOrbatToXmlFromPhase`, CSE-Prep functions, and so on) are made
+**from inside the custom widgets and the Mapplications app through OSDK**, not from Workshop
+configuration. To trace them, look in the *Plan & Prepare Widgets* repository
+(`ri.stemma.main.repository.f8d57d24-dd89-460c-9c6e-ff079b72e9bc`) and the *[NXG] Mapplications Repo*
+(`ri.stemma.main.repository.9a08332e-522d-460d-b0d6-14d3c2af70b6`).
+
+### 6.3 Embedded external applications
+
+| Embedded app | Embedded in | Where |
+|---|---|---|
+| [NXG] Mapplications `…01d93c11…` | Plan & Prepare | Scenario › Map, ORBAT & Positions, Execute, Analyse (4 iframes, different static paths) |
+| [NXG-PM] PMESII Frontend `…99104577…` | Plan & Prepare (Page 2), PMESII Workshop | Full page |
+
+### 6.4 Custom widget catalogue (Plan & Prepare Widgets set)
+
+| customWidgetId | Pinned version | Used in tab | Parameters | Events |
+|---|---|---|---|---|
+| `planner` | 4.4.0 | Page 1 | `scenarios`, `selectedScenario` | `onOpenScenario`, `onOpenPreparePhase`, `onOpenPmesii` |
+| `customSidebar` | 4.4.0 | Workspace sidebar | `itemIcons`, `itemLabels`, `selectedItem`, `sidebarIcon`, `showCollapseToggle`, `sidebarTitle` | `collapseToggled` |
+| `customHeader` | 4.4.0 | Workspace header | `title`, `buttonLabels`, `buttonIcons` | `buttonClicked` |
+| `scenarioDashboard` | 4.4.0 | Dashboard | `scenario` | `onViewMap`, `onViewTasks`, `onViewPhases`, `onOpenChatbot` |
+| `scenario` | 4.0.79 | Scenario › Overview | `scenario` | — |
+| `phasesWidget` | 4.4.0 | Phases | `scenario`, `selectedPhase` | — |
+| `taskAssignment` | 4.2.0 | Task Management | `scenario` | — |
+| `trainingAudience` | 4.2.0 | Training Audience | `scenario` | — |
+| `composition` | 0.7.9 | Composition | — | — |
+| `pmesiiAnalysis` | 4.2.0 | PMSEII Variables | `scenario` | — |
+| `milMel` | 4.2.0 | MIL & MEL | — | — |
+| `trainingObjectives` | 4.2.0 | Training Objectives | `scenario` | — |
 
 ---
 
-## 8. The Translator (this repository)
-
-### 8.1 Purpose
-The Translator is the bridge between **the ontology's ORBAT** (Units, Hierarchies, Edges, Operation, asset
-catalogues) and **what simulators consume** — a unified ORBAT JSON and the namespaced **CSE ORBAT XML**
-(`https://accenture.com/2026-03/cse/orbat`, with `vbs4:`, `sword:` and `simworks:` extension namespaces).
-It also goes the other way: importing/reconciling an ORBAT JSON into ontology objects.
-
-### 8.2 Published functions (`python-functions/python/python_functions/translate_functions.py`)
-
-| Function | Kind | What it does |
-|---|---|---|
-| `translate_orbat_from_operation(operation_key)` | query | Live ontology → unified ORBAT JSON. Auto-detects required simulators and merges VBS4 / SWORD / SimWorks outputs. Injects VBS4 vehicle nodes under SWORD units where DIS codes match. |
-| `translate_orbat_from_json(ontology_json)` | query | Same, from an OntologyStore-shaped JSON (no live lookups). |
-| `translate_orbat_to_xml_from_operation(operation_key)` | query | Live ontology → CSE ORBAT XML. One extension per unit chosen by `owningSimulator`. |
-| `translate_orbat_to_xml_from_phase(operation_key, phase_key)` — api `nxgTranslateOrbatToXmlFromPhase` | query | Phase-scoped XML: only hierarchies with matching `phaseKey`; each side becomes a sibling root `Organisation`. |
-| `translate_orbat_to_xml_from_json(ontology_json)` | query | JSON → XML. |
-| `validate_orbat_xml(xml_string)` | query | Validates against `validate.xsd` + `vbs4.xsd` + `sword.xsd` + `simworks.xsd`. Returns `"VALID"` or error lines. |
-| `preflight_orbat_from_operation(operation_key)` | query | "Will this ORBAT actually run?" — ERROR/WARNING issues as JSON. |
-| `preflight_orbat_from_phase(operation_key, phase_key)` — api `nxgPreflightOrbatFromPhase` | query | Phase-scoped preflight. |
-| `preflight_orbat_for_composition(operation_key, composition_xml)` | query | Preflight + composition fit (services present, echelon span, unit count). |
-| `import_ontology_orbat_from_json(ontology_json)` | edits `NxgUnit`, `NxgUnitHierarchy`, `NxgUnitHierachyEdge` | Upserts units/hierarchy/edges; hierarchy key derived deterministically from operation key. Add-only. |
-| `import_ontology_orbat_from_gzip_base64(payload)` | edits (same) | Same import with gzip+standard-base64 payload, to dodge Action parameter size/escaping limits (~23 KB for 59 units, ~100 KB for 250). |
-| `reconcile_scenario_orbat(scenario_json)` | edits (same) | Converges a scenario hierarchy on caller-described parentage: upsert + scoped delete of stale edges, applied atomically as one Action. |
-
-> Older registry entries (`generate_vbs4_orbat`, `generate_sword_orbat`, `generate_vbs4_orbat_from_json`,
-> `generate_vbs4_orbat_from_operation`) remain published from earlier versions but are no longer in the
-> current source; consumers should migrate to the `translate_*` functions.
-
-### 8.3 Internal modules (`python-functions/python/src`)
-
-| Module | Responsibility |
-|---|---|
-| `ontology_store.py` | `OntologyStore` — builds the in-memory model from either mock JSON (`OntologyStore(data)`) or live OSDK objects (`from_osdk`). Dataclasses `Unit`, `UnitHierarchyEdge`, `Operation`, `Vbs4Asset`, `SwordAsset`, `SimworksAsset`. |
-| `config_store.py` | `SimulatorConfigStore` — per-unit simulator representation (VBS4 className/roles, SWORD class, SimWorks). Separate from the ontology by design: *ontology = military reality; config = how to represent it*. |
-| `translator.py` | Main VBS4-oriented translation: validate → build tree → translate; tracks **dropped units** with reasons. |
-| `sword_translator.py` | SWORD translation — organisations only, SWORD block on each. |
-| `builders.py` / `sword_builders.py` | Build JSON nodes for organisation / vehicle / human / aircraft (and SimWorks variants). |
-| `xml_translator.py` | Unified ORBAT dict → namespaced CSE XML (`orbat_to_xml`). OSDK-free for local testing. |
-| `xml_validator.py` | XSD validation using `data/validate.xsd` and simulator XSDs. |
-| `orbat_preflight.py` | Completeness checks (no asset, empty className, unfederated unit, non-integer id, placeholder DIS, double counting…). |
-| `composition.py` / `composition_checks.py` | Safe parsing of CSE composition XML (no entity resolution, `defusedxml`) and checks `SERVICE_MISSING`, `ECHELON_OUT_OF_RANGE`, `UNIT_COUNT_OUT_OF_RANGE`. |
-| `representation.py` | What a node *becomes* in the federation: `entity` / `automat` / `subformation` / `aggregate`. **Mirrored in TypeScript** in `[NXG] Mapplications Repo` → `src/shared/orbat/representation.ts`. |
-| `sword_composition.py` | Reads SWORD automat constituents from the catalogue (e.g. battery = CP + 3 gun platoons). **Mirrored in TypeScript** (`swordComposition.ts`). |
-| `simulator_targets.py` | Normalises `owningSimulator` vocabulary and maps simulator → extension slot (VBS4/SimWorks → `UnitExtension`; SWORD → `OrganisationExtension`). |
-| `hierarchy_merge.py` | Verifies hierarchies being merged into one ORBAT describe disjoint forces. |
-| `payload_codec.py` | gzip + base64 encode/decode. |
-| `catalogue_parser.py` | Parses VBS4 class definitions into catalogue rows. |
-| `utils.py` | Stable integer ids, stable edge keys, scenario ids, datetime normalisation. |
-| `data/` | XSDs (`validate`, `vbs4`, `sword`, `simworks`), sample scenario / ORBAT / translated JSON+XML fixtures. |
-
-### 8.4 Key modelling rules encoded here
-
-1. **One extension per unit.** The schema permits one `UnitExtension` per unit, so a unit carries VBS4 *or*
-   SimWorks; organisations carry SWORD. A SimWorks unit that also resolved a canonical VBS4 asset has the
-   second block dropped (logged; see `EMIT_REFERENCE_VBS4`).
-2. **Representation rule** (`representation.py`):
-   vehicle/human/aircraft → `entity`; organisation + SWORD `…|automat` → `automat`;
-   organisation + SWORD `…|unit` → `subformation`; otherwise → `aggregate`.
-   Prevents double-counting (e.g. SWORD spawning an AD battery *and* VBS4 spawning its vehicles).
-3. **Phases hold full standing forces**, not diffs; lineage is `NxgPhase.basedOnPhaseId`.
-4. **Simulator fields live on `NxgUnit`** (since 2026-06; `NxgSimulatorConfig` removed). VBS4 details are
-   resolved from `NxgVbs4AssetCatalogue` via `simulatorIdentifierCode`.
-5. **`owningSimulator` must normalise** to the XSD enumeration
-   (`vbs4, simworks, ascot7, jtls-go, sword, mace`); `"none"` is reported, not exported.
-6. **Validity ≠ usefulness.** Always run preflight before export — a schema-valid document can spawn nothing.
-
-### 8.5 Typical call sequence
+## 7. A user's journey through the modules
 
 ```mermaid
 sequenceDiagram
-  participant UI as Mapplications / Workshop
-  participant ACT as Action
-  participant TR as Translator
-  participant ONT as Ontology
-  participant CSE as CSE-Prep / CSE
-  UI->>ACT: Publish to ORBAT Manager (gzip+b64 JSON)
-  ACT->>TR: import_ontology_orbat_from_gzip_base64 / reconcile_scenario_orbat
-  TR-->>ONT: Upsert Units, Hierarchy, Edges (one transaction)
-  UI->>TR: nxgPreflightOrbatFromPhase(op, phase)
-  TR->>ONT: load hierarchies for phaseKey
-  TR-->>UI: {summary, errors, warnings, issues[]}
-  UI->>TR: preflight_orbat_for_composition(op, composition.xml)
-  UI->>TR: nxgTranslateOrbatToXmlFromPhase(op, phase)
-  TR-->>UI: orbat.xml
-  UI->>TR: validate_orbat_xml(orbat.xml)
-  UI->>CSE: cse_run_composition_simple(composition.xml, orbat.xml)
+  actor U as Planner (user)
+  participant PL as Planner widget (Page 1)
+  participant WS as Scenario workspace (Page)
+  participant MA as Mapplications iframe
+  participant ONT as Ontology / AIP Logic / Translator
+  U->>PL: Pick scenario (or create from documents)
+  PL->>ONT: (create path) Generate Exercise Scenario from Documents
+  PL-->>WS: onOpenScenario → [NXG-P] Selected Scenario set
+  U->>WS: Dashboard → View Map
+  WS->>MA: Scenario › Map tab (iframe)
+  U->>MA: Add phase, type intent, Generate Orders / End State
+  MA->>ONT: AIP Logic + Commander compute module → Phase Map State
+  U->>WS: Composition tab
+  WS->>ONT: composition widget → Publish to ORBAT Manager
+  ONT->>ONT: Generate ORBAT / Reconcile Scenario ORBAT (Translator)
+  U->>WS: ORBAT & Positions / Execute tabs (Mapplications)
+  MA->>ONT: nxgPreflightOrbatFromPhase → nxgTranslateOrbatToXmlFromPhase → CSE
+  U->>WS: AI Assistant tab → Operations Chatbot
 ```
 
-### 8.6 Tests & tooling
-`python-functions/python/tests/` covers representation, SWORD composition, composition checks, preflight /
-dropped units, payload codec, hierarchy merge and multiple roots, reconcile property names, XML validity, a
-golden SWORD ORBAT (`tests/golden/sworbat.xml`) and a Baltic Shield Phase-1 ORBAT.
-`python-functions/python/tools/build_baltic_phase1.py` builds the Baltic Shield Phase-1 fixture.
-Pure modules in `src/` deliberately avoid OSDK imports so they can be tested without a Foundry environment.
-
-**Cross-language contract:** when changing `representation.py` or `sword_composition.py`, make the same
-change in `[NXG] Mapplications Repo` (`src/shared/orbat/*.ts`) and keep the paired test tables aligned.
-
 ---
 
-## 9. Applications
+## 8. Suggested clean-up (summary)
 
-### 9.1 Plan & Prepare (`3. Applications/Plan & Prepare`)
-* **Plan & Prepare Workshop** — primary UI: Command Overview, Create-exercise wizard (CAX/wargame/plan/analysis;
-  from scratch, template, or *document + prompt*), scenario dashboard, phases, tasks, injects, objectives.
-* **Plan & Prepare Widgets** (+ repository) — custom React widgets embedded in the Workshop.
-
-### 9.2 Mapplications (`3. Applications/Mapplications`)
-* **`[NXG] Mapplications`** (OSDK React app) + **`[NXG] Mapplications Repo`** — the map-centric planner:
-  APP-6(D) symbology, phase timeline (draft → review → approved), per-phase panels (orders, objectives,
-  PMESII, MEL/MIL, commander), unit placement, Composition tab with *Publish to ORBAT Manager*, ORBAT Manager
-  tree with unit detail (echelon, nation, symbol code, canonical asset). Shares ORBAT rules with the Translator.
-* **`[NXG] BGWS LLM Commanders`** — LLM "commanders" per side that drive the end-state war-game.
-* **`[BGWS] Events`** — event log produced by war-game resolution.
-* **`[NXG] Map test Workshop`** — map test harness.
-
-### 9.3 Prototyping
-`[NXG] UI Prototype` Workshop + widget set + repository — early UI exploration.
-
----
-
-## 10. Connections, compute modules & simulator federation
-
-| Resource | Type | Role |
-|---|---|---|
-| `gRPC` | Source | gRPC endpoint (CSE-Prep service interface). |
-| `SMB - Test` | Source | SMB file-share access for simulator files. |
-| `[NXG] Foundry Connection` | Source | Foundry-to-Foundry / API connectivity for compute modules. |
-| `[NXG] HLA Pitch` | Source | Pitch RTI for HLA federation. |
-| `[NXG] MACE MCP` / `[NXG] MACE MCP Server` | Sources | MACE integration via Model Context Protocol. |
-| `[NXG] Commander` | Compute module | Hosts AI commander / war-game resolution logic. |
-| `[NXG] HLA Streamer` | Compute module | Streams HLA federation state back into Foundry (Compute Module Streams). |
-| `Artifacts (container images)` | Folder | Container images for compute modules (CSE-Prep, HLA bridge). |
-
-The federation target is **CSE**, which takes a `composition.xml` (which simulators/services, scale, echelon
-span) and an `orbat.xml` (from the Translator) and instantiates forces across VBS4 (platform level),
-SWORD (aggregate/automat level) and SimWorks, with HLA carrying runtime state.
-
----
-
-## 11. AI agents & MCP integrations
-* **`[NXG] Operations Chatbot`** (AIP Agent) with configuration notes in
-  *`[NXG] Operations Chatbot — Agent Configuration`* and code in `Agents Repo`.
-* MCP servers (MACE, PMESII) expose CSP capabilities as tools to agents and external clients.
-* The gzip/base64 import path in the Translator exists partly for agent/tool callers who struggle with large
-  escaped JSON parameters.
-
----
-
-## 12. PMESII sub-project
-A sibling area to CSP focused on deep operational-environment analysis (Political, Military, Economic, Social,
-Information, Infrastructure — and Physical Terrain/Time):
-
-* **Ontology:** `[NXG-PM] PMESII Stakeholder`.
-* **Applications:** `[NXG-PM] PMESII Frontend` (OSDK app) + code workspace, `[NXG] PMESII Workshop`.
-* **Functions/AI:** `PMESII Analysis Agent` (AIP Logic), `PMESII Stakeholder Discovery Agent`,
-  `SchellingIQ_Agent` + `TypeScript_SchellingIQ`, `NXG PMESII MCP Functions`, `[NXG] PMESII MCP Server`.
-
-Within CSP, PMESII appears as `[NXG-P] PMESII Domain` on each scenario. The roadmap (§15) calls for unifying
-these into a full PMESII-PT model feeding inject generation.
-
----
-
-## 13. How it all fits together — key flows
-
-### Flow A — Stand up a CAX from documents
-1. User opens Plan & Prepare → *New CAX Exercise* → *From document + prompt*.
-2. PDFs go to the **Plan and Prepare Documents** media set.
-3. `Generate Exercise Scenario from Documents` drafts Scenario, PMESII Domains, Training Objectives/Audiences,
-   Phases, Injects (14-day MEL/MIL) and Tasks/Subtasks with suggested owners/approvers, via `[NXG-P]` actions.
-4. Scenario is flagged `aiGenerated = true`, status `draft`, ready for review.
-
-### Flow B — Plan and resolve a phase
-1. In Mapplications, add a phase *based on* a previous one (inherits its end state; `basedOnPhaseId`).
-2. Enter commander's intent → `Generate Orders` writes orders for all units; graphics land in Phase Map State.
-3. *Generate End State* → BGWS LLM Commanders / `[NXG] Commander` resolve positions, engagements and outcomes,
-   logging to `[BGWS] Events`; the end state becomes the next phase's starting point.
-
-### Flow C — From plan to simulation
-1. Composition tab → *Publish to ORBAT Manager*: units split by side; AI builds a structured ORBAT per side.
-2. Payload is gzip+base64 encoded → `Generate ORBAT (compressed payload)` / `Reconcile Scenario ORBAT`
-   → Translator writes Units, Hierarchies and Edges atomically, linked to the Phase.
-3. Units resolve to **Canonical Assets**, which map to VBS4/SWORD/SimWorks models (Canon ↔ Sim Matching).
-4. `nxgPreflightOrbatFromPhase` + `preflight_orbat_for_composition` surface blockers.
-5. `nxgTranslateOrbatToXmlFromPhase` → `validate_orbat_xml` → submit to CSE with the composition.
-6. HLA Streamer brings runtime state back into Foundry.
-
-### Flow D — Reference data refresh
-Raw simulator catalogues → `Canon <-> Sim Matching` → consolidated catalogues → catalogue object types →
-used by the Translator's `OntologyStore` to resolve VBS4 classNames, SWORD automats and SimWorks classes.
-
----
-
-## 14. Live data snapshot
-(as of 2026-11-01)
-
-| Item | Count | Note |
-|---|---|---|
-| `NxgUnit` objects (live) | **903** | Backing dataset has only 78 rows — the vast majority are created via actions/AI. |
-| `NxgPhase` objects | 74 | |
-| Canonical Asset rows | 1,395 | |
-| VBS4 Asset Catalogue rows | 9,828 | |
-| Scenario dataset rows | 3 | More scenarios exist live through edits. |
-
-Scenarios present include **IRON FORGE 26** (Sorvian Peninsula Crisis — main demo, active, 5 nations
-GBR/DEU/POL/NOR/NLD), **NEXGEN 26** (Defence of Tallinn, GBR/EST), **BALTIC SHIELD / NORTHERN SENTINEL**
-(NATO Eastern Flank reinforcement) and **CORAL SENTRY 26** (maritime, Azure Strait).
-
----
-
-## 15. Roadmap
-From *CSP Documentation: Improvement Roadmap*:
-
-1. **External ORBAT ingestion** — LOGFAS, national C2, MSDL/C-BML, previous exercise files, CSV.
-   The Translator's `import_*` / `reconcile_*` functions and canonical asset resolution are the natural landing point.
-2. **PMESII-PT integration** — replace the deprecated key/value model with a structured model driving inject generation.
-3. **Exercise design branching** — planning branches (compare/merge) and execution decision trees
-   (see *Feature Design: Sub-Phases & Branching*).
-4. **Personnel & staff object** — roles, qualifications, shifts, response cells; inject ownership and notifications.
-5. **Weather & METOC** — weather timeline, impact rules, HLA sync to simulators, historical patterns.
-
-Translator-specific follow-ups noted in source:
-* Persist `representation` as a stored `NxgUnit` property (the current function supplies default + backfill).
-* "Export projection" (Phase 3): project automats down to platforms for VBS4-only runs, using `sword_composition`.
-* Map SWORD `majorEquipmentType` to DIS codes (requires ingesting SWORD `component.xml`).
-
----
-
-## 16. Known issues & housekeeping
-* **`CSP Documentation: Project Structure Guide` notepad is stale** — several resource links point to RIDs
-  that don't exist and the Plan & Prepare type list predates Composition / OPFOR Definition / Participating
-  Nation / Subtask. Prefer this document (and §18) until it is refreshed.
-* **Duplicate draft scenarios** — repeated AI generation has produced multiple `IRON FORGE 26` and
-  `NORTHERN SENTINEL` drafts; consider de-duplication or making generation idempotent.
-* **Legacy artefacts** — `Units (Legacy)`, `Unit Hierarchy Edges (Legacy)`, `[NXG] Plan and Prepare Object
-  Backing Datasource (DEPRECATED)`, `[NXG] Simulator Config`, `PMESII (depr)`, `5. Connections/_depr`.
-* **Misfiled resources** — an AIP Logic function, a solution-design diagram and a Workshop live under
-  `Plan And Prepare/Object Types`.
-* **Stale published functions** — `generate_vbs4_orbat*` / `generate_sword_orbat` remain in the registry.
-* **Spelling** — `NxgUnitHierachyEdge` (missing "r") is the real API name; don't "fix" it in code.
-* This repo is flagged as needing a template upgrade.
-
----
-
-## 17. Glossary
-
-| Term | Meaning |
-|---|---|
-| **CAX** | Computer-Assisted Exercise — staff training driven by constructive simulation. |
-| **ORBAT** | Order of Battle — hierarchical force structure. |
-| **MEL/MIL** | Master Events List / Master Incidents List — scripted injects over the exercise timeline. |
-| **Inject** | A scripted event delivered to the training audience. |
-| **EXCON / DISTAFF** | Exercise control / directing staff. |
-| **PMESII-PT** | Political, Military, Economic, Social, Information, Infrastructure — Physical Terrain, Time. |
-| **OPFOR / BLUFOR** | Opposing / friendly forces. |
-| **APP-6(D)** | NATO joint military symbology standard. |
-| **DIS** | Distributed Interactive Simulation (IEEE 1278) — includes entity type enumeration codes. |
-| **HLA** | High Level Architecture (IEEE 1516) — simulation federation standard; Pitch is the RTI. |
-| **CSE** | Constructive Simulation Environment — federates simulators from a composition + ORBAT. |
-| **Composition** | CSE document declaring services/simulators, unit scale and echelon span. |
-| **VBS4** | Bohemia Interactive virtual (platform-level) simulator. |
-| **SWORD** | MASA constructive (aggregate) simulator; *automats* are pre-composed formations, *pions* their units. |
-| **SimWorks** | Simulator integrated via its own asset catalogue/classification. |
-| **Canonical Asset** | Simulator-agnostic asset definition bridging to each simulator's model. |
-| **MSDL / C-BML** | Military Scenario Definition Language / Coalition Battle Management Language. |
-| **LOGFAS** | NATO Logistics Functional Area Services (force planning). |
-
----
-
-## 18. Resource index
-
-### Folders
-| Name | RID |
-|---|---|
-| Project root | `ri.compass.main.folder.3a79a425-13e7-4cc4-86d8-77d64b8c7d22` |
-| CSP | `ri.compass.main.folder.0ebda24e-bfe2-44bd-8d20-f6134f0852eb` |
-| PMESII | `ri.compass.main.folder.67c0f709-e54e-4ebe-996b-ce410c91dc4d` |
-
-### Ontology — ORBAT
-| Name | RID |
-|---|---|
-| Unit | `ri.ontology.main.object-type.e6d24345-6ee1-4e5a-bba8-7b8c279ee1c0` |
-| Unit Hierarchy | `ri.ontology.main.object-type.d2d1a007-c315-4a1d-be2e-62e4d59a9e14` |
-| Unit Hierarchy Edge | `ri.ontology.main.object-type.ba721810-9fc8-4f18-abd3-f277eddc74ba` |
-| Operation | `ri.ontology.main.object-type.97d9094c-203f-417f-82e1-d7935b594812` |
-| Canonical Asset | `ri.ontology.main.object-type.994dced7-d788-4950-82af-268786ee509f` |
-| VBS4 Asset Catalogue | `ri.ontology.main.object-type.0a5b2b83-07d0-4cf2-a54a-574d16eae99a` |
-| SWORD Asset Catalogue | `ri.ontology.main.object-type.c86ababd-90e9-4b0e-bfbe-a6b7ea278f61` |
-| SimWorks Asset Catalogue | `ri.ontology.main.object-type.6148fe80-6c2b-437a-b526-c2f3c3fe811a` |
-| Template ORBAT Graph | `ri.ontology.main.object-type.065e80d8-7dfb-48d1-8cca-29cab794c3fc` |
-| Tactical Graphic Symbol | `ri.ontology.main.object-type.3c9d0baf-41fb-4b09-87b8-36180d73b526` |
-| Phase – Unit Hierarchy (link) | `ri.ontology.main.relation.9561c92b-f98e-400a-a88c-d8c05e27993b` |
-| Generate ORBAT (action) | `ri.actions.main.action-type.040064b3-1656-4286-9cdf-913ab3c82350` |
-| Generate ORBAT – compressed (action) | `ri.actions.main.action-type.14582785-8886-40c5-a3ea-ec3fc7f98670` |
-| Reconcile Scenario ORBAT (action) | `ri.actions.main.action-type.406fa6da-a2b5-4199-9466-8584e39b892e` |
-| Validate Phase ORBAT with CSE (action) | `ri.actions.main.action-type.3cac65e9-20bb-469b-a236-5796f8c2e286` |
-
-### Ontology — Plan & Prepare
-| Name | RID |
-|---|---|
-| Scenario | `ri.ontology.main.object-type.5081c7b5-798f-4a28-b0dc-6236793d736b` |
-| Phase | `ri.ontology.main.object-type.3833c4ca-aff8-4878-8120-c3b8b36ca257` |
-| Phase Map State | `ri.ontology.main.object-type.fba601eb-2427-4024-999b-b9fb2d915a3b` |
-| Inject | `ri.ontology.main.object-type.3692ee06-2e3e-45dd-83ae-4e6039f88949` |
-| Task | `ri.ontology.main.object-type.88f1151f-f825-4783-bb86-5ec06bb8601e` |
-| Subtask | `ri.ontology.main.object-type.e3e7e139-6e9f-4b11-bb03-afdfb38a9929` |
-| Training Audience | `ri.ontology.main.object-type.815626fe-6a08-4e91-abb8-e77a73fdd402` |
-| Training Objective | `ri.ontology.main.object-type.b5dff895-464d-4ba0-9d54-94f1e561d055` |
-| PMESII Domain | `ri.ontology.main.object-type.4e10c53b-af67-4c3b-9b28-f0f44ce2b921` |
-| Participating Nation | `ri.ontology.main.object-type.308b3626-ea0c-44de-a112-668ee2fcd38b` |
-| OPFOR Definition | `ri.ontology.main.object-type.b3b2d99e-f07b-4917-a607-651e630179fe` |
-| Composition | `ri.ontology.main.object-type.38069efa-c1b1-49ae-8316-14daef8e545b` |
-
-### Functions, logic & repositories
-| Name | RID |
-|---|---|
-| [NXG] Translator (this repo) | `ri.stemma.main.repository.e9b29f7a-7caa-4118-93d6-60234637ceb7` |
-| [NXG] Ontology Edit Functions | `ri.stemma.main.repository.874e7971-cfc7-4a7e-833a-82bd4a6a6fd5` |
-| NXG CSE-Prep Functions | `ri.stemma.main.repository.6d5479c9-798c-4a04-a51b-42a49bf19f25` |
-| mace mcp | `ri.stemma.main.repository.523917c5-3e4b-400a-83ac-8eee5a65a18c` |
-| [NXG] Canon <-> Sim Matching | `ri.stemma.main.repository.e1807183-f068-4128-95c2-8bcd440a80d6` |
-| terrain functions | `ri.stemma.main.repository.5e4b8904-792c-4dd2-a31e-6126ac88bf9b` |
-| [NXG] Generate Orders | `ri.eddie.main.logic.25c820b2-9f5f-47b7-8632-1470ce452de4` |
-| [NXG] Generate Phase Draft | `ri.eddie.main.logic.5105c875-6859-4b81-8671-91fefd0902fa` |
-| [NXG] Generate Phase Map | `ri.eddie.main.logic.479270bf-f816-40ad-b496-057a80f5cc52` |
-| [NXG] Phase Draft Generator | `ri.eddie.main.logic.f427cd71-cc2b-44f9-abc6-647e274fd8d5` |
-| [NXG] Phase Map Generator | `ri.eddie.main.logic.60186fcf-90f9-4bb2-bd0c-c807c597aab0` |
-| Generate Exercise Scenario from Documents | `ri.eddie.main.logic.c168cc2a-10be-4451-88c7-7e60adcba812` |
-
-### Applications
-| Name | RID |
-|---|---|
-| Plan & Prepare Workshop | `ri.workshop.main.module.8bfbb4f7-c40b-46c7-9bab-0def4c809f80` |
-| Plan & Prepare Widgets repository | `ri.stemma.main.repository.f8d57d24-dd89-460c-9c6e-ff079b72e9bc` |
-| [NXG] Mapplications (app) | `ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581` |
-| [NXG] Mapplications Repo | `ri.stemma.main.repository.9a08332e-522d-460d-b0d6-14d3c2af70b6` |
-| [NXG] BGWS LLM Commanders | `ri.stemma.main.repository.e127eca1-e9c8-4342-813b-8d787411c0d4` |
-| [NXG] Operations Chatbot | `ri.aip-agents..agent.2ec32cc8-58c9-46ab-88e3-a61f4830d778` |
-
-### Connections & compute
-| Name | RID |
-|---|---|
-| [NXG] Commander | `ri.foundry.main.deployed-app.7a13ba1c-718b-4bfc-a039-acffdf870d21` |
-| [NXG] HLA Streamer | `ri.foundry.main.deployed-app.b4c28899-7810-4925-9558-4182cb37fdae` |
-| [NXG] HLA Pitch | `ri.magritte..source.fdca4e4f-90b3-4a7e-ac0b-a327703f39a3` |
-| gRPC | `ri.magritte..source.674a5d62-8fbf-4e0e-b84f-cca46529f5f2` |
-| [NXG] MACE MCP Server | `ri.magritte..source.e8997c8e-71a1-4701-afac-76b19deaea57` |
-
-### Documentation
-| Name | RID |
-|---|---|
-| Demo Storyline v2 | `ri.notepad.main.notepad.47ba6191-65ac-4645-8af5-5840396c7b22` |
-| Improvement Roadmap | `ri.notepad.main.notepad.8e8f52c5-1a1c-4488-b788-e9752602b749` |
-| Project Structure Guide (stale) | `ri.notepad.main.notepad.6dd6b316-4580-4cd8-8671-fb5899a3b469` |
-| [NXG] Ontology Overview | `ri.notepad.main.notepad.92e3d368-1059-4013-9622-bcc072127d51` |
-| Feature Design: Sub-Phases & Branching | `ri.notepad.main.notepad.aebe8e33-9af1-42f9-9e26-76f0679fb114` |
-| [NXG] Internal Task Tracker | `ri.notepad.main.notepad.36eb7d0d-6b89-4c28-a55d-b7abdfbf5638` |
+1. Bind `[NXG-P] Selected Phase` to `[NXG-P] Selected Scenario`, or remove the orphan `Selected Scenario`
+   variable. Then check that each widget receives the object type it expects.
+2. Fix the "PMSEII" typo in both the sidebar list and the tab name. Then either add *Exercise Area* to the
+   sidebar or remove the tab.
+3. Remove the unused variables and widgets in Plan & Prepare (§1.5 item 4).
+4. Bring the Plan & Prepare widget versions in line, especially `composition` (0.7.9) and `scenario` (4.0.79).
+5. Repoint the Map test Workshop from the legacy `generate_vbs4_orbat` to `translate_*` or `preflight_*` functions.
+6. Data Browser: label the buttons, bind the delete action to the selected row, add the missing `[NXG-P]`
+   types, and move it to `3. Applications`.
