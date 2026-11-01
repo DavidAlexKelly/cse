@@ -7,9 +7,9 @@ Planner) and watching it fight (HLA Map) or reviewing it (Analysis).
 |---|---|---|
 | Phase ORBAT | Units per side in `hier-{scenario}--{phase}` | Ontology read (`loadPhaseForest`) |
 | Preflight | Will every unit actually spawn? This **must** have no errors before launch. | `nxgPreflightOrbatFromPhase` |
-| CSE validation | CSE's own server-side schema check. Advised, not required. | `nxgTranslateOrbatToXmlFromPhase` → `cseAddProject` → `cseValidateOrbat` |
+| CSE validation | CSE's own server-side schema check. Advised, not required. | `nxgTranslateOrbatToXmlFromPhase` → `nxgCseAddProject` → `nxgCseValidateOrbat` |
 | Launch: export | Phase ORBAT to CSE ORBAT XML | `nxgTranslateOrbatToXmlFromPhase` |
-| Launch: project | Create the CSE project with the chosen composition. An existing project is reused. | `cseAddProject` |
+| Launch: project | Create the CSE project with the chosen composition. An existing project is reused. | `nxgCseAddProject` |
 | Launch: load | Add the ORBAT to the project | `nxgCseAddOrbatToProject` |
 | Launch: publish | Deploy the project; the simulators and the federation come up | `nxgCsePublishProject` |
 | Launch: start | Start simulation time | `hlaSimStart` (via the HLA Map bridge client) |
@@ -40,9 +40,12 @@ When a function is reachable by neither route, the error says so and names the f
 Developer Console application's resources, then regenerate and install the SDK:
 
 - `nxgPreflightOrbatFromPhase`, `nxgTranslateOrbatToXmlFromPhase` (Translator)
-- `nxgCseGetCompositions`, `nxgCseAddOrbatToProject`, `nxgCsePublishProject` (CSE-Prep)
+- `nxgCseGetCompositions`, `nxgCseAddProject`, `nxgCseValidateOrbat`, `nxgCseAddOrbatToProject`,
+  `nxgCsePublishProject` (CSE-Prep)
 
-`cseAddProject`, `cseValidateOrbat` and `hlaSimStart` are already in the SDK.
+`hlaSimStart` is already in the SDK. Add `nxgCseAddProject` and `nxgCseValidateOrbat` too.
+The SDK's older `cseAddProject` / `cseValidateOrbat` are a different function set (camelCase
+parameters, a JSON payload) and are deliberately not used here.
 
 ## Workshop wiring (Plan & Prepare)
 

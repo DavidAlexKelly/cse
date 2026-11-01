@@ -41,12 +41,17 @@ export interface Runner {
   launchStep(step: LaunchStepId, target: ExecuteTarget): Promise<string>;
 }
 
+// Only the CSE-Prep functions (NXG-CSE-Prep-Functions, all `nxgCse*`, snake_case
+// parameters, CSE ORBAT XML). The SDK also exports an OLDER `cseAddProject` /
+// `cseValidateOrbat` pair from another function set, with camelCase parameters
+// (projectName, orbatContent) and a JSON payload — calling those with these
+// arguments fails, so they are deliberately not alternatives here.
 const Q = {
   preflight: ["nxgPreflightOrbatFromPhase", "preflightOrbatFromPhase"],
   translate: ["nxgTranslateOrbatToXmlFromPhase", "translateOrbatToXmlFromPhase"],
   compositions: ["nxgCseGetCompositions", "cseGetCompositions"],
-  addProject: ["cseAddProject", "nxgCseAddProject"],
-  validateOrbat: ["cseValidateOrbat", "nxgCseValidateOrbat"],
+  addProject: ["nxgCseAddProject"],
+  validateOrbat: ["nxgCseValidateOrbat"],
   addOrbat: ["nxgCseAddOrbatToProject", "cseAddOrbatToProject"],
   publish: ["nxgCsePublishProject", "csePublishProject"],
 };

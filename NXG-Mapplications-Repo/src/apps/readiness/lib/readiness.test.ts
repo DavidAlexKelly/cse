@@ -44,7 +44,7 @@ describe("requirements", () => {
       "nxgTranslateOrbatToXmlFromPhase",
       "nxgCseAddOrbatToProject",
       "nxgCsePublishProject",
-      "cseAddProject",
+      "nxgCseAddProject",
     ])
       expect(names).toContain(n);
   });
