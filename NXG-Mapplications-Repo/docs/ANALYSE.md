@@ -157,11 +157,11 @@ resources. The app already requests `api:use-ontologies-write`.
 Highest priority first:
 
 1. The phase picked in the **PLAN** selector in the top bar.
-2. **The phase the run was launched for.** Execute records each launch (scenario, phase, time) in the
-   browser, and a run whose first track follows a launch by up to 15 minutes opens on that phase
-   (`shared/lib/launchRecords.ts`).
-   - The record is per browser. Recording runs in the ontology needs a run object or run fields on
-     `NxgPhase`, which don't exist yet.
+2. **The phase the run was launched for.** Execute records every launch as an `NxgCseLaunch`
+   (see `EXECUTE.md`). A run whose first track follows a successful, non-demo launch by up to 15
+   minutes opens on that phase (`shared/lib/launchRecords.ts`, `launchStore.ts`).
+   - Records from the ontology are merged over this browser's own; until the object type exists,
+     only launches made from this browser are known.
 3. **Workshop's `selectedPhase`.**
 4. The scenario's first phase.
 

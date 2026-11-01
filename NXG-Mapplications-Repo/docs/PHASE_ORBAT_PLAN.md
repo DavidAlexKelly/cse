@@ -53,7 +53,8 @@ lives in another phase or the legacy scenario-wide hierarchy, and **missing** if
 | `shared/orbat/skeleton.ts` | Breadth-first generator; `autoOrbatCapFor` |
 | `shared/orbat/serialise.ts` | Ring layout, `keyFor`, `omitRootUnit`, `maxUnits` |
 | `shared/orbat/phasePayload.ts` | Builds every reconcile payload (pure, tested) |
-| `shared/orbat/phaseOrbat.ts` | OSDK reads/writes: resolve hierarchy, load forest, place, generate, re-parent, remove, move, save, Define flow, debounced reconcile |
+| `shared/orbat/phaseOrbat.ts` | OSDK reads/writes: resolve hierarchy, load forest, place, generate, re-parent, remove, move, save, Define flow, debounced reconcile, `saveTreeToPhase` (ORBAT Manager) |
+| `shared/orbat/usePhasePreflight.ts` | The Translator preflight for a phase — shown in the planner, ORBAT Manager and Execute |
 | `apps/scenarioPlanner/hooks/usePhaseOrbat.ts` | Loads and indexes a phase forest; optimistic moves; drops stale loads |
 | `apps/scenarioPlanner/map/orbatLevelLayer.ts` | One GeoJSON symbol layer for the frontier, with drag |
 | `components/OrbatLevelControl`, `PlaceUnitDialog`, `OrbatNodeMenu` | UI |
@@ -63,7 +64,7 @@ lives in another phase or the legacy scenario-wide hierarchy, and **missing** if
 | Write | Action | Notes |
 |---|---|---|
 | Create the phase hierarchy | `createNxgUnitHierarchy` (with `phaseKey`) | Done once, on first use |
-| Place, generate, re-parent, save, Define, parentage | `nxgOReconcileScenarioOrbat` | One transaction per call; the payload carries `unitHierarchy.phaseKey` |
+| Place, generate, re-parent, save, Define, parentage, ORBAT Manager save | `nxgOReconcileScenarioOrbat` | One transaction per call; the payload carries `unitHierarchy.phaseKey`. Fields left out of a unit row (position, DIS) are not touched |
 | Move | `updateNxgUnit` batches of up to 500 | Writes `primaryKey`, `latitude` and `longitude` only |
 | Remove a unit or subtree | `deleteNxgUnit` batches with `cascadeEdges` | Phase-native units only |
 
@@ -82,7 +83,8 @@ its parent, and a derived parent from inside a unit's own subtree is refused.
 | 5 | Level control and GeoJSON ORBAT layer; dragging moves the subtree | ✅ |
 | 6 | Right-click a level unit: Generate beneath, Change parent, Open in ORBAT Manager, **Remove** | ✅ |
 | 7 | Orders on tree nodes with inheritance guards; **a new phase inherits its parent phase's whole ORBAT** (cloned, each placed unit pinned to where it ended) | ✅ |
-| 8 | Remove legacy scenario-wide paths and the palette drag-drop; delete `hier-scenario_operation_baltic_shield` | ⬜ **After the demo.** Legacy code is still present but no longer called by the planner. |
+| 8 | Remove legacy scenario-wide paths | ✅ Scenario-wide writes removed (`ORBAT_PIPELINE_PLAN.md` 3.7). Still to do by hand: delete the old `hier-scenario_operation_baltic_shield` hierarchy in Foundry; the palette drag-drop remains. |
+| 9 | ORBAT Manager edits the phase ORBAT in the ontology (load, save, map positions) | ✅ `ORBAT_PIPELINE_PLAN.md` 3.4–3.6 |
 
 ### Differences from the original `per-phase-orbat` branch notes
 
@@ -100,9 +102,10 @@ its parent, and a derived parent from inside a unit's own subtree is refused.
 
 ## To deploy (Foundry)
 
-1. **Translator.** Publish the new version and point `[NXG-O] Reconcile Scenario Orbat` at it, so
-   reconciles stamp `phaseKey` themselves. Phase ORBATs work without this step, because the hierarchy
-   is created with `phaseKey`, but the action should be current.
+1. **Translator.** Publish the new version and point `[NXG-O] Reconcile Scenario Orbat`,
+   `nxgTranslateOrbatToXmlFromPhase` and `nxgPreflightOrbatFromPhase` at it. **Required** for ORBAT
+   Manager's save: it relies on the reconcile leaving out-of-payload fields (positions) untouched,
+   which only the new version does. Publish `nxgPreflightOrbatFromPhaseForComposition` too.
 2. **Ontology SDK.** Make sure the Mapplications SDK version exposes `phaseKey` on
    `createNxgUnitHierarchy`. The edit function already accepts it. Regenerate the SDK if the action
    type was updated after the pinned SDK version.

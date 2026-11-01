@@ -25,19 +25,25 @@ that phase only.
 
 Do these in order. Each item names the doc with the details.
 
-1. **Deploy the Translator** and point `[NXG-O] Reconcile Scenario Orbat` at the new version
-   (`docs/PHASE_ORBAT_PLAN.md`, "To deploy").
+1. **Deploy the Translator** and point `[NXG-O] Reconcile Scenario Orbat`, the phase export and
+   both preflights at the new version (`docs/PHASE_ORBAT_PLAN.md`, "To deploy"). ORBAT Manager's
+   save needs it.
 2. **Developer Console application** — add every function and action the readiness screen reports
    as "not found" or "REST fallback", then regenerate and install the SDK (`docs/EXECUTE.md`).
 3. **Optional: `NxgObjectiveAssessment`** — create the object type and its three actions so analyst
    ratings are shared (`docs/ANALYSE.md`). Without it, ratings stay on the analyst's device.
-4. **Release Mapplications** from this branch.
-5. **Workshop, Plan & Prepare module:**
+4. **Recommended: `NxgCseLaunch`** — create the object type and its two actions so every launch is
+   recorded and Analysis knows which phase each run executed, on any machine (`docs/EXECUTE.md`).
+5. **Release Mapplications** from this branch.
+6. **Workshop, Plan & Prepare module:**
    - Fix the Selected Phase binding (`WORKSHOP.md` §1.5, item 1).
    - Iframe 6 (Execute) → `/execute`; Iframe 7 (Analyse) → `/analysis`. Map `scenario`,
      `selectedPhase` and `mockDemo` on both (`docs/EXECUTE.md`, `docs/ANALYSE.md`).
    - Wire `mockDemo` on Execute, HLA Map and Analysis to **one** boolean (rename `[b] Mock Data?` to
      "Demo mode"), so demo mode switches the whole flow at once.
+   - ORBAT Manager (Iframe 2): wire `phase` to `[NXG-P] Selected Phase`, so it opens on the phase's
+     ORBAT. **Unwire** `orbatJson` and `translatedInputOrbat` and remove the translation function
+     they fed (`Iframe 2 undefined2`): ORBAT Manager no longer uses them.
 
 ## 3. Rehearsal
 

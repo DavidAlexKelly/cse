@@ -7,6 +7,36 @@ path that is correct end to end. This covers Mapplications, the Translator and t
 problems are listed at the end so they are not lost. Where the plan needs something from CSE, it
 uses the CSE-Prep functions as they are today.
 
+## Status
+
+**Implemented** on `claude/cool-fermat-7pvzpd`: every item in workstreams 1–6. CSE-Prep is unchanged.
+Verified by tests only: Translator 184 passed (a fake Foundry client drives the entry points);
+Mapplications 534 passed, plus lint and a type check against stubbed SDK types. Nothing has run
+against Foundry yet.
+
+**To switch it on in Foundry:**
+1. Publish the Translator and point the reconcile action, both phase preflights and the phase export
+   at it. ORBAT Manager's save depends on the new partial-update reconcile (2.1).
+2. Create `NxgCseLaunch` and its two actions (`EXECUTE.md`), and add them to the Developer
+   Console app with `nxgPreflightOrbatFromPhaseForComposition`, `nxgCseAddProject` and
+   `nxgCseValidateOrbat`.
+3. Workshop: wire ORBAT Manager's `phase`; unwire `orbatJson` / `translatedInputOrbat` and remove
+   their translation function (`DEMO_RUNBOOK.md`).
+4. Run `/readiness`: it checks every new function, parameter, object type and action.
+
+**Not verified without Foundry:**
+- the Translator's primary-key prefix search (1.3), which falls back to edges if the filter is
+  rejected;
+- `NxgUnit` delete edits in the orphan prune (2.5, off by default);
+- that CSE returns composition files intact (4.2), which falls back to the plain preflight.
+
+**Behaviour changes to expect:**
+- Exported ORBAT IDs change once (1.8).
+- Stored `owningSimulator` casing is normalised on the next reconcile (2.4).
+- A reconcile can no longer clear a field to null (2.1).
+- SWORD vehicles get a VBS4 block attached instead of a duplicate vehicle, and only when they have
+  no simulator block (1.4).
+
 ## Where we are
 
 - **Three routes to CSE, with different inputs:**
