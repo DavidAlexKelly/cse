@@ -1,0 +1,441 @@
+/* ============================================================
+   PMESII Analysis — Layout-only styles
+   All shared component styles come from shared/styling/components.css
+   ============================================================ */
+
+/* ── Task context banner ─────────────────────────────────────────────────── */
+
+.pa-task-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 16px;
+  background-color: #13161c;
+  border-bottom: 1px solid #232a45;
+  border-left: 3px solid #f0a83c;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.pa-task-banner--approved {
+  border-left-color: #6c5ce7;
+  background-color: rgba(108, 92, 231, 0.05);
+}
+
+.pa-task-banner__left {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.pa-task-banner__icon {
+  color: #f0a83c;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: color 0.2s ease;
+}
+
+.pa-task-banner--approved .pa-task-banner__icon {
+  color: #6c5ce7;
+}
+
+.pa-task-banner__progress {
+  color: #6c5ce7;
+  font-weight: 600;
+}
+
+.pa-task-banner__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pa-task-banner__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.pa-task-banner__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e6eaf8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pa-task-banner__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #6a7292;
+  flex-wrap: wrap;
+}
+
+.pa-task-banner__meta .bp5-icon {
+  color: #454c68;
+  flex-shrink: 0;
+}
+
+.pa-task-banner__sep {
+  color: #232a45;
+}
+
+.pa-task-banner__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Domain grid ──────────────────────────────────────────────────────────── */
+
+.pa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+}
+
+/* ── Domain card ─────────────────────────────────────────────────────────── */
+
+.pa-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 0 12px;        /* bottom-pad removed — pip sits flush */
+  background-color: #141828;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.12s ease, background-color 0.12s ease,
+              box-shadow 0.12s ease;
+}
+
+.pa-card:hover {
+  background-color: #1a1f36;
+  border-color: #2f3860;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.pa-card:focus-visible {
+  outline: 2px solid #6c5ce7;
+  outline-offset: 1px;
+}
+
+/* Pending / empty state — slightly muted */
+.pa-card--pending {
+  background-color: #13161c;
+  border-style: dashed;
+}
+
+.pa-card--pending:hover {
+  background-color: #141828;
+  border-style: solid;
+  border-color: #2f3860;
+}
+
+.pa-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.pa-card__domain {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #98a1c0;
+}
+
+.pa-card__summary {
+  font-size: 12px;
+  color: #e6eaf8;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.pa-card__summary--empty {
+  color: #454c68;
+  font-style: italic;
+}
+
+.pa-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-bottom: 8px;
+}
+
+.pa-card__owner {
+  font-size: 10px;
+  color: #6a7292;
+  letter-spacing: 0.03em;
+}
+
+.pa-card__owner--unassigned {
+  font-style: italic;
+  color: #454c68;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+/* ── Approved card state ─────────────────────────────────────────────────── */
+
+.pa-card--approved {
+  background-color: rgba(108, 92, 231, 0.05);
+  cursor: default;
+}
+
+.pa-card--approved:hover {
+  background-color: rgba(108, 92, 231, 0.08);
+  border-color: #6c5ce7;
+  box-shadow: none;
+}
+
+.pa-card__approved-icon {
+  color: #6c5ce7;
+  margin-right: 5px;
+}
+
+/* ── Critical card state ─────────────────────────────────────────────────── */
+
+.pa-card--critical {
+  background-color: rgba(239, 77, 77, 0.04);
+}
+
+/* ── Reviewer chip ───────────────────────────────────────────────────────── */
+
+.pa-card__reviewer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #6a7292;
+  letter-spacing: 0.03em;
+}
+
+.pa-card__reviewer .bp5-icon {
+  color: #454c68;
+  flex-shrink: 0;
+}
+
+.pa-card__reviewer--none {
+  font-style: italic;
+  color: #454c68;
+}
+
+/* ── Card action buttons group ───────────────────────────────────────────── */
+
+.pa-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ── Approved stamp (bottom of card, above pip) ──────────────────────────── */
+
+.pa-card__approved-stamp {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6c5ce7;
+  padding: 4px 0 6px;
+  border-top: 1px solid rgba(108, 92, 231, 0.2);
+  margin-top: auto;
+}
+
+.pa-card__approved-stamp .bp5-icon {
+  color: #6c5ce7;
+  flex-shrink: 0;
+}
+
+/* ── Completion pip ──────────────────────────────────────────────────────── */
+
+.pa-card__pip-track {
+  height: 3px;
+  background-color: #1a1f36;
+  margin: 0 -12px;          /* bleed to card edges */
+  flex-shrink: 0;
+}
+
+.pa-card__pip-fill {
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+  transition: width 0.35s ease;
+  opacity: 0.75;
+}
+
+/* ── Comments panel ──────────────────────────────────────────────────────── */
+
+.pa-comments {
+  border-top: 1px solid #232a45;
+  background-color: #0e1120;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Collapse toggle header ──────────────────────────────────────────────── */
+
+.pa-comments__header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: #6a7292;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: left;
+  transition: color 0.1s ease, border-color 0.1s ease;
+}
+
+.pa-comments__header:hover {
+  color: #98a1c0;
+}
+
+.pa-comments__header-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pa-comments__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #1a1f36;
+  border: 1px solid #2f3860;
+  font-size: 9px;
+  font-weight: 700;
+  color: #98a1c0;
+  letter-spacing: 0;
+}
+
+.pa-comments__chevron {
+  color: #454c68;
+  transition: transform 0.2s ease, color 0.1s ease;
+  flex-shrink: 0;
+}
+
+.pa-comments__header:hover .pa-comments__chevron {
+  color: #6a7292;
+}
+
+/* ── Comment list ────────────────────────────────────────────────────────── */
+
+.pa-comments__list {
+  overflow-y: auto;
+  max-height: 120px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid #232a45;
+}
+
+.pa-comments__empty {
+  font-size: 11px;
+  color: #454c68;
+  font-style: italic;
+}
+
+/* ── Single comment ──────────────────────────────────────────────────────── */
+
+.pa-comment {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.pa-comment__avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #4c7ef3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.pa-comment__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pa-comment__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pa-comment__author {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e6eaf8;
+  letter-spacing: 0.03em;
+}
+
+.pa-comment__time {
+  font-size: 10px;
+  color: #454c68;
+}
+
+.pa-comment__text {
+  font-size: 12px;
+  color: #98a1c0;
+  line-height: 1.5;
+}
+
+/* ── Add comment row ─────────────────────────────────────────────────────── */
+
+.pa-comments__input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  flex-shrink: 0;
+}
+
+.pa-comments__input {
+  flex: 1;
+}

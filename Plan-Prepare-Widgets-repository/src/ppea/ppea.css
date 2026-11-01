@@ -1,0 +1,1805 @@
+/* ============================================================
+   PPEA Role Map — dark theme
+   Re-skin of nato_cax_ppea_role_map_5.html.
+   ============================================================ */
+
+.ppea-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #080a12;
+  color: #e6eaf8;
+  overflow: hidden;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+.ppea-header {
+  background: #0e1120;
+  border-bottom: 1px solid #232a45;
+  padding: 14px 20px 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.ppea-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+  margin-bottom: 4px;
+}
+
+.ppea-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e6eaf8;
+}
+
+.ppea-subtitle {
+  font-size: 11px;
+  color: #6a7292;
+  margin-top: 3px;
+}
+
+.ppea-legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.ppea-legend__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.ppea-leg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #98a1c0;
+}
+
+.ppea-leg__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ppea-leg__dot--owner    { background: #4c7ef3; }
+.ppea-leg__dot--approver { background: #24b47e; }
+.ppea-leg__dot--involved { background: #6a7292; }
+
+/* Status legend dot (header legend) */
+.ppea-leg__bar {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Phase tab bar ───────────────────────────────────────────────────────── */
+
+.ppea-phase-bar {
+  background: #0e1120;
+  border-bottom: 1px solid #232a45;
+  padding: 0 16px;
+  display: flex;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.ppea-phase-tab {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a7292;
+  cursor: pointer;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  font-family: inherit;
+  outline: none;
+  transition: color 0.12s ease, border-color 0.12s ease;
+  white-space: nowrap;
+}
+
+.ppea-phase-tab:hover {
+  color: #e6eaf8;
+}
+
+.ppea-phase-tab.active {
+  color: #e6eaf8;
+}
+
+.ppea-phase-tab.active[data-phase="all"]       { border-bottom-color: #6c5ce7; }
+.ppea-phase-tab.active[data-phase="plan"]      { border-bottom-color: #4c7ef3; color: #8eb8f0; }
+.ppea-phase-tab.active[data-phase="prepare"]   { border-bottom-color: #24b47e; color: #6ee7b7; }
+.ppea-phase-tab.active[data-phase="execute"]   { border-bottom-color: #e08a2a; color: #f5b955; }
+.ppea-phase-tab.active[data-phase="assess"]    { border-bottom-color: #d05aa8; color: #e79ecb; }
+.ppea-phase-tab.active[data-phase="blueprint"] { border-bottom-color: #98a1c0; color: #e6eaf8; }
+
+.ppea-phase-tab-sep {
+  width: 1px;
+  background: #232a45;
+  margin: 6px 4px;
+  flex-shrink: 0;
+}
+
+/* ── Main grid (sidebar + content) ───────────────────────────────────────── */
+
+.ppea-main {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ppea-main--blueprint {
+  grid-template-columns: 1fr;
+}
+
+/* ── Role sidebar ────────────────────────────────────────────────────────── */
+
+.ppea-sidebar {
+  background: #0e1120;
+  border-right: 1px solid #232a45;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.ppea-sidebar__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  padding: 12px 14px 8px;
+}
+
+.ppea-role-list {
+  padding: 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ppea-role-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    opacity 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: inherit;
+  color: inherit;
+}
+
+.ppea-role-btn:hover {
+  background: #1a1f36;
+  border-color: #2f3860;
+}
+
+.ppea-role-btn.active {
+  background: rgba(108, 92, 231, 0.15);
+  border-color: #6c5ce7;
+}
+
+.ppea-role-btn.faded {
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.ppea-role-btn__abbr {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #98a1c0;
+  background: #1a1f36;
+  display: inline-block;
+  align-self: flex-start;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.ppea-role-btn.active .ppea-role-btn__abbr {
+  background: rgba(108, 92, 231, 0.25);
+  color: #6ee7b7;
+}
+
+.ppea-role-btn__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6eaf8;
+  line-height: 1.3;
+}
+
+.ppea-role-btn__sub {
+  font-size: 11px;
+  color: #6a7292;
+}
+
+/* ── Right panel ─────────────────────────────────────────────────────────── */
+
+.ppea-right {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+  background: #080a12;
+}
+
+/* ── Selected role detail header ─────────────────────────────────────────── */
+
+.ppea-role-detail {
+  border-bottom: 1px solid #232a45;
+  background: #0e1120;
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.ppea-role-detail__head {
+  background: #080a12;
+  padding: 14px 18px;
+  min-width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid #232a45;
+}
+
+.ppea-role-detail__abbr {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6ee7b7;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ppea-role-detail__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1.3;
+}
+
+.ppea-role-detail__sub {
+  font-size: 11px;
+  color: #6a7292;
+  margin-top: 3px;
+}
+
+.ppea-role-detail__body {
+  padding: 14px 18px;
+  flex: 1;
+}
+
+.ppea-role-detail__desc {
+  font-size: 12.5px;
+  color: #aab3d0;
+  line-height: 1.65;
+}
+
+.ppea-role-detail__stats {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.ppea-stat-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ppea-stat-chip--owner {
+  background: rgba(76, 126, 243, 0.18);
+  color: #7ab0ff;
+  border: 1px solid rgba(76, 126, 243, 0.35);
+}
+
+.ppea-stat-chip--approver {
+  background: rgba(36, 180, 126, 0.18);
+  color: #6ee7b7;
+  border: 1px solid rgba(36, 180, 126, 0.35);
+}
+
+.ppea-stat-chip--involved {
+  background: rgba(106, 114, 146, 0.18);
+  color: #98a1c0;
+  border: 1px solid rgba(106, 114, 146, 0.35);
+}
+
+/* ── Task list ───────────────────────────────────────────────────────────── */
+
+.ppea-task-area {
+  padding: 14px 16px;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.ppea-phase-block {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #232a45;
+  background: #0e1120;
+}
+
+.ppea-phase-head {
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #232a45;
+  background: #141828;
+  border-left: 3px solid #232a45;
+}
+
+.ppea-phase-head[data-phase="plan"]    { border-left-color: #4c7ef3; }
+.ppea-phase-head[data-phase="prepare"] { border-left-color: #24b47e; }
+.ppea-phase-head[data-phase="execute"] { border-left-color: #e08a2a; }
+.ppea-phase-head[data-phase="assess"]  { border-left-color: #d05aa8; }
+
+/* Per-task-list column header — column widths MUST match .ppea-task-row */
+.ppea-task-colhead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 14px 4px;
+  /* Match the 3px transparent left border on .ppea-task-row so columns line up */
+  border-left: 3px solid transparent;
+  background: #0b0e18;
+  border-bottom: 1px solid #1a1d26;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.ppea-task-colhead__status {
+  /* fixed column for the status word — wider than the dot so the header
+     text doesn't run into the task name */
+  width: 56px;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.ppea-task-colhead__name {
+  flex: 1;
+}
+
+.ppea-task-colhead__badges {
+  min-width: 180px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ppea-task-colhead__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ppea-task-colhead__leg {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.ppea-task-colhead__leg--owner {
+  background: rgba(76, 126, 243, 0.18);
+  color: #7ab0ff;
+}
+
+.ppea-task-colhead__leg--approver {
+  background: rgba(36, 180, 126, 0.18);
+  color: #6ee7b7;
+}
+
+.ppea-task-colhead__leg--involved {
+  background: rgba(106, 114, 146, 0.12);
+  color: #98a1c0;
+  border: 1px solid #232a45;
+}
+
+.ppea-task-colhead__info {
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.ppea-phase-head[data-phase="plan"]    .ppea-phase-name { color: #8eb8f0; }
+.ppea-phase-head[data-phase="prepare"] .ppea-phase-name { color: #6ee7b7; }
+.ppea-phase-head[data-phase="execute"] .ppea-phase-name { color: #f5b955; }
+.ppea-phase-head[data-phase="assess"]  .ppea-phase-name { color: #e79ecb; }
+
+.ppea-phase-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ppea-phase-count {
+  font-size: 10px;
+  color: #6a7292;
+  margin-left: auto;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ppea-task-list {
+  background: #0e1120;
+}
+
+.ppea-task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  border-bottom: 1px solid #1a1d26;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background-color 0.1s ease, opacity 0.15s ease,
+    border-left-color 0.1s ease;
+}
+
+.ppea-task-row:last-child {
+  border-bottom: none;
+}
+
+.ppea-task-row:hover {
+  background: #141828;
+}
+
+.ppea-task-row.dim {
+  opacity: 0.22;
+}
+
+.ppea-task-row.highlight-owner {
+  background: rgba(76, 126, 243, 0.08);
+  border-left-color: #4c7ef3;
+}
+.ppea-task-row.highlight-approver {
+  background: rgba(36, 180, 126, 0.08);
+  border-left-color: #24b47e;
+}
+.ppea-task-row.highlight-involved {
+  background: rgba(106, 114, 146, 0.08);
+  border-left-color: #6a7292;
+}
+
+.ppea-task-row.highlight-owner:hover    { background: rgba(76, 126, 243, 0.16); }
+.ppea-task-row.highlight-approver:hover { background: rgba(36, 180, 126, 0.16); }
+.ppea-task-row.highlight-involved:hover { background: rgba(106, 114, 146, 0.16); }
+
+/* "Action available for the role you're acting as" — adds a small text tag
+   next to the task name.  Subtle background tint is *not* used so it
+   doesn't compete with the role-highlight backgrounds. */
+.ppea-task-action-tag {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(232, 168, 72, 0.18);
+  color: #f5b955;
+  border: 1px solid rgba(232, 168, 72, 0.5);
+  vertical-align: middle;
+}
+
+.ppea-task-name {
+  font-size: 12.5px;
+  color: #e6eaf8;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.ppea-task-info {
+  color: #454c68;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.1s ease;
+}
+
+.ppea-task-row:hover .ppea-task-info {
+  color: #7ab0ff;
+}
+
+.ppea-badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 180px;
+}
+
+.ppea-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.ppea-badge:hover {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+.ppea-badge--owner {
+  background: #4c7ef3;
+  color: #fff;
+  border-color: #4c7ef3;
+}
+.ppea-badge--approver {
+  background: #24b47e;
+  color: #fff;
+  border-color: #24b47e;
+}
+.ppea-badge--involved {
+  background: transparent;
+  color: #98a1c0;
+  border-color: #2f3860;
+}
+
+/* ── Hint bar ────────────────────────────────────────────────────────────── */
+
+.ppea-hintbar {
+  background: #0e1120;
+  border-top: 1px solid #232a45;
+  padding: 6px 20px;
+  font-size: 11px;
+  color: #6a7292;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.ppea-hintbar strong {
+  color: #e6eaf8;
+  font-weight: 600;
+}
+
+/* ── Blueprint panel ─────────────────────────────────────────────────────── */
+
+.ppea-blueprint {
+  flex: 1;
+  overflow: hidden;
+  background: #07111e;
+  display: flex;
+  position: relative;
+  min-height: 0;
+}
+
+.ppea-bp-canvas {
+  flex: 1;
+  overflow: auto;
+  padding: 28px 36px 48px;
+}
+
+/* Status legend — pinned to the top-right of the blueprint panel itself
+   (not the scrolling SVG), so it never overlaps the Assess phase column
+   or any node when the user scrolls the canvas horizontally. */
+.ppea-bp-legend {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  background: rgba(10, 20, 40, 0.82);
+  border: 1px solid rgba(100, 150, 200, 0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  width: max-content;
+}
+
+.ppea-bp-legend__title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8aacc8;
+  margin-bottom: 6px;
+}
+
+.ppea-bp-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 16px;
+}
+
+.ppea-bp-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ppea-bp-legend__label {
+  font-size: 10.5px;
+  color: #aab3d0;
+}
+
+.ppea-bp-canvas svg .ppea-bp-node-rect {
+  transition: filter 0.15s;
+}
+.ppea-bp-canvas svg .ppea-bp-node:hover .ppea-bp-node-rect {
+  filter: brightness(1.35);
+}
+
+/* ── Blueprint drawer (right side panel) ─────────────────────────────────── */
+
+.ppea-bp-drawer {
+  width: 0;
+  flex-shrink: 0;
+  background: #0e1120;
+  border-left: 1px solid #232a45;
+  overflow: hidden;
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.ppea-bp-drawer.open {
+  width: 380px;
+}
+
+.ppea-bp-drawer__inner {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ppea-bp-drawer__head {
+  background: #080a12;
+  border-bottom: 1px solid #232a45;
+  padding: 14px 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.ppea-bp-drawer__phase {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.ppea-bp-drawer__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1.35;
+  flex: 1;
+}
+
+.ppea-bp-drawer__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6a7292;
+  font-size: 16px;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.ppea-bp-drawer__close:hover {
+  color: #e6eaf8;
+}
+
+.ppea-bp-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ppea-bp-drawer__desc {
+  font-size: 12px;
+  color: #98a1c0;
+  line-height: 1.6;
+}
+
+.ppea-bp-context-label,
+.ppea-bp-field-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  margin-bottom: 6px;
+}
+
+.ppea-bp-context-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.ppea-bp-context-pill {
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #232a45;
+  color: #98a1c0;
+  background: transparent;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  transition: background-color 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.ppea-bp-context-pill:hover {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.ppea-bp-context-pill.has-content {
+  background: rgba(108, 92, 231, 0.12);
+  border-color: #6c5ce7;
+  color: #6ee7b7;
+}
+
+.ppea-bp-textarea {
+  width: 100%;
+  border: 1px solid #2f3860;
+  border-radius: 4px;
+  padding: 9px 11px;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: #e6eaf8;
+  background: #080a12;
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ppea-bp-textarea:focus {
+  border-color: #6c5ce7;
+}
+
+.ppea-bp-textarea.ai-filled {
+  background: rgba(108, 92, 231, 0.05);
+  border-color: #6c5ce7;
+}
+
+.ppea-bp-action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ppea-bp-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1a1f36;
+  border: 1px solid #2f3860;
+  border-radius: 4px;
+  color: #e6eaf8;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.ppea-bp-ai-btn:hover {
+  background: #202641;
+  border-color: #3f4a78;
+}
+
+.ppea-bp-ai-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ppea-bp-ai-btn__icon {
+  font-size: 13px;
+  color: #6ee7b7;
+}
+
+.ppea-bp-save-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ppea-bp-save-btn {
+  background: #6c5ce7;
+  color: #fff;
+  border: 1px solid #6c5ce7;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s;
+}
+.ppea-bp-save-btn:hover {
+  background: #8b7cf6;
+  border-color: #8b7cf6;
+}
+
+.ppea-bp-saved-msg {
+  font-size: 11px;
+  color: #6ee7b7;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+  letter-spacing: 0.04em;
+}
+.ppea-bp-saved-msg.show {
+  opacity: 1;
+}
+
+.ppea-bp-downstream {
+  background: rgba(76, 126, 243, 0.08);
+  border: 1px solid rgba(76, 126, 243, 0.3);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.ppea-bp-downstream__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7ab0ff;
+  margin-bottom: 6px;
+}
+
+.ppea-bp-downstream__items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ppea-bp-downstream__item {
+  font-size: 12px;
+  color: #98a1c0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.ppea-bp-downstream__item:hover {
+  background: rgba(76, 126, 243, 0.16);
+  color: #e6eaf8;
+}
+
+.ppea-bp-downstream__item::before {
+  content: "→";
+  color: #7ab0ff;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ── Modal (dark theme, matches MIL modal aesthetic) ─────────────────────── */
+
+.ppea-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+
+.ppea-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ppea-modal {
+  background: #141828;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
+  transform: translateY(14px);
+  transition: transform 0.18s;
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ppea-modal-backdrop.open .ppea-modal {
+  transform: translateY(0);
+}
+
+.ppea-modal__header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #232a45;
+  background: #0e1120;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.ppea-modal__pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.ppea-modal__title-wrap {
+  flex: 1;
+}
+
+.ppea-modal__phase-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ppea-modal__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e6eaf8;
+  line-height: 1.3;
+}
+
+.ppea-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #6a7292;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.ppea-modal__close:hover {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.ppea-modal__body {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.ppea-modal__desc {
+  font-size: 13px;
+  color: #aab3d0;
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.ppea-modal__roles-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  margin-bottom: 8px;
+}
+
+.ppea-modal__role-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ppea-modal__role-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 4px;
+  background: #0e1120;
+  border: 1px solid #232a45;
+}
+
+.ppea-modal__role-type {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  min-width: 70px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ppea-modal__role-type--owner {
+  background: #4c7ef3;
+  color: #fff;
+}
+.ppea-modal__role-type--approver {
+  background: #24b47e;
+  color: #fff;
+}
+.ppea-modal__role-type--involved {
+  background: transparent;
+  color: #98a1c0;
+  border: 1px solid #2f3860;
+}
+
+.ppea-modal__role-name {
+  font-size: 12.5px;
+  color: #e6eaf8;
+  font-weight: 500;
+  flex: 1;
+}
+
+.ppea-modal__role-sub {
+  font-size: 11px;
+  color: #6a7292;
+}
+
+/* ── AI spinner (kept stylistically even though button is a stub) ────────── */
+
+.ppea-bp-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #6ee7b7;
+  border-radius: 50%;
+  animation: ppea-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ppea-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Header controls (Operation, Acting as, legend) ──────────────────────── */
+
+.ppea-header-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ppea-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.ppea-select-field__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.ppea-select {
+  background-color: #0e1120;
+  border: 1px solid #2f3860;
+  border-radius: 4px;
+  color: #e6eaf8;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 9px;
+  outline: none;
+  transition: border-color 0.1s ease;
+}
+
+.ppea-select:focus {
+  border-color: #6c5ce7;
+}
+
+.ppea-select option {
+  background-color: #0e1120;
+}
+
+.ppea-input,
+.ppea-textarea {
+  background-color: #0e1120;
+  border: 1px solid #2f3860;
+  border-radius: 4px;
+  color: #e6eaf8;
+  font-size: 13px;
+  font-family: inherit;
+  padding: 6px 10px;
+  outline: none;
+  transition: border-color 0.1s ease;
+  width: 100%;
+}
+
+.ppea-input:focus,
+.ppea-textarea:focus {
+  border-color: #6c5ce7;
+}
+
+.ppea-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.ppea-input::placeholder,
+.ppea-textarea::placeholder {
+  color: #454c68;
+}
+
+/* ── Sidebar role row with edit affordance ────────────────────────────── */
+
+.ppea-sidebar__top {
+  padding: 12px 14px 4px;
+  border-bottom: 1px solid #232a45;
+  margin-bottom: 4px;
+}
+
+.ppea-sidebar__top .ppea-select-field {
+  min-width: 0;
+}
+
+.ppea-sidebar__top .ppea-select {
+  width: 100%;
+}
+
+.ppea-sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 8px;
+}
+
+.ppea-sidebar__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  flex: 1;
+}
+
+.ppea-icon-btn {
+  background: #1a1f36;
+  border: 1px solid #2f3860;
+  color: #e6eaf8;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background-color 0.1s, border-color 0.1s;
+}
+
+.ppea-icon-btn:hover {
+  background: #202641;
+  border-color: #3f4a78;
+}
+
+.ppea-icon-btn--inline {
+  margin-left: auto;
+}
+
+.ppea-role-row {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    opacity 0.15s ease;
+}
+
+.ppea-role-row:hover {
+  background: #1a1f36;
+  border-color: #2f3860;
+}
+
+.ppea-role-row.active {
+  background: rgba(108, 92, 231, 0.15);
+  border-color: #6c5ce7;
+}
+
+.ppea-role-row.faded {
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.ppea-role-row .ppea-role-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: inherit;
+  color: inherit;
+}
+
+.ppea-role-edit {
+  background: transparent;
+  border: none;
+  color: #6a7292;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 13px;
+  font-family: inherit;
+  opacity: 0;
+  transition: opacity 0.1s ease, color 0.1s ease;
+}
+
+.ppea-role-row:hover .ppea-role-edit,
+.ppea-role-row.active .ppea-role-edit {
+  opacity: 1;
+}
+
+.ppea-role-edit:hover {
+  color: #e6eaf8;
+}
+
+/* ── Task row status dot ─────────────────────────────────────────────── */
+
+/* The dot is rendered inside a fixed-width column so it aligns with the
+   "Status" header above. */
+.ppea-task-status-col {
+  width: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ppea-task-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ppea-empty-line {
+  font-size: 11px;
+  color: #454c68;
+  font-style: italic;
+  padding: 10px 14px;
+}
+
+/* ── Task modal — section labels & extras ─────────────────────────────── */
+
+.ppea-modal__section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+
+.ppea-modal__section-label:first-of-type {
+  margin-top: 0;
+}
+
+.ppea-modal__status-pill-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.ppea-modal__status-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.ppea-modal__status-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.ppea-modal__status-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.ppea-modal__status-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+}
+
+.ppea-modal__acting-hint {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #6a7292;
+  line-height: 1.5;
+}
+
+.ppea-modal__acting-hint strong {
+  color: #e6eaf8;
+}
+
+/* "Read-only" tag inside section labels (e.g. on Operation details when
+   the acting role can't edit). */
+.ppea-modal__readonly-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: rgba(106, 114, 146, 0.2);
+  color: #98a1c0;
+  border: 1px solid rgba(106, 114, 146, 0.4);
+  border-radius: 4px;
+}
+
+.ppea-bp-textarea.readonly {
+  background: #0b0e18;
+  border-color: #232a45;
+  color: #98a1c0;
+  cursor: not-allowed;
+}
+
+/* Designer-only manual status override block (Observer mode). */
+.ppea-modal__designer-override {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px dashed #2f3860;
+  border-radius: 4px;
+  background: rgba(108, 92, 231, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ppea-modal__designer-override .ppea-select {
+  align-self: flex-start;
+  min-width: 180px;
+}
+
+.ppea-modal__designer-hint {
+  font-size: 10px;
+  color: #6a7292;
+  font-style: italic;
+}
+
+/* ── Count tag (e.g. for the History section label) ───────────────────── */
+
+.ppea-modal__count-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: #1a1f36;
+  color: #aab3d0;
+  border: 1px solid #232a45;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ── Task history (audit trail) ───────────────────────────────────────── */
+
+.ppea-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.ppea-history__row {
+  border: 1px solid #232a45;
+  background: #0b0e18;
+  border-left: 3px solid #2f3860;
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+
+.ppea-history__row--start    { border-left-color: #98a1c0; }
+.ppea-history__row--submit   { border-left-color: #f0a83c; }
+.ppea-history__row--approve  { border-left-color: #6c5ce7; }
+.ppea-history__row--return   { border-left-color: #ef4d4d; }
+.ppea-history__row--reopen   { border-left-color: #d05aa8; }
+
+.ppea-history__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+
+.ppea-history__kind {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.ppea-history__kind--start    { color: #aab3d0; }
+.ppea-history__kind--submit   { color: #f0a83c; }
+.ppea-history__kind--approve  { color: #6ee7b7; }
+.ppea-history__kind--return   { color: #d97565; }
+.ppea-history__kind--reopen   { color: #e79ecb; }
+
+.ppea-history__author {
+  color: #e6eaf8;
+  font-weight: 600;
+}
+
+.ppea-history__date {
+  color: #6a7292;
+  margin-left: auto;
+  font-size: 10.5px;
+}
+
+.ppea-history__comment {
+  margin-top: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #e6eaf8;
+  background: #0e1120;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ── Inline comment prompt (Return / Re-open) ────────────────────────── */
+
+.ppea-modal__prompt-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 20px;
+}
+
+.ppea-modal__prompt {
+  width: 100%;
+  max-width: 460px;
+  background: #141828;
+  border: 1px solid #232a45;
+  border-radius: 6px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ppea-modal__prompt-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e6eaf8;
+}
+
+.ppea-modal__prompt-blurb {
+  font-size: 12px;
+  color: #98a1c0;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ppea-modal__prompt-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* The modal sits inside an absolutely-positioned backdrop, but we need
+   `position: relative` on .ppea-modal so the prompt-backdrop above
+   covers exactly the modal body, not the whole screen. */
+.ppea-modal {
+  position: relative;
+}
+
+.ppea-modal__footer {
+  padding: 12px 16px;
+  border-top: 1px solid #232a45;
+  background: #0e1120;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ppea-spacer {
+  flex: 1;
+}
+
+/* ── Buttons (uniform set) ────────────────────────────────────────────── */
+
+.ppea-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1a1f36;
+  border: 1px solid #2f3860;
+  color: #e6eaf8;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  transition: background-color 0.1s, border-color 0.1s, opacity 0.1s;
+}
+
+.ppea-btn:hover:not(:disabled) {
+  background: #202641;
+  border-color: #3f4a78;
+}
+
+.ppea-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ppea-btn--primary {
+  background: #6c5ce7;
+  border-color: #6c5ce7;
+  color: #fff;
+}
+
+.ppea-btn--primary:hover:not(:disabled) {
+  background: #8b7cf6;
+  border-color: #8b7cf6;
+}
+
+.ppea-btn--danger {
+  background: transparent;
+  border-color: transparent;
+  color: #ef4d4d;
+}
+
+.ppea-btn--danger:hover:not(:disabled) {
+  background: rgba(239, 77, 77, 0.12);
+  border-color: rgba(239, 77, 77, 0.35);
+}
+
+.ppea-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: #98a1c0;
+}
+
+.ppea-btn--ghost:hover:not(:disabled) {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.ppea-btn--default {
+  /* alias for default ppea-btn */
+}
+
+/* ── Wider modal (task edit) & form grid ──────────────────────────────── */
+
+.ppea-modal--wide {
+  max-width: 760px;
+}
+
+.ppea-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ppea-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ppea-form-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7292;
+}
+
+.ppea-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ppea-chip {
+  background: transparent;
+  border: 1px solid #2f3860;
+  color: #98a1c0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  transition: background-color 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.ppea-chip:hover {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.ppea-chip--on {
+  background: rgba(108, 92, 231, 0.18);
+  border-color: #6c5ce7;
+  color: #6ee7b7;
+}
+
+.ppea-task-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #232a45;
+  border-radius: 4px;
+  padding: 6px 8px;
+  background: #0b0e18;
+}
+
+.ppea-task-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 3px 4px;
+  border-radius: 4px;
+  transition: background-color 0.1s;
+}
+
+.ppea-task-check:hover {
+  background: #1a1f36;
+}
+
+.ppea-task-check input {
+  margin: 0;
+  accent-color: #6c5ce7;
+}
+
+.ppea-task-check__phase {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6a7292;
+  width: 30px;
+  flex-shrink: 0;
+}
+
+.ppea-task-check__phase[data-phase="plan"]    { color: #4c7ef3; }
+.ppea-task-check__phase[data-phase="prepare"] { color: #24b47e; }
+.ppea-task-check__phase[data-phase="execute"] { color: #e08a2a; }
+.ppea-task-check__phase[data-phase="assess"]  { color: #d05aa8; }
+
+.ppea-task-check__name {
+  color: #e6eaf8;
+}
+
+/* ── Blueprint drawer extras ──────────────────────────────────────────── */
+
+.ppea-bp-drawer__op {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+  margin-top: 4px;
+}
+

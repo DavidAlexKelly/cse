@@ -1,0 +1,830 @@
+/* ============================================================
+   Phases Widget
+   ============================================================ */
+
+html, body, #root {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Root ── */
+.phw-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: #080a12;
+  color: #e6eaf8;
+  overflow: hidden;
+}
+
+/* ── Page header ── */
+.phw-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px 16px;
+  background: linear-gradient(180deg, #111a23 0%, #0b0e18 100%);
+  border-bottom: 1px solid #232a45;
+  position: relative;
+}
+
+.phw-header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4c7ef3 30%, #6c5ce7 70%, transparent);
+}
+
+.phw-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 520px;
+}
+
+.phw-header__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f3f5ff;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.phw-header__subtitle {
+  font-size: 12px;
+  color: #6a7292;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.phw-header__right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.phw-header__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.phw-header__stat-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #e6eaf8;
+  line-height: 1;
+}
+
+.phw-header__stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #454c68;
+  white-space: nowrap;
+}
+
+/* ── Body ── */
+.phw-body {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Card grid — always full width ── */
+.phw-grid {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: min-content;
+  gap: 14px;
+  align-content: start;
+  box-sizing: border-box;
+}
+
+/* ── Phase card ── */
+.ph-card {
+  background: #0e1120;
+  border: 1px solid #232a45;
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+  position: relative;
+  overflow: hidden;
+}
+
+.ph-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  background: transparent;
+  transition: background 0.12s;
+}
+
+.ph-card:hover {
+  background: #161b22;
+  border-color: #2f3860;
+}
+
+.ph-card--selected {
+  border-color: #4c7ef3;
+  background: #0f1620;
+  box-shadow: 0 0 0 1px #4c7ef320;
+}
+
+.ph-card--selected::before {
+  background: #4c7ef3;
+}
+
+/* ── Card header ── */
+.ph-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ph-card__header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Card action buttons (edit / delete) ── */
+.ph-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ph-card__action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.1s, color 0.1s;
+  padding: 0;
+}
+
+.ph-card__action-btn--edit {
+  color: #6a7292;
+}
+
+.ph-card__action-btn--edit:hover {
+  background: rgba(76, 126, 243, 0.18);
+  color: #63a2ff;
+}
+
+.ph-card__action-btn--delete {
+  color: #6a7292;
+}
+
+.ph-card__action-btn--delete:hover {
+  background: rgba(239, 77, 77, 0.18);
+  color: #c06050;
+}
+
+.ph-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ph-card__phase-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-family: "SF Mono", "Fira Code", ui-monospace, monospace;
+  color: #4c7ef3;
+  background: rgba(76, 126, 243, 0.12);
+  border: 1px solid rgba(76, 126, 243, 0.25);
+  border-radius: 6px;
+  padding: 2px 6px;
+  flex-shrink: 0;
+}
+
+.ph-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f3f5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+/* ── Status badge ── */
+.ph-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ph-badge--green  { background: rgba(36, 180, 126,0.15);  color: #4aaa70; border: 1px solid rgba(36, 180, 126,0.3);  }
+.ph-badge--blue   { background: rgba(76, 126, 243,0.15); color: #63a2ff; border: 1px solid rgba(76, 126, 243,0.3); }
+.ph-badge--amber  { background: rgba(240, 168, 60,0.15); color: #f5b955; border: 1px solid rgba(240, 168, 60,0.3); }
+.ph-badge--grey   { background: rgba(106, 114, 146,0.15);  color: #98a1c0; border: 1px solid rgba(106, 114, 146,0.3);  }
+
+.ph-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ph-dot--green  { background: #4aaa70; }
+.ph-dot--blue   { background: #63a2ff; }
+.ph-dot--amber  { background: #f5b955; }
+.ph-dot--grey   { background: #6a7292; }
+
+/* ── Card meta row ── */
+.ph-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ph-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: #6a7292;
+}
+
+.ph-card__meta-item--amber {
+  color: #f0a83c;
+  font-weight: 700;
+}
+
+.ph-card__meta-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #232a45;
+  flex-shrink: 0;
+}
+
+/* ── Card description ── */
+.ph-card__desc {
+  font-size: 12px;
+  color: #98a1c0;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Stats grid ── */
+.ph-card__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #1a1f36;
+  border: 1px solid #1a1f36;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ph-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  background: #0b0e18;
+  font-size: 11px;
+}
+
+.ph-card__stat-label {
+  color: #6a7292;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10.5px;
+}
+
+.ph-card__stat-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e6eaf8;
+  min-width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.ph-card__stat-value--amber {
+  color: #f0a83c;
+}
+
+/* ── Card footer / gaps ── */
+.ph-card__footer {
+  padding-top: 6px;
+  border-top: 1px solid #171c30;
+}
+
+.ph-card__gap {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #f0a83c;
+  line-height: 1.4;
+}
+
+.ph-card__gap--critical {
+  color: #ef4d4d;
+}
+
+.ph-card__no-gap {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #24b47e;
+}
+
+/* ── Detail panel overlay (floats over the grid, doesn't shrink it) ── */
+.phw-panel-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 340px;
+  height: 100%;
+  border-left: 1px solid #232a45;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  background: #0b0e18;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Detail panel ── */
+.ph-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0b0e18;
+  overflow: hidden;
+}
+
+.ph-panel__header {
+  flex-shrink: 0;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #232a45;
+  background: #0e1120;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ph-panel__header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ph-panel__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ph-panel__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f3f5ff;
+  line-height: 1.3;
+}
+
+.ph-panel__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6a7292;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color 0.1s, background 0.1s;
+}
+
+.ph-panel__close:hover {
+  color: #e6eaf8;
+  background: #1a1f36;
+}
+
+.ph-panel__body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ph-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ph-panel__section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #3f4a78;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #171c30;
+}
+
+.ph-panel__gap-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 14px;
+  padding: 0 4px;
+  border-radius: 10px;
+  background: rgba(240, 168, 60,0.2);
+  color: #f5b955;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.ph-panel__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.ph-panel__row-label {
+  color: #6a7292;
+}
+
+.ph-panel__row-value {
+  color: #e6eaf8;
+  font-weight: 600;
+}
+
+.ph-panel__objective {
+  font-size: 12px;
+  color: #9aa3ba;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ph-panel__readiness-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ph-panel__readiness-track {
+  flex: 1;
+  height: 6px;
+  background: #171c30;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ph-panel__readiness-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.ph-panel__readiness-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #98a1c0;
+  min-width: 34px;
+  text-align: right;
+}
+
+.ph-panel__stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.ph-panel__stat-cell {
+  background: #0e1120;
+  border: 1px solid #1a1f36;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.ph-panel__stat-icon {
+  color: #454c68;
+}
+
+.ph-panel__stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #e6eaf8;
+  line-height: 1;
+}
+
+.ph-panel__stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #454c68;
+}
+
+.ph-panel__review-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(240, 168, 60,0.1);
+  border: 1px solid rgba(240, 168, 60,0.25);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #f5b955;
+  font-weight: 600;
+}
+
+.ph-panel__gaps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ph-panel__gap-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px 10px;
+  background: rgba(240, 168, 60,0.06);
+  border: 1px solid rgba(240, 168, 60,0.18);
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #b8a070;
+  line-height: 1.45;
+}
+
+.ph-panel__gap-item--critical {
+  background: rgba(239, 77, 77,0.08);
+  border-color: rgba(239, 77, 77,0.25);
+  color: #c06050;
+}
+
+.ph-panel__gap-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: inherit;
+}
+
+/* ── Header divider (between button and stat chips) ── */
+.phw-header__divider {
+  width: 1px;
+  height: 28px;
+  background: #232a45;
+  flex-shrink: 0;
+}
+
+/* ── New Phase button ── */
+.phw-add-phase-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #6c5ce7;
+  border: 1px solid #8b7cf6;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+  flex-shrink: 0;
+}
+
+.phw-add-phase-btn:hover {
+  background: #8b7cf6;
+  border-color: #6ab87e;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+.phw-add-phase-btn:active {
+  background: #4f3fc9;
+  box-shadow: none;
+}
+
+/* ── Create Phase Modal extras ── */
+.cpm-sequence-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(76, 126, 243, 0.08);
+  border: 1px solid rgba(76, 126, 243, 0.2);
+  border-radius: 8px;
+}
+
+.cpm-sequence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  background: rgba(76, 126, 243, 0.18);
+  border: 1px solid rgba(76, 126, 243, 0.35);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #63a2ff;
+  letter-spacing: 0.06em;
+  font-family: "SF Mono", "Fira Code", ui-monospace, monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cpm-sequence-hint {
+  font-size: 11px;
+  color: #6a7292;
+}
+
+.cpm-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(239, 77, 77, 0.1);
+  border: 1px solid rgba(239, 77, 77, 0.3);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #c06050;
+  line-height: 1.5;
+}
+
+/* ── Delete confirm overlay ── */
+.ph-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ph-confirm-modal {
+  background: #161b22;
+  border: 1px solid #232a45;
+  border-radius: 10px;
+  padding: 24px;
+  width: 400px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+.ph-confirm-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ph-confirm-modal__icon {
+  color: #f0a83c;
+  flex-shrink: 0;
+}
+
+.ph-confirm-modal__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f3f5ff;
+}
+
+.ph-confirm-modal__body {
+  font-size: 13px;
+  color: #98a1c0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ph-confirm-modal__body strong {
+  color: #e6eaf8;
+}
+
+.ph-confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ph-confirm-modal__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.ph-confirm-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ph-confirm-modal__btn--cancel {
+  background: transparent;
+  border: 1px solid #232a45;
+  color: #98a1c0;
+}
+
+.ph-confirm-modal__btn--cancel:hover:not(:disabled) {
+  background: #1a1f36;
+  color: #e6eaf8;
+}
+
+.ph-confirm-modal__btn--delete {
+  background: #7a2a22;
+  border: 1px solid #a03a30;
+  color: #ffffff;
+}
+
+.ph-confirm-modal__btn--delete:hover:not(:disabled) {
+  background: #9a3228;
+  border-color: #c04030;
+}
+
+/* Scrollbar */
+.phw-grid::-webkit-scrollbar,
+.ph-panel__body::-webkit-scrollbar {
+  width: 4px;
+}
+.phw-grid::-webkit-scrollbar-track,
+.ph-panel__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.phw-grid::-webkit-scrollbar-thumb,
+.ph-panel__body::-webkit-scrollbar-thumb {
+  background: #232a45;
+  border-radius: 4px;
+}
