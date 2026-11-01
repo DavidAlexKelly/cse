@@ -84,23 +84,40 @@ export interface Hierarchy {
   phases: HierarchyPhaseSlot[];
   createdAt: string;
   updatedAt: string;
+  /**
+   * Where this tree lives in the ontology, when it was loaded from there.
+   * Absent for a DRAFT (template, AI import) — nothing persisted yet.
+   */
+  source?: HierarchySource;
+  /** Edited since it was loaded or last saved. */
+  dirty?: boolean;
 }
 
-// ─── Session storage ──────────────────────────────────────────────────────────
-
-const STORAGE_KEY = "orbat_hierarchies_v1";
-
-export function loadHierarchies(): Hierarchy[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Hierarchy[];
-  } catch { /* ignore */ }
-  return [];
+/** The ontology tree a working Hierarchy was loaded from. */
+export interface HierarchySource {
+  hierarchyKey: string;
+  /** Set when hierarchyKey is a phase hierarchy (hier-{scenario}--{phase}). */
+  scenarioId: string | null;
+  phaseId: string | null;
+  rootUnitKey: string;
+  /** Every unit key in the tree as loaded — what a save compares against. */
+  loadedKeys: string[];
 }
 
-export function saveHierarchies(hierarchies: Hierarchy[]): void {
-  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(hierarchies)); } catch { /* quota */ }
+/** Every node id in a tree. */
+export function treeKeys(root: CompositionNode): string[] {
+  const out: string[] = [];
+  const walk = (n: CompositionNode) => {
+    out.push(n.id);
+    n.children.forEach(walk);
+  };
+  walk(root);
+  return out;
 }
+
+// No storage: hierarchies are loaded from the ontology (or are drafts until
+// saved to a phase) — the tab-scoped sessionStorage copy is gone
+// (docs/ORBAT_PIPELINE_PLAN.md, 3.4).
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -124,6 +141,7 @@ export function createHierarchyFromRoot(opts: {
   kind: HierarchyKind;
   operationKey: string;
   root: CompositionNode;
+  source?: HierarchySource;
 }): Hierarchy {
   const slot: HierarchyPhaseSlot = {
     id: uid(),
@@ -142,6 +160,8 @@ export function createHierarchyFromRoot(opts: {
     phases: [slot],
     createdAt: now(),
     updatedAt: now(),
+    source: opts.source,
+    dirty: false,
   };
 }
 
@@ -193,7 +213,7 @@ export function updateHierarchyRoot(
   h: Hierarchy,
   newRoot: CompositionNode,
 ): Hierarchy {
-  return { ...h, canonicalRoot: newRoot, updatedAt: now() };
+  return { ...h, canonicalRoot: newRoot, updatedAt: now(), dirty: true };
 }
 
 /** Rename a phase slot within a hierarchy. */

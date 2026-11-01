@@ -13,9 +13,9 @@ import { HierarchyMap, type OrbatExport, type NodePositionMap, type MapAvailable
 import type { PhaseSwitcherItem } from "./components/PhaseSwitcher";
 import { HierarchySelector } from "./components/HierarchySelector";
 import {
-  loadHierarchies,
-  saveHierarchies,
   createHierarchyFromRoot,
+  treeKeys,
+  type HierarchySource,
   createPhaseHierarchy,
   addPhaseSlotToHierarchy,
   updateHierarchyRoot,
@@ -24,11 +24,16 @@ import {
   type HierarchyPhaseSlot,
 } from "./lib/hierarchyStore";
 import { C } from "./components/shared/milStyles";
-import { loadOrbatForest, loadOrbatSubtree } from "../../shared/orbat/loadOrbatSubtree";
+import {
+  fetchUnitPositions,
+  loadOrbatForest,
+  loadOrbatSubtree,
+} from "../../shared/orbat/loadOrbatSubtree";
+import { moveOrbatUnits, saveTreeToPhase } from "../../shared/orbat/phaseOrbat";
+import { searchObjectsByName } from "@/shared/lib/platformObjects";
 import { buildOrbatSkeleton } from "../../shared/orbat/skeleton";
 import {
   DEFAULT_OPERATION_KEY,
-  commitOrbatForPlacement,
   operationKeyForScenario,
   describeActionError,
 } from "../../shared/orbat/scenarioOrbat";
@@ -43,7 +48,7 @@ import { PHASE_PARAM, readPhaseParam, useAppNavigate } from "@/shared/hooks/useA
 import { topLevelWindow } from "@/shared/hooks/useMockDemo";
 import { parsePhaseHierarchyKey } from "@/shared/orbat/phaseKeys";
 import { usePhasePreflight } from "@/shared/orbat/usePhasePreflight";
-import { useOrbatStore } from "./store/useOrbatStore";
+import { builtinTemplates } from "./store/builtinTemplates";
 import { useCompositionData } from "@/shared/hooks/useCompositionData";
 import { AiTemplateGenerator } from "./components/AiTemplateGenerator";
 import {
@@ -59,8 +64,6 @@ import {
   type PhaseTemplateExtras,
 } from "./lib/phaseOrbatIngest";
 import {
-  loadPhaseGroups,
-  savePhaseGroups,
   createPhaseGroup,
   addPhaseToGroup,
   renamePhase,
@@ -78,11 +81,14 @@ import {
   createHierarchyTemplateFn,
   editHierarchyTemplateFn,
   deleteHierarchyTemplateFn,
+  loadHierarchiesForOperation,
   type OPhaseMapState,
 } from "@/shared/lib/foundry";
+import { absolutePosition } from "./lib/localStore";
 import { client } from "@/client";
 import { AppSwitcher } from "@/components/AppSwitcher";
 import {
+  NxgPhase,
   llmPhaseToOrbat,
   NxgUnit,
   NxgUnitHierarchy,
@@ -808,6 +814,24 @@ function TemplateDetailView({
   );
 }
 
+/** The ontology source of a tree loaded from `hierarchyKey`. */
+function sourceFor(hierarchyKey: string, root: CompositionNode): HierarchySource {
+  const parsed = parsePhaseHierarchyKey(hierarchyKey);
+  return {
+    hierarchyKey,
+    scenarioId: parsed?.scenarioId ?? null,
+    phaseId: parsed?.phaseId ?? null,
+    rootUnitKey: root.id,
+    loadedKeys: treeKeys(root),
+  };
+}
+
+/** A search result's primary key, whichever API answered (SDK or REST). */
+function pkOf(o: Record<string, unknown>): string | null {
+  const v = o.$primaryKey ?? o.__primaryKey ?? o.primaryKey;
+  return typeof v === "string" ? v : null;
+}
+
 export default function App() {
   const workshopCtxAsync = useWorkshopContext(ORBAT_CONFIG);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -847,10 +871,9 @@ export default function App() {
   // Session-scoped store of multi-phase operation timelines.
   // Each group has a canonical CompositionNode tree (stable ids) and one
   // PhaseSlot per imported phase (positions + relationship overrides).
-  const [phaseGroups, setPhaseGroups] = useState<OperationPhaseGroup[]>(() => loadPhaseGroups());
+  const [phaseGroups, setPhaseGroups] = useState<OperationPhaseGroup[]>([]);
 
   // Persist to sessionStorage whenever groups change.
-  useEffect(() => { savePhaseGroups(phaseGroups); }, [phaseGroups]);
 
   // The group for the currently-active operationKey, or null if none yet.
   const activePhaseGroup = useMemo(
@@ -906,7 +929,7 @@ export default function App() {
   const phaseDescriptionRaw = workshopCtx?.phaseDescription?.fieldValue;
   const phaseDescription: string = (phaseDescriptionRaw?.status === "LOADED" ? (phaseDescriptionRaw.value as string) ?? "" : "").trim();
 
-  const { state: orbatState } = useOrbatStore();
+  const orbatState = builtinTemplates();
 
   // ── Templates loaded from the ontology ────────────────────────────────────
   const [ontologyTemplates, setOntologyTemplates] = useState<HierarchyTemplate[]>([]);
@@ -989,8 +1012,7 @@ export default function App() {
   useEffect(() => { void reloadPhaseMapStates(); }, [reloadPhaseMapStates]);
 
   // ── Hierarchy session store (declared early — used by phase ingest below) ──
-  const [hierarchies, setHierarchies] = useState<Hierarchy[]>(() => loadHierarchies());
-  useEffect(() => { saveHierarchies(hierarchies); }, [hierarchies]);
+  const [hierarchies, setHierarchies] = useState<Hierarchy[]>([]);
 
   // ── Phase-ORBAT ingest ────────────────────────────────────────────────────
   //
@@ -1245,7 +1267,8 @@ export default function App() {
           const without = prev.filter((x) => !(x.kind === "operation" && x.operationKey === key));
           return [...without, h];
         });
-        setSelectedHierarchyId(h.id);
+        // When a phase is being worked on, its own ORBAT is selected instead.
+        if (!preflightPhaseId) setSelectedHierarchyId(h.id);
       })
       .catch((e) => setOpError(e instanceof Error ? e.message : String(e)))
       .finally(() => setOpLoading(false));
@@ -1257,10 +1280,10 @@ export default function App() {
 
   // Auto-select the op hierarchy when it first appears
   useEffect(() => {
-    if (selectedHierarchyId) return;
+    if (selectedHierarchyId || preflightPhaseId) return;
     const opH = hierarchies.find((h) => h.kind === "operation" && h.operationKey === operationKey);
     if (opH) setSelectedHierarchyId(opH.id);
-  }, [hierarchies, operationKey, selectedHierarchyId]);
+  }, [hierarchies, operationKey, selectedHierarchyId, preflightPhaseId]);
 
   // ── Define-ORBAT session from the Scenario Planner ───────────────────────
   // /orbat?define=1 with a request parked in sessionStorage. We seed a DRAFT
@@ -1337,34 +1360,33 @@ export default function App() {
       // phase-native keys, subordinates ringed around the placed position,
       // root slotted into the phase tree. Older callers without a phase keep
       // the scenario-wide path.
-      const result = defineRequest.phaseId
-        ? await commitDefinedOrbatToPhase(
-            {
-              scenarioId: defineRequest.scenarioId,
-              scenarioName: defineRequest.scenarioName,
-              phaseId: defineRequest.phaseId,
-              // The hierarchy is named after the phase if this call creates
-              // it. Never fall back to the phase ID: that is what used to end
-              // up in the name.
-              phaseName: defineRequest.phaseName ?? "Phase",
-            },
-            root,
-            { lat: defineRequest.lat, lng: defineRequest.lng },
-            defineRequest.side,
-          ).then((r) => ({
-            hierarchyKey: r.hierarchyKey,
-            rootUnitKey: r.rootUnitKey,
-            unitsCreated: r.unitCount,
-          }))
-        : await commitOrbatForPlacement({
-            scenarioId: defineRequest.scenarioId,
-            scenarioName: defineRequest.scenarioName,
-            root,
-            side: defineRequest.side,
-            lat: defineRequest.lat,
-            lng: defineRequest.lng,
-            unitLabel: defineRequest.unitLabel,
-          });
+      // One write path (docs/ORBAT_PIPELINE_PLAN.md, 3.7): every placement
+      // belongs to a phase, and its ORBAT is written into that phase's
+      // hierarchy through the phase reconcile. The old scenario-wide path
+      // (commitOrbatForPlacement → createCompositionInOntology) is retired.
+      if (!defineRequest.phaseId) {
+        throw new Error(
+          "This placement has no phase. Open the phase in the Scenario Planner and define the ORBAT from there.",
+        );
+      }
+      const result = await commitDefinedOrbatToPhase(
+        {
+          scenarioId: defineRequest.scenarioId,
+          scenarioName: defineRequest.scenarioName,
+          phaseId: defineRequest.phaseId,
+          // The hierarchy is named after the phase if this call creates
+          // it. Never fall back to the phase ID: that is what used to end
+          // up in the name.
+          phaseName: defineRequest.phaseName ?? "Phase",
+        },
+        root,
+        { lat: defineRequest.lat, lng: defineRequest.lng },
+        defineRequest.side,
+      ).then((r) => ({
+        hierarchyKey: r.hierarchyKey,
+        rootUnitKey: r.rootUnitKey,
+        unitsCreated: r.unitCount,
+      }));
       publishOrbatDefinitionResult({
         unitId: defineRequest.unitId,
         rootUnitKey: result.rootUnitKey,
@@ -1432,6 +1454,7 @@ export default function App() {
               kind: "force",
               operationKey,
               root: tree.root,
+              source: sourceFor(hierarchyKey, tree.root),
             }),
           );
           setHierarchies((prev) => [...prev, ...created]);
@@ -1472,6 +1495,7 @@ export default function App() {
           kind: "force",
           operationKey,
           root: subtree.root,
+          source: sourceFor(hierarchyKey, subtree.root),
         });
         setHierarchies((prev) => [...prev, created]);
         setSelectedHierarchyId(created.id);
@@ -1492,6 +1516,178 @@ export default function App() {
 
   const activeHierarchy = hierarchies.find((h) => h.id === selectedHierarchyId) ?? null;
   const activeRoot = activeHierarchy?.canonicalRoot ?? null;
+
+  // ── The ontology is the record (docs/ORBAT_PIPELINE_PLAN.md, 3.4) ─────────
+  // Trees are loaded from NxgUnitHierarchy and saved back through the phase
+  // reconcile. A tree with no `source` is a draft (template / AI import) until
+  // it is saved into a phase.
+  const [persistBusy, setPersistBusy] = useState(false);
+  /** The map's positions, for saving a placed draft (declared further down). */
+  const mapPositionsRef = useRef<NodePositionMap>(new Map());
+  const [persistNote, setPersistNote] = useState<{ text: string; error?: boolean } | null>(null);
+
+  /** Load every tree of a hierarchy as working Hierarchies; returns them. */
+  const openHierarchyFromOntology = useCallback(
+    async (hierarchyKey: string): Promise<Hierarchy[]> => {
+      const forest = await loadOrbatForest(hierarchyKey);
+      const created = forest.trees.map((tree) =>
+        createHierarchyFromRoot({
+          name: tree.root.unitIdentifier || hierarchyKey,
+          kind: "force",
+          operationKey,
+          root: tree.root,
+          source: sourceFor(hierarchyKey, tree.root),
+        }),
+      );
+      setHierarchies((prev) => {
+        // Replace any working copy of the same trees rather than stacking them.
+        const roots = new Set(created.map((h) => h.source?.rootUnitKey));
+        return [
+          ...prev.filter((h) => !(h.source?.hierarchyKey === hierarchyKey && roots.has(h.source.rootUnitKey))),
+          ...created,
+        ];
+      });
+      return created;
+    },
+    [operationKey],
+  );
+
+  // On open: the phase being worked on, from the ontology — unless a deep link
+  // (?hierarchy=) already says what to show.
+  const phaseAutoLoadedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!preflightPhaseId || new URLSearchParams(window.location.search).get("hierarchy")) return;
+    if (phaseAutoLoadedRef.current === preflightPhaseId) return;
+    phaseAutoLoadedRef.current = preflightPhaseId;
+    void (async () => {
+      try {
+        const rows = await searchObjectsByName("NxgUnitHierarchy", { phaseKey: preflightPhaseId }, 20);
+        for (const row of rows) {
+          const key = pkOf(row);
+          if (!key) continue;
+          const created = await openHierarchyFromOntology(key);
+          // The phase being worked on wins over the operation overview.
+          if (created[0]) setSelectedHierarchyId(created[0].id);
+        }
+      } catch (err) {
+        console.warn("[OrbatManager] could not load the phase ORBAT:", err);
+      }
+    })();
+  }, [preflightPhaseId, openHierarchyFromOntology]);
+
+  // "Open from ontology": the operation's hierarchies.
+  const [ontologyHierarchies, setOntologyHierarchies] = useState<{ key: string; name: string }[]>([]);
+  useEffect(() => {
+    let live = true;
+    loadHierarchiesForOperation(operationKey)
+      .then((rows) => {
+        if (live) setOntologyHierarchies(rows.map((r) => ({ key: r.primaryKey, name: r.name || r.primaryKey })));
+      })
+      .catch(() => {
+        if (live) setOntologyHierarchies([]);
+      });
+    return () => {
+      live = false;
+    };
+  }, [operationKey]);
+
+  /** Where a save of the active tree would land, or why it can't. */
+  const saveTarget = useMemo((): { phaseId: string; scenarioId: string | null } | { blocked: string } | null => {
+    if (!activeHierarchy) return null;
+    if (activeHierarchy.kind === "operation") {
+      return {
+        blocked:
+          "The whole operation, every hierarchy merged — read-only. Open a phase ORBAT to edit it.",
+      };
+    }
+    const src = activeHierarchy.source;
+    if (src) {
+      if (!src.phaseId) {
+        return { blocked: "Not a phase ORBAT — read-only here. Edit it from the phase it belongs to." };
+      }
+      return { phaseId: src.phaseId, scenarioId: src.scenarioId };
+    }
+    if (!preflightPhaseId) return { blocked: "Draft — open a phase (from the planner) to save it into." };
+    return { phaseId: preflightPhaseId, scenarioId: urlPhaseHierarchy?.scenarioId ?? null };
+  }, [activeHierarchy, preflightPhaseId, urlPhaseHierarchy]);
+
+  const saveActiveTree = useCallback(async () => {
+    if (!activeHierarchy || !saveTarget || "blocked" in saveTarget) return;
+    setPersistBusy(true);
+    setPersistNote(null);
+    try {
+      const { phaseId } = saveTarget;
+      let scenarioId = saveTarget.scenarioId;
+      let phaseName = phaseId;
+      if (!scenarioId) {
+        const phase = await client(NxgPhase).fetchOne(phaseId);
+        scenarioId = phase.scenarioId ?? null;
+        phaseName = phase.phaseName ?? phaseId;
+      }
+      if (!scenarioId) throw new Error(`Phase ${phaseId} has no scenario.`);
+      const src = activeHierarchy.source;
+      const loadedKeys = new Set(src?.loadedKeys ?? []);
+      const positions = await fetchUnitPositions([...loadedKeys]);
+      // A draft's root goes where it sits on the map, if it has been placed.
+      if (!src) {
+        const mapPositions = mapPositionsRef.current;
+        const p = absolutePosition(activeHierarchy.canonicalRoot, activeHierarchy.canonicalRoot.id, mapPositions);
+        if (p && mapPositions.has(activeHierarchy.canonicalRoot.id)) {
+          positions.set(activeHierarchy.canonicalRoot.id, { lat: p.lat, lng: p.lng });
+        }
+      }
+      const parts = await saveTreeToPhase(
+        { scenarioId, scenarioName: scenarioId, phaseId, phaseName },
+        { root: activeHierarchy.canonicalRoot, loadedKeys, positions },
+      );
+      // Read it back: the ontology is the record, and new units have new keys.
+      const hierarchyKey = parts.payload.unitHierarchy.primaryKey;
+      const rootKey = src?.rootUnitKey ?? parts.createdKeys[0];
+      const fresh = rootKey ? await loadOrbatSubtree(hierarchyKey, rootKey) : null;
+      if (fresh) {
+        setHierarchies((prev) =>
+          prev.map((h) =>
+            h.id === activeHierarchy.id
+              ? {
+                  ...h,
+                  canonicalRoot: fresh.root,
+                  source: sourceFor(hierarchyKey, fresh.root),
+                  dirty: false,
+                  updatedAt: new Date().toISOString(),
+                }
+              : h,
+          ),
+        );
+      }
+      setPersistNote({
+        text:
+          `Saved to the phase ORBAT — ${parts.payload.units.length} units` +
+          (parts.createdKeys.length ? `, ${parts.createdKeys.length} new` : "") +
+          (parts.removedKeys.length ? `, ${parts.removedKeys.length} removed` : "") +
+          ".",
+      });
+      preflight.recheck();
+    } catch (err) {
+      setPersistNote({ text: `Could not save: ${err instanceof Error ? err.message : String(err)}`, error: true });
+    } finally {
+      setPersistBusy(false);
+    }
+  }, [activeHierarchy, saveTarget, preflight]);
+
+  const discardActiveEdits = useCallback(async () => {
+    const src = activeHierarchy?.source;
+    if (!src) return;
+    const fresh = await loadOrbatSubtree(src.hierarchyKey, src.rootUnitKey);
+    if (!fresh) return;
+    setHierarchies((prev) =>
+      prev.map((h) =>
+        h.id === activeHierarchy!.id
+          ? { ...h, canonicalRoot: fresh.root, source: sourceFor(src.hierarchyKey, fresh.root), dirty: false }
+          : h,
+      ),
+    );
+    setPersistNote(null);
+  }, [activeHierarchy]);
 
   // ── Auto-ingest phase templates from NxgOTemplateOrbatGraph ─────────────
   // For every phase-tagged Template Orbat Graph record we try to parse its
@@ -1622,7 +1818,9 @@ export default function App() {
     hierarchies.map((h) => ({
       hierarchy: h,
       displayRoot: h.canonicalRoot,
-      isDirty: false, // structural edits are committed immediately into the store
+      // Unsaved edits, or a draft not yet in the ontology (the operation
+      // overview is read from it, so it is never a draft).
+      isDirty: !!h.dirty || (!h.source && h.kind !== "operation"),
     })),
   [hierarchies]);
 
@@ -1782,6 +1980,7 @@ export default function App() {
   // ── Template editor state ──────────────────────────────────────────────────
   const [selectedTplId, setSelectedTplId] = useState<string | null>(null);
   const [mapPositions, setMapPositions] = useState<NodePositionMap>(new Map());
+  mapPositionsRef.current = mapPositions;
   // Wire setMapPositions / setTopTab / setMapRootIds into refs so
   // switchToPhaseSlot can call them without forward-reference problems.
   useEffect(() => { setMapPositionsRef.current = setMapPositions; }, []);
@@ -1902,6 +2101,79 @@ export default function App() {
     }
     return out;
   }, [mapRootIds, opRoot, editedRoot, hierarchyRootsById, activePhaseGroup, phaseTemplatesByRootId]);
+
+  // ── Map positions ARE the units' positions (docs/ORBAT_PIPELINE_PLAN.md, 3.5) ──
+  // A phase ORBAT put on the map starts where its NxgUnits are; dragging it
+  // writes the new positions back to them (debounced), so the planner, the
+  // export and CSE see what this map shows. Drafts stay on the map only until
+  // saved into a phase.
+  const seededRootsRef = useRef<Set<string>>(new Set());
+  const seedDoneRef = useRef<Set<string>>(new Set());
+  const persistedPosRef = useRef<Map<string, string>>(new Map());
+  const fmtPos = (p: { lat: number; lng: number }) => `${p.lat.toFixed(6)},${p.lng.toFixed(6)}`;
+
+  useEffect(() => {
+    for (const root of allMapRoots) {
+      const owner = hierarchies.find((h) => h.canonicalRoot.id === root.id && h.source);
+      if (!owner || seededRootsRef.current.has(root.id)) continue;
+      seededRootsRef.current.add(root.id);
+      void fetchUnitPositions(treeKeys(root))
+        .then((abs) => {
+          // Offsets top-down: a node's effective position is its parent's
+          // when it has no stored one (absolutePosition sums along the chain).
+          const offsets = new Map<string, { offsetFromParent: { lat: number; lng: number } }>();
+          const walk = (n: CompositionNode, parentEff: { lat: number; lng: number } | null) => {
+            const own = abs.get(n.id);
+            let eff = parentEff;
+            if (own) {
+              const base = parentEff ?? { lat: 0, lng: 0 };
+              offsets.set(n.id, { offsetFromParent: { lat: own.lat - base.lat, lng: own.lng - base.lng } });
+              eff = own;
+              persistedPosRef.current.set(n.id, fmtPos(own));
+            }
+            for (const c of n.children) walk(c, eff);
+          };
+          if (abs.has(root.id)) walk(root, null);
+          setMapPositions((prev) => {
+            const next = new Map(prev);
+            for (const [id, v] of offsets) if (!next.has(id)) next.set(id, v);
+            return next;
+          });
+        })
+        .catch((err) => console.warn("[OrbatManager] could not read unit positions:", err))
+        .finally(() => seedDoneRef.current.add(root.id));
+    }
+  }, [allMapRoots, hierarchies]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const moves = new Map<string, { lat: number; lng: number }>();
+      for (const root of allMapRoots) {
+        const owner = hierarchies.find((h) => h.canonicalRoot.id === root.id && h.source?.phaseId);
+        if (!owner || !seedDoneRef.current.has(root.id)) continue;
+        const stored = new Set(owner.source!.loadedKeys);
+        for (const id of treeKeys(root)) {
+          if (!stored.has(id) || !mapPositions.has(id)) continue;
+          const p = absolutePosition(root, id, mapPositions);
+          if (!p || persistedPosRef.current.get(id) === fmtPos(p)) continue;
+          moves.set(id, { lat: p.lat, lng: p.lng });
+        }
+      }
+      if (moves.size === 0) return;
+      moveOrbatUnits(moves)
+        .then(() => {
+          for (const [id, p] of moves) persistedPosRef.current.set(id, fmtPos(p));
+          setPersistNote({ text: `Moved ${moves.size} unit${moves.size === 1 ? "" : "s"} — saved.` });
+        })
+        .catch((err) =>
+          setPersistNote({
+            text: `Could not save the new positions: ${err instanceof Error ? err.message : String(err)}`,
+            error: true,
+          }),
+        );
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [mapPositions, allMapRoots, hierarchies]);
 
   // ── Map available items — ALL hierarchies, sorted stably ────────────────
   // The AddToMapSection inside HierarchyMap handles the compact/all toggle
@@ -2268,6 +2540,16 @@ export default function App() {
               ⚠ Phase ORBAT: {phaseIngestError.length > 40 ? phaseIngestError.slice(0, 40) + "…" : phaseIngestError}
             </span>
           )}
+          {persistNote && (
+            <span
+              className={`om-status-chip ${persistNote.error ? "om-status-chip--err" : "om-status-chip--ok"}`}
+              onClick={() => setPersistNote(null)}
+              style={{ cursor: "pointer" }}
+              title={persistNote.text}
+            >
+              {persistNote.text.length > 60 ? persistNote.text.slice(0, 60) + "…" : persistNote.text}
+            </span>
+          )}
           {preflightPhaseId && preflight.status === "running" && (
             <span className="om-status-chip om-status-chip--info">⟳ Preflight…</span>
           )}
@@ -2363,6 +2645,88 @@ export default function App() {
 
             {/* ── Canvas ── */}
             <div className="om-canvas">
+              {/* ── Where this tree lives, and saving it (plan 3.4) ── */}
+              <div
+                style={{
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  flexWrap: "wrap",
+                  padding: "6px 12px",
+                  borderBottom: "1px solid var(--border-subtle, #232a40)",
+                  fontSize: 12,
+                  color: "var(--text-muted, #8a93a6)",
+                }}
+              >
+                {activeHierarchy?.kind === "operation" ? (
+                  <span>Operation overview</span>
+                ) : activeHierarchy?.source ? (
+                  <span title={activeHierarchy.source.hierarchyKey}>
+                    {activeHierarchy.source.phaseId
+                      ? `Phase ORBAT in the ontology (${activeHierarchy.source.phaseId})`
+                      : "Ontology hierarchy (not a phase ORBAT)"}
+                    {activeHierarchy.dirty && (
+                      <strong style={{ color: "var(--accent-amber, #f0b429)" }}> · unsaved changes</strong>
+                    )}
+                  </span>
+                ) : activeHierarchy ? (
+                  <span>
+                    <strong style={{ color: "var(--accent-amber, #f0b429)" }}>Draft</strong> — not in the
+                    ontology yet
+                  </span>
+                ) : (
+                  <span>No hierarchy selected</span>
+                )}
+                {saveTarget && "blocked" in saveTarget && <span>{saveTarget.blocked}</span>}
+                {saveTarget && !("blocked" in saveTarget) && (activeHierarchy?.dirty || !activeHierarchy?.source) && (
+                  <button
+                    type="button"
+                    className="mil-btn mil-btn--sm mil-btn--primary"
+                    disabled={persistBusy}
+                    onClick={() => void saveActiveTree()}
+                    title="One reconcile: units, parentage, removals. Existing units keep their positions."
+                  >
+                    {persistBusy
+                      ? "Saving…"
+                      : activeHierarchy?.source
+                        ? "Save to ontology"
+                        : `Save into phase ${saveTarget.phaseId}`}
+                  </button>
+                )}
+                {activeHierarchy?.source && activeHierarchy.dirty && (
+                  <button
+                    type="button"
+                    className="mil-btn mil-btn--sm mil-btn--ghost"
+                    disabled={persistBusy}
+                    onClick={() => void discardActiveEdits()}
+                  >
+                    Discard
+                  </button>
+                )}
+                <span style={{ flex: 1 }} />
+                <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  Open from ontology
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const key = e.target.value;
+                      if (!key) return;
+                      void openHierarchyFromOntology(key).then((created) => {
+                        if (created[0]) setSelectedHierarchyId(created[0].id);
+                      });
+                    }}
+                    style={{ maxWidth: 260 }}
+                  >
+                    <option value="">{ontologyHierarchies.length ? "Choose…" : "None for this operation"}</option>
+                    {ontologyHierarchies.map((h) => (
+                      <option key={h.key} value={h.key}>
+                        {h.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
               {opLoading && activeHierarchy?.kind === "operation" && (
                 <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--om-text-muted)", fontSize: 13 }}>Loading operation hierarchy…</div>
               )}

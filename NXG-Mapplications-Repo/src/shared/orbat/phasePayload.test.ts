@@ -9,6 +9,7 @@ import {
   phasePlacementParentage,
   pinSubtrees,
   placeUnitPayload,
+  treeSavePayload,
   treeViewOf,
 } from "./phasePayload";
 
@@ -310,5 +311,95 @@ describe("inheriting nested placements", () => {
     // The company keeps its offset from its battalion.
     expect(coy.latitude! - bn.latitude!).toBeCloseTo(coyOffset.lat, 9);
     expect(coy.longitude! - bn.longitude!).toBeCloseTo(coyOffset.lng, 9);
+  });
+});
+
+describe("treeSavePayload", () => {
+  const P = "obs_phase_01--";
+  const withId = (n: CompositionNode, id: string): CompositionNode => ({ ...n, id });
+  // Loaded: Bde → [Bn A → Coy, Bn B]
+  const loaded = new Set([`${P}bde`, `${P}bnA`, `${P}coy`, `${P}bnB`]);
+  const positions = new Map([[`${P}bde`, { lat: 54, lng: 20 }]]);
+
+  it("re-parents, adds, removes — one payload, existing units never moved", () => {
+    // Edited: Coy moved under Bn B; Bn A removed; a new Recce Pl added under Bde.
+    const edited = withId(
+      comp("Bde", "Brigade", [
+        withId(comp("Bn B", "Battalion", [withId(comp("Coy", "Company"), `${P}coy`)]), `${P}bnB`),
+        comp("Recce Pl", "Platoon"),
+      ]),
+      `${P}bde`,
+    );
+    const parts = treeSavePayload(REF, {
+      root: edited,
+      loadedKeys: loaded,
+      positions,
+      validFrom: "2026-11-01",
+      newKey: () => `${P}new1`,
+    });
+    const units = parts.payload.units;
+    const existing = units.find((u) => u.primaryKey === `${P}coy`)!;
+    expect("latitude" in existing).toBe(false);
+    expect("dis" in existing).toBe(false);
+    const created = units.find((u) => u.primaryKey === `${P}new1`)!;
+    expect(created.unitIdentifier).toBe("Recce Pl");
+    expect(created.latitude).not.toBeNull();
+    expect(parts.payload.unitHierarchyEdges.map((e) => `${e.parentUnitKey}>${e.childUnitKey}`)).toEqual([
+      `${P}bnB>${P}coy`,
+      `${P}bde>${P}bnB`,
+      `${P}bde>${P}new1`,
+    ].sort((a, b) => a.split(">")[1].localeCompare(b.split(">")[1]) || a.localeCompare(b)));
+    expect(parts.removedKeys).toEqual([`${P}bnA`]);
+    expect(parts.deletableKeys).toEqual([`${P}bnA`]);
+    // Removed unit is managed with no parent → detached; the root is never managed.
+    expect(parts.payload.managedChildUnitKeys).toContain(`${P}bnA`);
+    expect(parts.payload.managedChildUnitKeys).not.toContain(`${P}bde`);
+    expect(parts.payload.unitHierarchy.phaseKey).toBe("obs_phase_01");
+  });
+
+  it("expands a raised quantity into new copies with their own subtrees", () => {
+    let n = 0;
+    const edited = withId(
+      comp("Bde", "Brigade", [
+        { ...withId(comp("Bn B", "Battalion", [withId(comp("Coy", "Company"), `${P}coy`)]), `${P}bnB`), quantity: 2 },
+      ]),
+      `${P}bde`,
+    );
+    const parts = treeSavePayload(REF, {
+      root: edited,
+      loadedKeys: loaded,
+      positions,
+      newKey: () => `${P}n${++n}`,
+    });
+    // Copy 1 keeps its key and its existing child; copy 2 is new with a new Coy.
+    expect(parts.createdKeys).toEqual([`${P}n1`, `${P}n2`]);
+    const labels = Object.fromEntries(parts.payload.units.map((u) => [u.primaryKey, u.unitIdentifier]));
+    expect(labels[`${P}bnB`]).toBe("Bn B");
+    expect(labels[`${P}n1`]).toBe("Bn B 2");
+    expect(labels[`${P}n2`]).toBe("Coy");
+    expect(parts.removedKeys).toEqual([`${P}bnA`]);
+  });
+
+  it("detaches but does not delete removed units inherited from another phase", () => {
+    const parts = treeSavePayload(REF, {
+      root: withId(comp("Bde", "Brigade"), `${P}bde`),
+      loadedKeys: new Set([`${P}bde`, "obs_phase_00--old"]),
+      positions,
+      newKey: () => "x",
+    });
+    expect(parts.removedKeys).toEqual(["obs_phase_00--old"]);
+    expect(parts.deletableKeys).toEqual([]);
+  });
+
+  it("saves a draft tree (nothing loaded) as all-new units under the root position", () => {
+    let n = 0;
+    const parts = treeSavePayload(REF, {
+      root: comp("Draft Bn", "Battalion", [comp("A Coy", "Company")]),
+      loadedKeys: new Set(),
+      positions: new Map(),
+      newKey: () => `${P}d${++n}`,
+    });
+    expect(parts.createdKeys).toEqual([`${P}d1`, `${P}d2`]);
+    expect(parts.payload.units[0].latitude).toBeNull();
   });
 });

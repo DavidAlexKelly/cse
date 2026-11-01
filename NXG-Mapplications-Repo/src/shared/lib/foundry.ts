@@ -65,12 +65,10 @@ import type {
   OEquipmentType,
   ORelationshipType,
   OHierarchy,
-  CompositionNode,
   AssetAvailability,
   OSimAsset,
   SimTarget,
 } from "../types/index";
-import { assertCompositionEligible } from "../orbat/assetEligibility";
 import {
   buildSwordFormationIndex,
   type SwordFormationIndex,
@@ -767,158 +765,12 @@ export {
   type CompositionPlan,
 } from "./compositionPlan";
 
-import { planComposition } from "./compositionPlan";
-
-export interface CompositionResult {
-  rootUnitKey: string;
-  createdUnitKeys: string[];
-  createdSymbolKeys: string[];
-  createdEdgeKeys: string[];
-}
-
-/**
- * Maximum action calls sent in one `batchApplyAction`.
- *
- * Foundry allows up to 10,000 calls per batch for a standard (non
- * function-backed) action, and treats a batch as a single group for the
- * 10,000-objects-per-submission edit limit. 500 keeps request bodies small
- * enough to stay well inside both, and bounds how much has to be rolled back
- * if a chunk fails.
- */
-const ACTION_BATCH_SIZE = 500;
-
-function chunk<T>(items: readonly T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
-  return out;
-}
 
 
-interface WrittenKeys {
-  units: string[];
-  symbols: string[];
-  edges: string[];
-}
+// createCompositionInOntology (one action per unit, scenario-wide) was removed:
+// every ORBAT write goes through the phase reconcile (shared/orbat/phaseOrbat.ts),
+// docs/ORBAT_PIPELINE_PLAN.md 3.7.
 
-/**
- * Best-effort compensation for a partially-written composition.
- *
- * Foundry applies a batch as one transaction, but a composition spans three
- * action types and therefore at least three transactions. There is no
- * cross-action-type transaction available from the client, so if a later phase
- * fails we undo the earlier ones in reverse dependency order. This never
- * throws: the caller is already handling a failure and a rollback error must
- * not mask it.
- */
-async function rollbackComposition(written: WrittenKeys): Promise<void> {
-  const orphaned: string[] = [];
-
-  async function deleteAll(
-    label: string,
-    keys: string[],
-    applyChunk: (keys: string[]) => Promise<unknown>,
-  ): Promise<void> {
-    for (const batch of chunk(keys, ACTION_BATCH_SIZE)) {
-      try {
-        await applyChunk(batch);
-      } catch (err) {
-        orphaned.push(`${batch.length} ${label}`);
-        console.error(`[composition] rollback of ${batch.length} ${label} failed:`, err);
-      }
-    }
-  }
-
-  // Reverse dependency order: edges and symbols both reference units.
-  await deleteAll("edge(s)", written.edges, (keys) =>
-    client(deleteNxgUnitHierachyEdge).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey })),
-    ),
-  );
-  await deleteAll("symbol(s)", written.symbols, (keys) =>
-    client(deleteNxgTacticalGraphicSymbol).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey })),
-    ),
-  );
-  await deleteAll("unit(s)", written.units, (keys) =>
-    client(deleteNxgUnit).batchApplyAction(
-      keys.map((primaryKey) => ({ primaryKey, cascadeSymbol: true, cascadeEdges: true })),
-    ),
-  );
-
-  if (orphaned.length) {
-    console.error(
-      `[composition] rollback incomplete — possibly orphaned in the ontology: ${orphaned.join(", ")}`,
-    );
-  }
-}
-
-/**
- * Write a composition tree to the ontology.
- *
- * Previously this issued one `applyAction` per unit, per symbol and per edge,
- * sequentially awaited inside a recursive walk — a battalion was hundreds of
- * serial round-trips, and a failure part-way left an unrecoverable mess of
- * half-created units with no compensation path.
- *
- * Now the tree is planned in memory first, then written as three batched
- * phases (units → symbols → edges, in dependency order). That is O(nodes/500)
- * round-trips instead of O(nodes), and each phase is atomic. If a later phase
- * fails, earlier phases are rolled back before the error propagates, so the
- * caller either gets a complete ORBAT or none of one.
- */
-export async function createCompositionInOntology(
-  _operationKey: string,
-  hierarchyKey: string,
-  root: CompositionNode,
-  rootLat: number,
-  rootLng: number
-): Promise<CompositionResult> {
-  // Refuse to persist units no simulator can spawn. The UI stops most of these
-  // at the point of adding, but templates, the AI generator and the Scenario
-  // Planner all reach this function too, so the guard belongs here — it is the
-  // one place every composition passes through. loadCanonicalAssetIndex is
-  // TTL-cached, so in practice this costs nothing.
-  assertCompositionEligible(root, await loadCanonicalAssetIndex());
-
-  const plan = planComposition(hierarchyKey, root, rootLat, rootLng);
-
-  if (!plan.units.length) {
-    return { rootUnitKey: "", createdUnitKeys: [], createdSymbolKeys: [], createdEdgeKeys: [] };
-  }
-
-  const written: WrittenKeys = { units: [], symbols: [], edges: [] };
-
-  try {
-    for (const batch of chunk(plan.units, ACTION_BATCH_SIZE)) {
-      await client(createNxgUnit).batchApplyAction(batch);
-      written.units.push(...batch.map((p) => p.primaryKey));
-    }
-    for (const batch of chunk(plan.symbols, ACTION_BATCH_SIZE)) {
-      await client(createNxgTacticalGraphicSymbol).batchApplyAction(batch);
-      written.symbols.push(...batch.map((p) => p.primaryKey));
-    }
-    for (const batch of chunk(plan.edges, ACTION_BATCH_SIZE)) {
-      await client(createNxgUnitHierachyEdge).batchApplyAction(batch);
-      written.edges.push(...batch.map((p) => p.primaryKey));
-    }
-  } catch (err) {
-    await rollbackComposition(written);
-    // `cause` is deliberately interpolated rather than passed as ErrorOptions:
-    // that overload is ES2022 and this project targets ES2020.
-    throw new Error(
-      `Failed to write composition "${root.unitIdentifier}" (${plan.units.length} units, ` +
-        `${plan.symbols.length} symbols, ${plan.edges.length} edges) to hierarchy ${hierarchyKey}. ` +
-        `Partial writes were rolled back. Cause: ${err instanceof Error ? err.message : String(err)}`,
-    );
-  }
-
-  return {
-    rootUnitKey: plan.rootUnitKey,
-    createdUnitKeys: written.units,
-    createdSymbolKeys: written.symbols,
-    createdEdgeKeys: written.edges,
-  };
-}
 
 // ─── Template Orbat Graph CRUD ────────────────────────────────────────────────
 

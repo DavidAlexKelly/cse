@@ -26,7 +26,8 @@ import {
 } from "./hierarchy";
 import { ORGANIC_RELATIONSHIP_KEY, ontologyDate } from "./model";
 import type { ForestIndex } from "./orbatLevels";
-import { newPhaseUnitKey } from "./phaseKeys";
+import { isNativeToPhase, newPhaseUnitKey } from "./phaseKeys";
+import { ringPositions } from "./ringLayout";
 import { serialiseComposition } from "./serialise";
 
 /** Where a phase write lands. */
@@ -421,4 +422,140 @@ export function pinSubtrees(
 
 function normaliseQuantities(node: CompositionNode): CompositionNode {
   return { ...node, quantity: 1, children: node.children.map(normaliseQuantities) };
+}
+
+// ─── Save an edited tree (ORBAT Manager) ─────────────────────────────────────
+
+export interface TreeSaveInput {
+  /** The edited tree. Node ids that are NxgUnit keys are existing units. */
+  root: CompositionNode;
+  /** Every unit key the tree had when it was loaded from the ontology. */
+  loadedKeys: ReadonlySet<string>;
+  /** Known absolute positions, to place NEW units around their parent. */
+  positions: ReadonlyMap<string, { lat: number; lng: number }>;
+  /** Depth of the root in its hierarchy (ring radii). Default 0. */
+  rootDepth?: number;
+  validFrom?: string;
+  newKey?: () => string;
+}
+
+export interface TreeSaveParts {
+  payload: PhaseReconcilePayload;
+  /** Units created by this save (new keys). */
+  createdKeys: string[];
+  /** Loaded units no longer in the tree: detached by the payload. */
+  removedKeys: string[];
+  /** Of those, the ones native to the phase — safe to delete outright. */
+  deletableKeys: string[];
+}
+
+/**
+ * One reconcile for an edited tree: every unit's identity fields, every
+ * parent → child edge, and every non-root unit managed so a re-parent drops
+ * its old edge. Units that already exist are sent WITHOUT position or DIS, so
+ * saving never moves them or wipes a stored DIS (the reconcile writes only the
+ * fields present). New units — including extra copies when a node's quantity
+ * was raised — get fresh phase keys and a slot on a ring around their parent.
+ *
+ * Loaded units that are gone from the tree are added to the managed set with
+ * no requested parent, which detaches them; the native ones are also returned
+ * for deletion. The root's own parentage is never touched.
+ */
+export function treeSavePayload(ref: PhaseHierarchyRef, input: TreeSaveInput): TreeSaveParts {
+  const newKey = input.newKey ?? (() => newPhaseUnitKey(ref.phaseKey));
+  const validFrom = input.validFrom ?? ontologyDate();
+  const units: ReconcileUnit[] = [];
+  const edges: ReconcileEdge[] = [];
+  const managed: string[] = [];
+  const created: string[] = [];
+  const kept = new Set<string>();
+  const positions = new Map(input.positions);
+
+  const row = (
+    node: CompositionNode,
+    key: string,
+    isNew: boolean,
+    label: string,
+    pos: { lat: number; lng: number } | null,
+  ): ReconcileUnit => {
+    const base: ReconcileUnit = {
+      primaryKey: key,
+      unitIdentifier: label,
+      entityType: node.entityType,
+      owningSimulator: node.owningSimulator || "none",
+      simulatorIdentifierCode: node.simulatorIdentifierCode ?? null,
+      dis6Code: node.canonicalAssetKey ?? null,
+      canControlDrones: false,
+      militaryService: node.militaryService,
+      echelon: node.echelon,
+      sidc: node.sidc,
+      affiliation: node.affiliation,
+      allegiance: node.allegiance,
+      unitTypeKey: node.unitTypeKey,
+      equipmentTypeKey: node.equipmentTypeKey,
+    };
+    if (!isNew) return base;
+    return {
+      ...base,
+      dis: "0.0.0.0.0.0.0",
+      latitude: pos?.lat ?? null,
+      longitude: pos?.lng ?? null,
+    };
+  };
+
+  /** Emit a node (all its copies) and its subtree beneath `parentKey`. */
+  const emit = (
+    node: CompositionNode,
+    parentKey: string | null,
+    depth: number,
+    forceNew: boolean,
+    slotPos: () => { lat: number; lng: number } | null,
+  ): void => {
+    const copies = Math.max(1, node.quantity || 1);
+    for (let c = 0; c < copies; c++) {
+      const existing = !forceNew && c === 0 && input.loadedKeys.has(node.id);
+      const key = existing ? node.id : newKey();
+      const label =
+        copies > 1 && !existing ? `${node.unitIdentifier} ${c + 1}` : node.unitIdentifier;
+      const pos = existing ? (positions.get(key) ?? null) : slotPos();
+      if (!existing) {
+        created.push(key);
+        if (pos) positions.set(key, pos);
+      }
+      kept.add(key);
+      units.push(row(node, key, !existing, label, pos));
+      if (parentKey) {
+        edges.push(edge(parentKey, key, validFrom));
+        managed.push(key);
+      }
+      // A copy beyond the first is a duplicate subtree: everything beneath it is new.
+      const childForceNew = !existing;
+      const here = positions.get(key) ?? null;
+      const slots = here
+        ? ringPositions(here, node.children.reduce((n, ch) => n + Math.max(1, ch.quantity || 1), 0), depth + 1)
+        : [];
+      let next = 0;
+      for (const child of node.children) {
+        emit(child, key, depth + 1, childForceNew, () => slots[next++] ?? here);
+      }
+    }
+  };
+
+  const rootDepth = input.rootDepth ?? 0;
+  emit(input.root, null, rootDepth, false, () => null);
+
+  const removedKeys = [...input.loadedKeys].filter((k) => !kept.has(k)).sort();
+  const deletableKeys = removedKeys.filter((k) => isNativeToPhase(k, ref.phaseKey));
+
+  return {
+    payload: explicitPayload(ref, {
+      units,
+      edges,
+      managedChildUnitKeys: [...managed, ...removedKeys],
+      validFrom,
+    }),
+    createdKeys: created,
+    removedKeys,
+    deletableKeys,
+  };
 }

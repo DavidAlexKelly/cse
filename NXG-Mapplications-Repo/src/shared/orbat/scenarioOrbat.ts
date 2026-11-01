@@ -33,12 +33,7 @@ import {
   NxgUnitHierarchy,
   createNxgUnitHierarchy,
 } from "@nxg-simulation-execution-testing/sdk";
-import {
-  createCompositionInOntology,
-  createEdgeFn,
-} from "../lib/foundry";
-import type { CompositionNode } from "@/shared/types";
-import { ORGANIC_RELATIONSHIP_KEY, ontologyDate, type Side } from "./model";
+import { ontologyDate, type Side } from "./model";
 
 // The pure vocabulary (Side, ORGANIC_RELATIONSHIP_KEY, ontologyDate,
 // sideForSidc) lives in model.ts so the reconciler can use it without pulling
@@ -286,84 +281,7 @@ export function resetScenarioOrbatCache(): void {
 }
 
 // ─── Committing a placed unit's ORBAT ────────────────────────────────────────
-
-export interface DefineOrbatResult {
-  hierarchyKey: string;
-  rootUnitKey: string;
-  /** Total NxgUnit rows written (root + subordinates). */
-  unitsCreated: number;
-}
-
-/**
- * Write a confirmed ORBAT tree for a placed unit into the scenario's hierarchy.
- *
- * The tree is supplied by the caller — the ORBAT screen passes what the planner
- * actually built and confirmed. Nothing is written before that confirmation.
- *
- * This no longer attaches the tree to anything. Where the unit sits relative to
- * the rest of the force is derived and reconciled (hierarchy.ts / reconcile.ts);
- * deciding it here is what left stale edges behind when a more senior unit was
- * placed afterwards. Pinned scenarios still attach beneath their authored force
- * root, since nothing reconciles them.
- */
-export async function commitOrbatForPlacement(params: {
-  scenarioId: string;
-  scenarioName: string;
-  /** The confirmed tree. Its root becomes the placement's ORBAT root. */
-  root: CompositionNode;
-  side: Side;
-  /** Placement position — the root unit's symbol is created here. */
-  lat: number;
-  lng: number;
-  /** Label used in log output only. */
-  unitLabel?: string;
-}): Promise<DefineOrbatResult> {
-  const { scenarioId, scenarioName, root, side, lat, lng } = params;
-  const unitLabel = params.unitLabel ?? root.unitIdentifier;
-
-  const target = await resolveScenarioOrbat(scenarioId, scenarioName, side);
-
-  const result = await createCompositionInOntology(
-    target.operationKey,
-    target.hierarchyKey,
-    root,
-    lat,
-    lng,
-  );
-
-  if (!result.rootUnitKey) {
-    throw new Error("ORBAT was not created — the composition returned no root unit.");
-  }
-
-  // Only pinned scenarios carry an attach point (see resolveScenarioOrbat).
-  // Non-fatal: the ORBAT is already written, it would just sit at top level.
-  if (target.parentUnitKey) {
-    try {
-      await createEdgeFn({
-        primaryKey: crypto.randomUUID(),
-        hierarchyKey: target.hierarchyKey,
-        parentUnitKey: target.parentUnitKey,
-        childUnitKey: result.rootUnitKey,
-        relationshipTypeKey: ORGANIC_RELATIONSHIP_KEY,
-        validFrom: ontologyDate(),
-      });
-    } catch (err) {
-      console.warn(
-        `[scenarioOrbat] ORBAT ${result.rootUnitKey} created but could not be attached to ` +
-          `${target.parentUnitKey}: ${describeActionError(err)}`,
-      );
-    }
-  }
-
-  console.log(
-    `[scenarioOrbat] ORBAT for "${unitLabel}" → ${target.hierarchyKey}: ` +
-      `root ${result.rootUnitKey}, ${result.createdUnitKeys.length} units, ` +
-      `${result.createdEdgeKeys.length} edges`,
-  );
-
-  return {
-    hierarchyKey: target.hierarchyKey,
-    rootUnitKey: result.rootUnitKey,
-    unitsCreated: result.createdUnitKeys.length,
-  };
-}
+// Retired: every placement belongs to a phase, and Define writes into the
+// phase hierarchy (phaseOrbat.commitDefinedOrbatToPhase). The scenario-wide
+// commitOrbatForPlacement → createCompositionInOntology path is gone
+// (docs/ORBAT_PIPELINE_PLAN.md, 3.7).

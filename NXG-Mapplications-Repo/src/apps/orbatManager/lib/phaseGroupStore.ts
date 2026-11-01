@@ -99,21 +99,8 @@ export interface OperationPhaseGroup {
   createdAt: string;
 }
 
-// ─── Session storage ──────────────────────────────────────────────────────────
-
-const STORAGE_KEY = "orbat_phase_groups_v1";
-
-export function loadPhaseGroups(): OperationPhaseGroup[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as OperationPhaseGroup[];
-  } catch { /* ignore */ }
-  return [];
-}
-
-export function savePhaseGroups(groups: OperationPhaseGroup[]): void {
-  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(groups)); } catch { /* quota */ }
-}
+// No storage: phase groups are working state for this view only. The phase
+// ORBATs themselves live in the ontology (docs/ORBAT_PIPELINE_PLAN.md, 3.4).
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

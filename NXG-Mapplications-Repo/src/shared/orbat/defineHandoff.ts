@@ -6,7 +6,7 @@
 //   planner  → requestOrbatDefinition({ …placement… })  → navigate /orbat?define=1
 //   orbat    → readOrbatDefinitionRequest()             → seeds a DRAFT tree
 //              …planner edits it / regenerates by prompt…
-//              → Confirm  → commitOrbatForPlacement()   → publishOrbatDefinitionResult()
+//              → Confirm  → commitDefinedOrbatToPhase()  → publishOrbatDefinitionResult()
 //              → navigate back to the planner
 //   planner  → takeOrbatDefinitionResult()              → links the placement
 //

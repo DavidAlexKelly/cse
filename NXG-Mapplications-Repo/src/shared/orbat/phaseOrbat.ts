@@ -45,12 +45,15 @@ import {
 import {
   type PhaseHierarchyRef,
   type PhaseReconcilePayload,
+  type TreeSaveInput,
+  type TreeSaveParts,
   changeParentPayload,
   cloneSubtreePayloadParts,
   generateBeneathPayload,
   phasePlacementParentage,
   pinSubtrees,
   placeUnitPayload,
+  treeSavePayload,
   treeViewOf,
 } from "./phasePayload";
 import { adoptees, chooseParent, landingLevel } from "./placeIntoOrbat";
@@ -440,6 +443,32 @@ export async function removeSubtreeInPhase(
     );
   }
   return keys.length;
+}
+
+// ─── Save an edited tree (ORBAT Manager) ─────────────────────────────────────
+
+/**
+ * Write an edited ORBAT tree into a phase's hierarchy (creating the hierarchy
+ * if needed): one reconcile for every unit, edge and re-parent, then delete
+ * the removed units native to this phase. Existing units keep their stored
+ * positions. See treeSavePayload.
+ */
+export async function saveTreeToPhase(
+  target: PhaseTarget,
+  input: TreeSaveInput,
+): Promise<TreeSaveParts> {
+  const ref = await resolvePhaseHierarchy(target);
+  const parts = treeSavePayload(ref, input);
+  await applyReconcile(parts.payload);
+  const keys = [...parts.deletableKeys].reverse();
+  for (let i = 0; i < keys.length; i += 500) {
+    await client(deleteNxgUnit).batchApplyAction(
+      keys
+        .slice(i, i + 500)
+        .map((primaryKey) => ({ primaryKey, cascadeSymbol: true, cascadeEdges: true })),
+    );
+  }
+  return parts;
 }
 
 // ─── Moves ───────────────────────────────────────────────────────────────────

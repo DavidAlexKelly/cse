@@ -1,5 +1,13 @@
 /**
- * useOrbatStore.ts — central state for the ORBAT Group Builder.
+ * builtinTemplates.ts — the ORBAT builder's built-in building blocks.
+ *
+ * Unit templates, group templates and hierarchy templates that ship with the
+ * app. They are fixed: user templates live in the ontology
+ * (NxgOTemplateOrbatGraph). This used to be a sessionStorage "store" with a
+ * GraphQL-style resolver layer nothing called — a second, tab-scoped copy of
+ * the templates (docs/ORBAT_PIPELINE_PLAN.md, 3.6).
+ *
+ * Former header (useOrbatStore.ts — central state for the ORBAT Group Builder):
  *
  * Manages:
  *   - groups         : UnitGroup[] — named collections of UnitNodes per affiliation
@@ -9,27 +17,18 @@
  * Persisted to sessionStorage so state survives tab switches within the session.
  */
 
-import { useState, useCallback, useRef } from "react";
 import type {
-  OrbatStoreState,
-  UnitGroup,
-  UnitNode,
   UnitTemplate,
   GroupTemplate,
   GroupTemplateNode,
   HierarchyTemplate,
-  Force,
   CompositionNode,
   EchelonLevel,
   UnitIconType,
 } from "@/shared/types";
-import { flattenTree, removeNode, upsertNode, findParentId } from "../lib/treeUtils";
 
-const STORAGE_KEY = "orbat_builder_store_v1";
 
-function uid(): string { return crypto.randomUUID(); }
 function now(): string { return new Date().toISOString(); }
-function deepClone<T>(val: T): T { return JSON.parse(JSON.stringify(val)); }
 
 // ── Default Unit Templates ─────────────────────────────────────────────────
 
@@ -458,336 +457,22 @@ function buildUIBTemplate(): GroupTemplate {
   };
 }
 
-// ── Persistence ────────────────────────────────────────────────────────────
+// ── Built-ins ──────────────────────────────────────────────────────────────
 
-function buildInitialState(): OrbatStoreState {
-  return {
-    groups: [],
+export interface BuiltinTemplates {
+  templates: UnitTemplate[];
+  groupTemplates: GroupTemplate[];
+  hierarchyTemplates: HierarchyTemplate[];
+}
+
+let cached: BuiltinTemplates | null = null;
+
+/** The built-in templates (built once; treat as read-only). */
+export function builtinTemplates(): BuiltinTemplates {
+  cached ??= {
     templates: buildDefaultTemplates(),
     groupTemplates: [buildUIBTemplate()],
     hierarchyTemplates: buildDefaultHierarchyTemplates(),
-    forces: [],
   };
+  return cached;
 }
-
-function loadFromStorage(): OrbatStoreState {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as OrbatStoreState;
-      // Migrate: ensure built-in hierarchy templates always present
-      const defaults = buildDefaultHierarchyTemplates();
-      const defaultIds = new Set(defaults.map((d) => d.id));
-      const userTemplates = (parsed.hierarchyTemplates ?? []).filter((t) => !defaultIds.has(t.id));
-      parsed.hierarchyTemplates = [...defaults, ...userTemplates];
-      // Migrate: forces may not exist in older stored state
-      if (!parsed.forces) parsed.forces = [];
-      return parsed;
-    }
-  } catch { /* ignore */ }
-  return buildInitialState();
-}
-
-function saveToStorage(state: OrbatStoreState): void {
-  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* quota */ }
-}
-
-// ── inputToNode ────────────────────────────────────────────────────────────
-
-function inputToNode(input: Record<string, unknown>, affiliation: string, existingNode?: UnitNode): UnitNode {
-  const capabilities = { ...(existingNode?.capabilities ?? {}), ...((input.capabilities as Record<string, unknown>) ?? {}) };
-  return {
-    id: existingNode?.id ?? uid(),
-    name: (input.name as string) ?? existingNode?.name ?? "Unit",
-    echelon: (input.echelon as EchelonLevel) ?? existingNode?.echelon ?? "section",
-    personnelCount: (input.personnelCount as number) ?? existingNode?.personnelCount ?? 0,
-    notes: (input.notes as string) ?? existingNode?.notes ?? "",
-    symbol: {
-      standardIdentity: affiliation,
-      echelon: (input.echelon as EchelonLevel) ?? existingNode?.echelon ?? "section",
-      icon: ((input.symbolIcon as UnitIconType) ?? existingNode?.symbol.icon ?? "infantry"),
-      sector1:     (input.sector1     as string | undefined) ?? existingNode?.symbol.sector1,
-      sector2:     (input.sector2     as string | undefined) ?? existingNode?.symbol.sector2,
-      hqIndicator: (input.hqIndicator as string | undefined) ?? existingNode?.symbol.hqIndicator,
-      reinforced:  (input.reinforced  as "+" | "-" | "±" | undefined) ?? existingNode?.symbol.reinforced,
-      status:      (input.symbolStatus as string | undefined) ?? existingNode?.symbol.status,
-    },
-    capabilities,
-    state: existingNode?.state ?? { status: "active", lastUpdated: now() },
-    children: existingNode?.children ?? [],
-    canonicalAssetKey: (input.canonicalAssetKey as string | null | undefined) ?? existingNode?.canonicalAssetKey  ?? null,
-    unitTypeKey:       (input.unitTypeKey        as string | null | undefined) ?? existingNode?.unitTypeKey        ?? null,
-    equipmentTypeKey:  (input.equipmentTypeKey   as string | null | undefined) ?? existingNode?.equipmentTypeKey   ?? null,
-  };
-}
-
-function templateNodeToUnit(tn: GroupTemplateNode, affiliation: string): UnitNode {
-  return {
-    id: uid(), name: tn.name, echelon: tn.echelon, personnelCount: tn.personnelCount, notes: tn.notes,
-    symbol: { standardIdentity: affiliation, echelon: tn.echelon, icon: (tn.icon as UnitIconType) ?? "infantry" },
-    capabilities: {}, state: { status: "active", lastUpdated: now() },
-    children: tn.children.map((c) => templateNodeToUnit(c, affiliation)),
-  };
-}
-
-// ── Resolvers ──────────────────────────────────────────────────────────────
-
-type Resolver = (args: Record<string, unknown>, state: OrbatStoreState, setState: (s: OrbatStoreState) => void) => unknown;
-
-const RESOLVERS: Record<string, Resolver> = {
-  createGroup: ({ input }, state, setState) => {
-    const i = input as Record<string, string>;
-    const g: UnitGroup = { id: uid(), name: i.name, affiliation: i.affiliation ?? "Friend", description: i.description ?? "", units: [] };
-    setState({ ...state, groups: [...state.groups, g] });
-    return g;
-  },
-  updateGroup: ({ groupId, input }, state, setState) => {
-    const i = input as Record<string, string>;
-    const updated = state.groups.map((g) => g.id === groupId ? { ...g, ...i } : g);
-    setState({ ...state, groups: updated });
-    return updated.find((g) => g.id === groupId) ?? null;
-  },
-  deleteGroup: ({ groupId }, state, setState) => {
-    setState({ ...state, groups: state.groups.filter((g) => g.id !== groupId) });
-    return true;
-  },
-  addUnit: ({ groupId, parentUnitId, input }, state, setState) => {
-    const group = state.groups.find((g) => g.id === groupId)!;
-    const newNode = inputToNode(input as Record<string, unknown>, group.affiliation);
-    setState({ ...state, groups: state.groups.map((g) =>
-      g.id !== groupId ? g : { ...g, units: upsertNode(g.units, newNode, (parentUnitId as string | null) ?? null) },
-    )});
-    return newNode;
-  },
-  wrapUnit: ({ groupId, targetUnitId, input }, state, setState) => {
-    const group = state.groups.find((g) => g.id === groupId)!;
-    const target = flattenTree(group.units).find((u) => u.id === targetUnitId);
-    if (!target) return false;
-    const wrapper: UnitNode = { ...inputToNode(input as Record<string, unknown>, group.affiliation), children: [target] };
-    const replace = (nodes: UnitNode[]): UnitNode[] =>
-      nodes.map((n) => n.id === targetUnitId ? wrapper : { ...n, children: replace(n.children) });
-    setState({ ...state, groups: state.groups.map((g) => g.id !== groupId ? g : { ...g, units: replace(g.units) }) });
-    return wrapper;
-  },
-  updateUnit: ({ groupId, unitId, input }, state, setState) => {
-    const group    = state.groups.find((g) => g.id === groupId)!;
-    const existing = flattenTree(group.units).find((u) => u.id === unitId);
-    const updated  = { ...inputToNode(input as Record<string, unknown>, group.affiliation, existing), id: unitId as string };
-    const parentId = findParentId(group.units, unitId as string);
-    setState({ ...state, groups: state.groups.map((g) =>
-      g.id !== groupId ? g : { ...g, units: upsertNode(g.units, updated, parentId) },
-    )});
-    return updated;
-  },
-  removeUnit: ({ groupId, unitId }, state, setState) => {
-    setState({ ...state, groups: state.groups.map((g) =>
-      g.id !== groupId ? g : { ...g, units: removeNode(g.units, unitId as string) },
-    )});
-    return true;
-  },
-  reorderUnit: ({ groupId, unitId, newParentId, position }, state, setState) => {
-    const group = state.groups.find((g) => g.id === groupId)!;
-    const node  = flattenTree(group.units).find((u) => u.id === unitId);
-    if (!node) return false;
-    const pos = position as number;
-    let units = removeNode(group.units, unitId as string);
-    if (!newParentId) {
-      units = [...units.slice(0, pos), node, ...units.slice(pos)];
-    } else {
-      const ins = (nodes: UnitNode[]): UnitNode[] => nodes.map((n) => {
-        if (n.id === newParentId) {
-          const ch = removeNode(n.children, unitId as string);
-          return { ...n, children: [...ch.slice(0, pos), node, ...ch.slice(pos)] };
-        }
-        return { ...n, children: ins(n.children) };
-      });
-      units = ins(units);
-    }
-    setState({ ...state, groups: state.groups.map((g) => g.id !== groupId ? g : { ...g, units }) });
-    return true;
-  },
-  createTemplate: ({ input }, state, setState) => {
-    const i = input as Record<string, unknown>;
-    const t: UnitTemplate = {
-      id: uid(), name: i.name as string, echelon: i.echelon as EchelonLevel,
-      defaultPersonnelCount: (i.defaultPersonnelCount as number) ?? 0,
-      description: (i.description as string) ?? "", tags: (i.tags as string[]) ?? [],
-      defaultChildren: [], symbol: (i.symbol as UnitTemplate["symbol"]) ?? {},
-    };
-    setState({ ...state, templates: [...state.templates, t] });
-    return t;
-  },
-  updateTemplate: ({ id, input }, state, setState) => {
-    const i = input as Record<string, unknown>;
-    const updated = state.templates.map((t) => t.id !== id ? t : {
-      ...t,
-      name:                  (i.name as string)                    ?? t.name,
-      echelon:               (i.echelon as EchelonLevel)            ?? t.echelon,
-      defaultPersonnelCount: (i.defaultPersonnelCount as number)   ?? t.defaultPersonnelCount,
-      description:           (i.description as string)             ?? t.description,
-      tags:                  (i.tags as string[])                   ?? t.tags,
-      symbol:                (i.symbol as UnitTemplate["symbol"]) ?? t.symbol,
-    });
-    setState({ ...state, templates: updated });
-    return updated.find((t) => t.id === id)!;
-  },
-  deleteTemplate: ({ id }, state, setState) => {
-    setState({ ...state, templates: state.templates.filter((t) => t.id !== id) });
-    return true;
-  },
-  saveGroupTemplate: ({ input }, state, setState) => {
-    const i = input as Record<string, unknown>;
-    const gt: GroupTemplate = {
-      id: uid(), name: i.name as string, description: (i.description as string) ?? "",
-      tags: (i.tags as string[]) ?? [], branch: i.branch as GroupTemplate["branch"],
-      rootNodes: (i.rootNodes as GroupTemplateNode[]) ?? [], createdAt: now(),
-    };
-    setState({ ...state, groupTemplates: [...state.groupTemplates, gt] });
-    return gt;
-  },
-  deleteGroupTemplate: ({ id }, state, setState) => {
-    setState({ ...state, groupTemplates: state.groupTemplates.filter((t) => t.id !== id) });
-    return true;
-  },
-
-  // ── Hierarchy template mutations (Build Hierarchy tab) ──────────────────
-  saveHierarchyTemplate: ({ input }, state, setState) => {
-    const i = input as Record<string, unknown>;
-    const existingId = i.id as string | undefined;
-    const existing = existingId
-      ? (state.hierarchyTemplates ?? []).find((t) => t.id === existingId)
-      : undefined;
-
-    if (existing) {
-      // Update existing template — preserve its id and createdAt, update root + metadata
-      const updated = (state.hierarchyTemplates ?? []).map((t) =>
-        t.id === existingId
-          ? {
-              ...t,
-              name:        (i.name        as string)   ?? t.name,
-              description: (i.description as string)   ?? t.description,
-              tags:        (i.tags        as string[])  ?? t.tags,
-              root:        (i.root        as CompositionNode) ?? t.root,
-            }
-          : t,
-      );
-      setState({ ...state, hierarchyTemplates: updated });
-      return updated.find((t) => t.id === existingId);
-    }
-
-    // Create new template — assign fresh IDs to all nodes
-    function reId(n: CompositionNode): CompositionNode {
-      return { ...n, id: uid(), children: n.children.map(reId) };
-    }
-    const ht: HierarchyTemplate = {
-      id: existingId ?? uid(),
-      name:        (i.name        as string)   ?? "Unnamed",
-      description: (i.description as string)   ?? "",
-      tags:        (i.tags        as string[])  ?? [],
-      createdAt:   now(),
-      root:        reId(i.root as CompositionNode),
-    };
-    setState({ ...state, hierarchyTemplates: [...(state.hierarchyTemplates ?? []), ht] });
-    return ht;
-  },
-  deleteHierarchyTemplate: ({ id }, state, setState) => {
-    setState({ ...state, hierarchyTemplates: (state.hierarchyTemplates ?? []).filter((t) => t.id !== id) });
-    return true;
-  },
-
-  // ── Force mutations ─────────────────────────────────────────────────────
-  saveForce: ({ input }, state, setState) => {
-    const i = input as Record<string, unknown>;
-    const existing = (state.forces ?? []).find((f) => f.id === (i.id as string | undefined));
-    if (existing) {
-      // Update existing force (root changed)
-      const updated = (state.forces ?? []).map((f) =>
-        f.id === existing.id
-          ? { ...f, root: i.root as CompositionNode, updatedAt: now(), name: (i.name as string) ?? f.name, affiliation: (i.affiliation as string) ?? f.affiliation }
-          : f,
-      );
-      setState({ ...state, forces: updated });
-      return existing;
-    }
-    // Create new force
-    const force: Force = {
-      id: (i.id as string) ?? uid(),
-      name: (i.name as string) ?? "Unnamed Force",
-      affiliation: (i.affiliation as string) ?? "Friend",
-      description: (i.description as string) ?? "",
-      createdAt: now(),
-      updatedAt: now(),
-      root: i.root as CompositionNode,
-    };
-    setState({ ...state, forces: [...(state.forces ?? []), force] });
-    return force;
-  },
-  deleteForce: ({ id }, state, setState) => {
-    setState({ ...state, forces: (state.forces ?? []).filter((f) => f.id !== id) });
-    return true;
-  },
-  applyGroupTemplate: ({ groupId, templateId }, state, setState) => {
-    const group = state.groups.find((g) => g.id === groupId);
-    const gt    = state.groupTemplates.find((t) => t.id === templateId);
-    if (!group || !gt) return false;
-    const newUnits = gt.rootNodes.map((tn) => templateNodeToUnit(tn, group.affiliation));
-    setState({ ...state, groups: state.groups.map((g) =>
-      g.id !== groupId ? g : { ...g, units: [...g.units, ...newUnits] },
-    )});
-    return true;
-  },
-};
-
-// ── Query runner ───────────────────────────────────────────────────────────
-
-function parseOperationName(source: string): string | null {
-  const src = source.replace(/#[^\n]*/g, "").trim();
-  const m = src.match(/(?:query|mutation|subscription)?\s*(?:[a-zA-Z_]\w*)?\s*(?:\([^)]*\))?\s*\{\s*([a-zA-Z_]\w*)/);
-  return m?.[1] ?? null;
-}
-
-async function executeQuery(
-  query: string, variables: Record<string, unknown>,
-  getState: () => OrbatStoreState, setState: (s: OrbatStoreState) => void,
-): Promise<unknown> {
-  const opName = parseOperationName(query);
-  if (!opName) throw new Error("Could not parse operation name");
-  const resolver = RESOLVERS[opName];
-  if (!resolver) throw new Error(`Unknown operation: ${opName}`);
-  return resolver(variables, getState(), setState);
-}
-
-// ── Hook ───────────────────────────────────────────────────────────────────
-
-export interface OrbatStore {
-  state: OrbatStoreState;
-  runQuery: (query: string, variables?: Record<string, unknown>) => Promise<unknown>;
-  resetStore: () => void;
-}
-
-export function useOrbatStore(): OrbatStore {
-  const [state, setState] = useState<OrbatStoreState>(() => loadFromStorage());
-  const stateRef = useRef<OrbatStoreState>(state);
-  stateRef.current = state;
-
-  const setStateAndPersist = useCallback((newState: OrbatStoreState) => {
-    const cloned = deepClone(newState);
-    saveToStorage(cloned);
-    setState(cloned);
-  }, []);
-
-  const runQuery = useCallback(
-    async (query: string, variables: Record<string, unknown> = {}) =>
-      executeQuery(query, variables, () => stateRef.current, setStateAndPersist),
-    [setStateAndPersist],
-  );
-
-  const resetStore = useCallback(() => {
-    const fresh = buildInitialState();
-    saveToStorage(fresh);
-    setState(fresh);
-  }, []);
-
-  return { state, runQuery, resetStore };
-}
-
