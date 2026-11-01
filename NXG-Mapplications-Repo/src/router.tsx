@@ -10,6 +10,7 @@ const AnalysisScreenApp   = lazy(() => import("./apps/analysisScreen/index"));
 // Readiness → launch → live map for one phase. The Execute tab of the Plan &
 // Prepare Workshop embeds this route.
 const ExecuteApp          = lazy(() => import("./apps/execute/App"));
+const ReadinessApp        = lazy(() => import("./apps/readiness/App"));
 // /globe (a bare basemap test page, apps/globeMap) was removed: its source is
 // not in this repository, and a lazy import of a missing module fails the
 // build, not just the route.
@@ -70,6 +71,11 @@ export const router = createBrowserRouter(
     {
       path: "/analysis",
       element: withSuspense(<AnalysisScreenApp />),
+    },
+    {
+      // Pre-demo check of every Foundry resource and the scenario's data.
+      path: "/readiness",
+      element: withSuspense(<ReadinessApp />),
     },
     {
       path: "/auth/callback",

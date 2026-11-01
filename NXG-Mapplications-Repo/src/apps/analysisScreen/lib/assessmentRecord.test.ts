@@ -1,11 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { assessmentId, assessmentProperties, callsFromObjects } from "./assessmentRecord";
+import {
+  ASSESSMENT_PROPERTIES,
+  assessmentId,
+  assessmentProperties,
+  callsFromObjects,
+} from "./assessmentRecord";
 
 const CTX = { scenarioId: "s", phaseId: "p1", runId: "run-1000", runStartS: 1000, runEndS: 4600 };
 
 describe("assessment records", () => {
   it("keys one object per run, phase and objective", () => {
     expect(assessmentId(CTX, "TO-1")).toBe("run-1000|p1|TO-1");
+  });
+
+  it("lists exactly the properties it writes", () => {
+    const props = assessmentProperties(CTX, "TO-1", {}, { rating: "NOT_OBSERVED", basis: "" });
+    expect(Object.keys(props).sort()).toEqual([...ASSESSMENT_PROPERTIES].sort());
   });
 
   it("stores the call with the suggestion beside it for audit", () => {

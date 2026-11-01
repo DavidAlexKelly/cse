@@ -15,6 +15,22 @@ export const ASSESSMENT_ACTIONS = {
 /** Parameter naming the object on modify / delete (Ontology Manager's default). */
 export const ASSESSMENT_OBJECT_PARAM = "nxgObjectiveAssessment";
 
+/** Every property the app writes — the object type must have all of them. */
+export const ASSESSMENT_PROPERTIES = [
+  "assessmentId",
+  "objectiveId",
+  "phaseId",
+  "scenarioId",
+  "runId",
+  "runStartTime",
+  "runEndTime",
+  "rating",
+  "note",
+  "suggestedRating",
+  "suggestionBasis",
+  "assessedAt",
+] as const;
+
 const RATINGS: readonly ObjectiveRating[] = [
   "DEMONSTRATED",
   "PARTIALLY_DEMONSTRATED",

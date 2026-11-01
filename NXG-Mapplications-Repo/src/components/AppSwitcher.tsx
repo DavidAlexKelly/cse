@@ -53,6 +53,13 @@ const APPS = [
     sub: "Replay & after-action review",
     accent: "#4fc3f7",
   },
+  {
+    path: "/readiness",
+    label: "Demo readiness",
+    icon: "✓",
+    sub: "Check Foundry setup & data",
+    accent: "#8a93a6",
+  },
 ] as const;
 
 // ── Styles (injected once as a stylesheet node) ───────────────────────────────
