@@ -1,0 +1,12 @@
+{
+  "foundryUrl": "https://accenture.palantirfoundry.com",
+  "site": {
+    "application": "ri.third-party-applications.main.application.01d93c11-77d8-46c4-bca9-3158bd5ff581",
+    "directory": "./dist",
+    "autoVersion": {
+      "type": "git-describe",
+      "tagPrefix": ""
+    },
+    "uploadOnly": false
+  }
+}

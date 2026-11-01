@@ -1,0 +1,30 @@
+<!doctype html>
+<!--
+  The theme for every app in this repo is chosen here, once.
+
+  `decho-root` declares @acc/decho-styling's tokens; `decho-modern` switches
+  them to the lit theme — translucent surfaces over a glow, gradient
+  hairlines, a selection that glows rather than merely darkens.
+
+  The accent is re-tinted to green in shared/styles/global.css. Swap the
+  second class for decho-daylight, decho-command, decho-accenture-light or
+  decho-accenture-dark to re-theme every app; the apps read tokens, not
+  colours.
+-->
+<html lang="en" class="decho-root decho-modern">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/react.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="osdk-clientId" content="%VITE_FOUNDRY_CLIENT_ID%" />
+    <meta name="osdk-redirectUrl" content="%VITE_FOUNDRY_REDIRECT_URL%" />
+    <meta name="osdk-foundryUrl" content="%VITE_FOUNDRY_API_URL%" />
+    <title>ORBAT Manager</title>
+  </head>
+  <body>
+    <div id="root-container">
+      <div id="root"></div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
