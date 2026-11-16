@@ -272,6 +272,42 @@ public class EtrTaskSender {
         return requestId;
     }
 
+    // -- BGWS simulation control -------------------------------------------------
+    // Not NETN and not RPR: BGWS's own BGWS_Control interaction, from its FOM
+    // module foms/BGWS-Events.xml. RPR StartResume/StopFreeze can start and
+    // pause a federation, but cannot carry a scenario to a simulation that is
+    // joined and waiting for one, nor say which simulation is meant, nor a
+    // speed - which is what this adds. BGWS answers with BGWS_Event kind
+    // federate.status carrying the same RequestId, read back through
+    // GET /events like any other event; there is no task status to correlate,
+    // so nothing is recorded in the task history, where an answer that never
+    // comes as SMC_Response would read as an ignored task.
+    //
+    // 409 (IllegalStateException) when this bridge only monitors, when it is
+    // not connected, or when the federation's FOM has no BGWS_Control.
+    public void bgwsControl(BgwsControl.Message message) throws Exception {
+        if (federate.isMonitorOnly()) {
+            throw new IllegalStateException("This bridge is in monitor-only mode and publishes "
+                    + "nothing, so it cannot send BGWS_Control.");
+        }
+        InteractionClassHandle handle = federate.interaction(Fom.BGWS_CONTROL);
+
+        ParameterHandleValueMap params = federate.newParameterMap(5);
+        params.put(federate.parameter(handle, "Federate"), enc().unicodeString(message.federate()));
+        params.put(federate.parameter(handle, "Command"), enc().unicodeString(message.command()));
+        params.put(federate.parameter(handle, "RequestId"), enc().unicodeString(message.requestId()));
+        params.put(federate.parameter(handle, "Scenario"), enc().unicodeString(message.scenario()));
+        params.put(federate.parameter(handle, "Options"), enc().unicodeString(message.options()));
+
+        federate.sendInteraction(handle, params);
+        logger.info("BGWS_Control sent: {} to {} (request {}{}, options {}).",
+                message.command(),
+                message.federate().isEmpty() ? "every BGWS federate" : message.federate(),
+                message.requestId(),
+                message.scenario().isEmpty() ? "" : ", scenario " + message.scenario().length() + " chars",
+                message.options());
+    }
+
     private static int requestCounter = 0;
 
     private static synchronized long nextRequestId() {

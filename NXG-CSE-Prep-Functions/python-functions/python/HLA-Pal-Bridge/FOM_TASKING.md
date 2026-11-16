@@ -303,6 +303,7 @@ names) whichever dialect is live.
 | `POST /map/obstacle` | `ETR_Task.CreateObstacle` | `Task.CreateObstacle` [NETN-SE] |
 | `POST /map/disrupt-comms` | `ETR_Task.DisruptCommunication` | `Task.DisruptCommunication` [NETN-COM] |
 | `POST /start`, `/pause`, `/stop` | `StartResume` / `StopFreeze` (RPR) | identical |
+| `POST /bgws/control` | `BGWS_Control` (BGWS's own module, `foms/BGWS-Events.xml`; see `BGWS.md`) | identical |
 
 ### Request fields that behave differently
 

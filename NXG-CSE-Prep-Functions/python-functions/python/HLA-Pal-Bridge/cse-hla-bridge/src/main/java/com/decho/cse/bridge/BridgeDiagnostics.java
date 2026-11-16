@@ -528,6 +528,9 @@ public class BridgeDiagnostics {
         if (className.endsWith("SMC_EntityControl.SetSuppliesStatus")) {
             return "NETN-LOG";
         }
+        if (className.contains("BGWS_")) {
+            return "BGWS-Events";
+        }
         if (className.endsWith("SMC_Response")) {
             return "NETN-SMC";
         }

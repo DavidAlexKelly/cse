@@ -30,6 +30,60 @@ this bridge reads it like any other simulator. This page covers:
 - **Tasking:** BGWS does not yet accept NETN-SMC tasking. A task addressed
   to a BGWS entity is sent and ignored, with no `SMC_Response`.
 
+## Loading and running a scenario from Foundry
+
+BGWS can join a federation with no scenario (`bgws federate`) and wait to be
+given one. `BGWS_Control`, in the same FOM module as `BGWS_Event`, is how:
+
+| Parameter | |
+|---|---|
+| `Federate` | the BGWS federate to address, e.g. `BGWS-1-1`; empty for every one |
+| `Command` | `load`, `start`, `pause`, `resume`, `stop` or `speed` |
+| `RequestId` | the caller's id, echoed in the status events that answer it |
+| `Scenario` | for `load`: the scenario JSON (`bgws.foundry` v1, or a full `bgws.scenario` v4) |
+| `Options` | a JSON object, `{"speed": 2.0}` (simulated seconds per wall-clock second); `{}` when there are none |
+
+All `HLAunicodeString`, so it merges with any FOM.
+
+- **Commander:** `hla_bgws_load_scenario(scenario_json, federate?, speed?)`
+  and `hla_bgws_control(command, federate?, speed?)`. Both refuse what BGWS
+  could only misread: text that is not a JSON object, an unknown `format`,
+  a scenario over 512 KB, an unknown command, `speed` without a positive
+  speed. Load lives 300 s on the stream, controls 15 s.
+- **Streamer:** `BGWS_LOAD_SCENARIO` and `BGWS_CONTROL` go to the bridge with
+  `requestId` = `command_id`.
+- **Bridge:** `POST /api/v1/bridge/bgws/control`
+
+  ```json
+  {"federate": "", "command": "load", "requestId": "uuid, optional",
+   "scenario": {"format": "bgws.foundry", "version": 1, ...},
+   "options": {"speed": 2.0}}
+  ```
+
+  - `scenario` and `options` may be objects or JSON text. Either way they
+    are re-serialised compactly, and anything but an object is a 400.
+  - The scenario is sent only with `load`.
+  - `requestId` is generated when absent.
+  - Answers `{"status": "sent", "requestId", "command", "federate",
+    "task": "BGWS_Control"}`.
+  - 400 for an unknown command, a load without a scenario, or a speed
+    without one. 409 when the federation has no `BGWS_Control` (BGWS's
+    module not loaded), or the bridge is in monitor mode. The class is
+    published at connect only if it resolves; its absence fails nothing
+    else.
+  - It does not check the scenario's format: that is BGWS's to decide, and
+    the Commander has checked it already.
+- **The answer:** BGWS replies with `BGWS_Event` kind `federate.status`, with
+  `requestId` in its `data` and a `state`: `loading`, `building_terrain`
+  (a real-terrain area, a minute or more), `ready`, `running`, `paused`,
+  `finished` or `error` with a message. So look for the `request_id` on the
+  events stream. The command outcome row stops at `SENT`: that means
+  "on the wire", not "loaded".
+
+RPR `StartResume` and `StopFreeze` (`hla_sim_start`, `hla_sim_pause`) still
+work: BGWS reads them as start/resume and pause. But they reach the whole
+federation, and cannot load a scenario, name one simulation, or set a speed.
+
 ## What changed in this directory
 
 - **The bridge build:**
@@ -55,6 +109,11 @@ this bridge reads it like any other simulator. This page covers:
   - the publish path in `tracks.py` moved into a `Publisher` class, which
     both threads use.
   See ARCHITECTURE.md §3, *Read path (events)*.
+- **Control:** `BGWS_Control` in `BGWS-Events.xml` (module version 1.1);
+  `POST /bgws/control` and `BgwsControl` in the bridge; `BGWS_LOAD_SCENARIO`
+  and `BGWS_CONTROL` in `commands.py`; `hla_bgws_load_scenario` and
+  `hla_bgws_control` in the Commander. See *Loading and running a scenario
+  from Foundry*, above, and ARCHITECTURE.md §3.
 
 ## The whole chain on one machine
 
@@ -101,7 +160,23 @@ creator's MIM is in force), with `--hla` set to the FedPro address.
 ## Tests
 
 - `mvn package`: `EventLogTest` (numbering, paging, absent values, overflow
-  counted), with the existing tests.
+  counted) and `BgwsControlTest` (commands, object or text scenario, compact
+  serialisation, generated requestId, refusals), with the existing tests.
+- `python hla-bridge-streamer/local_test_commands.py` checks, with a stub
+  bridge, the BGWS control routes:
+  - path and body, with `requestId` = `command_id`;
+  - TTL and seen-once still applied first;
+  - a 409 kept as `REFUSED`.
+
+  With `live URL` it runs against a real bridge.
+- `python hla-command-poster/check_bgws_control.py` checks the rows the two
+  Commander functions write, and what they refuse.
+- Against `bgws mock-rti` (2026-11-16):
+  - with `BGWS-Events.xml` in `FOM_PATH`, the bridge published
+    `BGWS_Control` and sent load, start, pause and speed;
+  - without it, the endpoint answered 409 and nothing else changed.
+  - BGWS's own handling of `BGWS_Control` was not yet built, so no
+    `federate.status` reply was seen.
 - `python hla-bridge-streamer/local_test_events.py` checks, with a stub
   bridge and Foundry:
   - paging;

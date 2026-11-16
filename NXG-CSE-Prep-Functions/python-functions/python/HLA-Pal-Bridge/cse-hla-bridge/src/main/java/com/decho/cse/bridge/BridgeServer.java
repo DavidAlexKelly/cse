@@ -502,6 +502,34 @@ public class BridgeServer {
         }
     }
 
+    // BGWS simulation control: one BGWS_Control interaction. Load a scenario
+    // into a BGWS simulation joined and waiting in the federation, then
+    // start, pause, resume, stop or change its speed. A 200 means the
+    // interaction was sent; BGWS's answer - loading, building_terrain, ready,
+    // running, or error with a reason - arrives as a federate.status event on
+    // GET /events with the same requestId. 400 for an unknown command, a load
+    // with no scenario, or scenario/options that are not JSON objects; 409
+    // when this federation has no BGWS_Control (BGWS's FOM module not loaded)
+    // or this bridge only monitors.
+    @PostMapping("/bgws/control")
+    public ResponseEntity<?> bgwsControl(@RequestBody(required = false) BgwsControlRequest req) {
+        try {
+            BgwsControl.Message message = BgwsControl.from(req);
+            tasks.bgwsControl(message);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", "sent");
+            body.put("requestId", message.requestId());
+            body.put("command", message.command());
+            body.put("federate", message.federate());
+            // Named "task" so the command consumer's outcome row records the
+            // class that went on the wire, as it does for tasking.
+            body.put("task", "BGWS_Control");
+            return ResponseEntity.ok(body);
+        } catch (Exception e) {
+            return failure("send BGWS control", e);
+        }
+    }
+
     // -- Movement -------------------------------------------------------------------
     @PostMapping("/entities/{id}/move")
     public ResponseEntity<?> moveToLocation(@PathVariable String id,

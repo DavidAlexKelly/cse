@@ -164,12 +164,21 @@ _CONTROL_PATHS = {
 }
 
 
+# BGWS simulation control, one route for both operations: a load and a
+# start/pause/... are the same BGWS_Control interaction with a different
+# Command. Kept as two operations for the same reason CONNECT and RECONNECT
+# are: the command stream is the audit trail, and loading a scenario is a
+# different act from pressing pause. The bridge's own command vocabulary is
+# lowercase (load, start, pause, resume, stop, speed).
+_BGWS_OPERATIONS = frozenset({"BGWS_LOAD_SCENARIO", "BGWS_CONTROL"})
+
+
 def _as_int(value, default=None):
     """The Java records type durations as Integer; a float would be rejected."""
     return default if value is None else int(round(float(value)))
 
 
-def _route(operation: str, entity_uuid, params: dict) -> tuple[str, dict]:
+def _route(operation: str, entity_uuid, params: dict, command_id: str | None = None) -> tuple[str, dict]:
     """The bridge URL and request body for one command."""
     if operation in _ENTITY_PATHS:
         if not entity_uuid:
@@ -233,6 +242,35 @@ def _route(operation: str, entity_uuid, params: dict) -> tuple[str, dict]:
             "entityId": entity_uuid,
             "network": params.get("network"),
         }
+
+    if operation in _BGWS_OPERATIONS:
+        # requestId is the command_id, so the federate.status events BGWS
+        # answers with (on the events stream, carrying the same requestId)
+        # join to this command's outcome rows without a lookup table. That
+        # answer is the acknowledgement here: BGWS_Control has no
+        # SMC_Response, so nothing for poll_acknowledgements to find.
+        #
+        # The scenario stays the JSON text the Commander validated; the bridge
+        # takes text or an object and re-serialises either. Decoding it here
+        # only to encode it again would buy nothing but a chance to alter it.
+        if operation == "BGWS_LOAD_SCENARIO":
+            command = "load"
+            if not params.get("scenario"):
+                raise ValueError("BGWS_LOAD_SCENARIO requires params.scenario")
+        else:
+            command = str(params.get("command") or "").strip().lower()
+            if not command:
+                raise ValueError("BGWS_CONTROL requires params.command")
+        body = {
+            "federate": params.get("federate") or "",
+            "command": command,
+            "requestId": command_id,
+        }
+        if command == "load":
+            body["scenario"] = params["scenario"]
+        if params.get("options"):
+            body["options"] = params["options"]
+        return f"{BRIDGE_URL}/bgws/control", body
 
     if operation in _CONTROL_PATHS:
         return f"{BRIDGE_URL}/{_CONTROL_PATHS[operation]}", dict(params)
@@ -329,7 +367,7 @@ def handle_record(record: dict, from_deferred: bool = False) -> dict | None:
     try:
         params = record.get("params")
         params = json.loads(params) if isinstance(params, str) else (params or {})
-        url, body = _route(operation, entity_uuid, params)
+        url, body = _route(operation, entity_uuid, params, record.get("command_id"))
     except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
         _state["last_error"] = str(exc)
         return outcome("FAILED", detail=f"could not route: {type(exc).__name__}: {exc}")

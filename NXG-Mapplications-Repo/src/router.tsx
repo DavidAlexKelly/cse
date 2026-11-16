@@ -14,8 +14,11 @@ const ReadinessApp        = lazy(() => import("./apps/readiness/App"));
 // /globe (a bare basemap test page, apps/globeMap) was removed: its source is
 // not in this repository, and a lazy import of a missing module fails the
 // build, not just the route.
-// The Battlegroup Wargame System (/bgws) now lives in its own repository and
-// Developer Console app ("Realtime AI Wargaming").
+// BGWS (Battlegroup Wargame System) as a federate: build a scenario, send it
+// to the standing BGWS federate through the Commander functions, run it and
+// order its units. The simulator itself lives in its own repository; this is
+// only Foundry's side of it. See docs/BGWS.md.
+const BgwsApp             = lazy(() => import("./apps/bgws/index"));
 
 /** Minimal full-screen spinner shown while a chunk is being fetched */
 function AppLoader() {
@@ -67,6 +70,11 @@ export const router = createBrowserRouter(
     {
       path: "/hlamap",
       element: withSuspense(<HlaMapApp />),
+    },
+    {
+      // Embedded in Workshop like /hlamap; ?mock=1 runs it with no backend.
+      path: "/bgws",
+      element: withSuspense(<BgwsApp />),
     },
     {
       path: "/analysis",

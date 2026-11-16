@@ -56,6 +56,17 @@ TRACK_RECORDS_PATH = os.environ.get(
 MAX_GROUP_SIZE = int(os.environ.get("MAX_GROUP_SIZE", "50"))
 DEFAULT_TTL_SECONDS = int(os.environ.get("COMMAND_TTL_SECONDS", "120"))
 CONTROL_TTL_SECONDS = int(os.environ.get("CONTROL_TTL_SECONDS", "15"))
+# A scenario load gets longer than a control. Loading is what an operator does
+# once, at the top of an exercise, often while the streamer is still starting;
+# 15 s would drop it on any restart. Replaying it inside five minutes is
+# harmless in a way a replayed DISCONNECT is not: BGWS answers a load with the
+# same scenario by reloading it, and says so in a federate.status event.
+LOAD_TTL_SECONDS = int(os.environ.get("BGWS_LOAD_TTL_SECONDS", "300"))
+# Ceiling on the scenario text. A Foundry scenario is 5-50 KB; the stream-proxy
+# read returns the whole stream on every poll, so every row is re-read once a
+# second for as long as it is retained, and one runaway row is paid for at 1 Hz.
+# Refused rather than truncated: half a scenario is not a scenario.
+MAX_SCENARIO_BYTES = int(os.environ.get("BGWS_MAX_SCENARIO_BYTES", str(512 * 1024)))
 
 SCHEMA_VERSION = 1
 
@@ -152,6 +163,8 @@ class Op:
     CONNECT = "CONNECT"
     DISCONNECT = "DISCONNECT"
     RECONNECT = "RECONNECT"
+    BGWS_LOAD_SCENARIO = "BGWS_LOAD_SCENARIO"
+    BGWS_CONTROL = "BGWS_CONTROL"
 
 
 TARGET_ENTITY = "ENTITY"
@@ -169,6 +182,9 @@ ROE_VALUES = {
     "WEAPONS_FREE",
 }
 RESOURCE_TYPES = {"FUEL", "AMMUNITION", "WATER", "RATIONS"}
+# BGWS_Control's Command vocabulary, less "load", which has its own function.
+BGWS_CONTROL_COMMANDS = {"start", "pause", "resume", "stop", "speed"}
+BGWS_SCENARIO_FORMATS = {"bgws.foundry", "bgws.scenario"}
 
 _UUID_RE = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
@@ -877,6 +893,140 @@ def hla_reconnect(context, event: EmptyRequest) -> str:
     )
 
 
+# ── BGWS simulation control ──────────────────────────────────────────────────
+#
+# A BGWS simulation can join the federation empty (`bgws federate`) and wait
+# for a scenario. These two functions are how Foundry gives it one and runs it:
+# one row each, operation BGWS_LOAD_SCENARIO or BGWS_CONTROL, which the streamer
+# turns into a BGWS_Control interaction through the bridge's POST /bgws/control.
+#
+# The row's command_id travels as the interaction's RequestId, and BGWS echoes
+# it in the federate.status events it answers with (loading, building_terrain,
+# ready, running, error ...), on the events stream. So the request_id returned
+# here is what to watch for there. As with tasking, queued is not loaded: a 200
+# from the bridge means the interaction was sent, and only the status event
+# says whether BGWS took the scenario.
+#
+# The older hla_sim_start / hla_sim_pause still work against BGWS (it reads RPR
+# StartResume and StopFreeze too), but they address the whole federation and
+# cannot load anything, name one simulation, or set a speed.
+
+
+def _optional_federate(event: dict) -> str:
+    federate = event.get("federate")
+    if federate is None:
+        return ""
+    if not isinstance(federate, str):
+        raise CommandRejected(f"federate must be a federate name such as 'BGWS-1-1', got {federate!r}")
+    return federate.strip()
+
+
+def _bgws_options(event: dict, required_speed: bool = False) -> dict[str, Any]:
+    options: dict[str, Any] = {}
+    if event.get("speed") is not None:
+        options["speed"] = _require_positive(event["speed"], "speed")
+    elif required_speed:
+        raise CommandRejected("speed is required for command 'speed': simulated seconds per wall-clock second, > 0")
+    return options
+
+
+def _bgws_command(context: Any, operation: str, params: dict[str, Any], ttl_seconds: int) -> str:
+    """
+    Queue one BGWS row, returning the usual queued JSON plus request_id.
+
+    request_id is the command_id under the name BGWS uses for it: the value its
+    federate.status events will carry as requestId. Given its own key so a
+    caller watching the events stream need not know that the two are the same.
+    """
+    queued = _publish(_record(context, operation, TARGET_SIM, None, params, ttl_seconds))
+    queued["request_id"] = queued["commandId"]
+    return json.dumps(queued)
+
+
+class BgwsLoadScenarioRequest(TypedDict):
+    scenario_json: str
+    federate: NotRequired[str]
+    speed: NotRequired[float]
+
+
+@function
+def hla_bgws_load_scenario(context, event: BgwsLoadScenarioRequest) -> str:
+    """
+    Load a scenario into a BGWS simulation waiting in the federation.
+
+    scenario_json: the scenario as JSON text - format "bgws.foundry" version 1
+    (what the Foundry scenario editor builds) or a full "bgws.scenario". Text
+    rather than an object because that is what the stream column holds, and a
+    function argument of arbitrary shape cannot be typed for the SDK.
+    federate: the BGWS federate to load it into; omitted, every BGWS simulation
+    in the federation loads it.
+    speed: simulated seconds per wall-clock second once it runs.
+
+    Loading does not start it: send hla_bgws_control start once the status
+    events report "ready". A real-terrain scenario reports "building_terrain"
+    first, for a minute or more.
+    """
+    text = _require(event, "scenario_json")
+    if not isinstance(text, str) or not text.strip():
+        raise CommandRejected("scenario_json must be the scenario as JSON text")
+    size = len(text.encode("utf-8"))
+    if size > MAX_SCENARIO_BYTES:
+        raise CommandRejected(
+            f"scenario_json is {size} bytes, over the {MAX_SCENARIO_BYTES}-byte limit for one command row"
+        )
+    try:
+        scenario = json.loads(text)
+    except ValueError as exc:
+        raise CommandRejected(f"scenario_json is not valid JSON: {exc}")
+    if not isinstance(scenario, dict):
+        raise CommandRejected(f"scenario_json must be a JSON object, got {type(scenario).__name__}")
+    if scenario.get("format") not in BGWS_SCENARIO_FORMATS:
+        raise CommandRejected(
+            f"scenario_json format must be one of {sorted(BGWS_SCENARIO_FORMATS)}, got {scenario.get('format')!r}"
+        )
+
+    params: dict[str, Any] = {
+        # The text as given, not re-serialised: what was validated is what is sent.
+        "scenario": text,
+        "federate": _optional_federate(event),
+        "options": _bgws_options(event),
+    }
+    return _bgws_command(context, Op.BGWS_LOAD_SCENARIO, params, LOAD_TTL_SECONDS)
+
+
+class BgwsControlRequest(TypedDict):
+    command: str
+    federate: NotRequired[str]
+    speed: NotRequired[float]
+
+
+@function
+def hla_bgws_control(context, event: BgwsControlRequest) -> str:
+    """
+    Run a loaded BGWS scenario: start, pause, resume, stop, or speed.
+
+    speed is required for command "speed" and optional for start/resume (it
+    sets the rate the run continues at). federate omitted addresses every BGWS
+    simulation in the federation.
+
+    Short TTL, like the other control operations: a pause replayed after a
+    streamer restart minutes later would freeze an exercise nobody asked to
+    freeze.
+    """
+    raw = _require(event, "command")
+    command = str(raw).strip().lower()
+    if command not in BGWS_CONTROL_COMMANDS:
+        hint = " (use hla_bgws_load_scenario to load)" if command == "load" else ""
+        raise CommandRejected(f"command must be one of {sorted(BGWS_CONTROL_COMMANDS)}, got {raw!r}{hint}")
+
+    params: dict[str, Any] = {
+        "command": command,
+        "federate": _optional_federate(event),
+        "options": _bgws_options(event, required_speed=(command == "speed")),
+    }
+    return _bgws_command(context, Op.BGWS_CONTROL, params, CONTROL_TTL_SECONDS)
+
+
 # ── Group tasking ────────────────────────────────────────────────────────────
 #
 # One order, many entities. "Move all friendly forces to point A" is one
@@ -1132,7 +1282,7 @@ def _publish_batch(records: list[dict[str, Any]]) -> None:
 
 
 class GroupRequest(TypedDict):
-    selector: dict
+    selector: dict[str, str]
     operation: str
     latitude: NotRequired[float]
     longitude: NotRequired[float]

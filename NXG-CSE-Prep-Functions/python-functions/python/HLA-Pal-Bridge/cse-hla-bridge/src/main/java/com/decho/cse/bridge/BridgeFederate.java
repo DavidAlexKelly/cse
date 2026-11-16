@@ -96,6 +96,11 @@ public class BridgeFederate {
         // federation without that module, in which case it is skipped.
         public static final String BGWS_EVENT = "HLAinteractionRoot.BGWS_Event";
 
+        // Commands to a BGWS simulation waiting in the federation: load a
+        // scenario, start, pause, resume, stop, change speed. Same module,
+        // same rule: absent, it is skipped and POST /bgws/control returns 409.
+        public static final String BGWS_CONTROL = "HLAinteractionRoot.BGWS_Control";
+
         // MOM class the RTI itself publishes, one instance per joined
         // federate. Subscribing turns "who else is in this federation, and
         // are they publishing?" into a log line rather than a trip to the
@@ -121,6 +126,18 @@ public class BridgeFederate {
     private static final List<String> RPR_PUBLISHED = List.of(
             Fom.START_RESUME,
             Fom.STOP_FREEZE
+    );
+
+    // BGWS simulation control this federate sends, when the federation
+    // carries BGWS's FOM module. Kept apart from RPR_PUBLISHED because it is
+    // optional in a way StartResume and StopFreeze are not: most federations
+    // will not define it, and that is no fault worth a warning, so it is
+    // reported under its own tag ("bgws") and never counted as a missing
+    // module. The RPR pair stays published either way - BGWS reads
+    // StartResume as start/resume and StopFreeze as pause, so a federation
+    // driven from the old SIM_START/SIM_PAUSE buttons keeps working.
+    private static final List<String> BGWS_PUBLISHED = List.of(
+            Fom.BGWS_CONTROL
     );
 
     // Dialect-independent RPR-FOM events this federate listens for.
@@ -995,6 +1012,7 @@ public class BridgeFederate {
         Map<String, String> all = new LinkedHashMap<>();
         for (String name : RPR_PUBLISHED) all.putIfAbsent(name, "rpr");
         for (String name : RPR_SUBSCRIBED) all.putIfAbsent(name, "rpr");
+        for (String name : BGWS_PUBLISHED) all.putIfAbsent(name, "bgws");
         for (TaskDialect candidate : List.of(v4Dialect)) {
             for (String name : candidate.published()) all.putIfAbsent(name, candidate.id());
             for (String name : candidate.subscribed()) all.putIfAbsent(name, candidate.id());
@@ -1122,7 +1140,10 @@ public class BridgeFederate {
             // Publishes only what the selected dialect actually sends.
             // Publishing the other dialect's classes would advertise a
             // capability this bridge will never exercise.
+            // BGWS_Control only where the FOM defines it: an absent handle
+            // is skipped below, quietly, like any optional class.
             List<String> toPublish = new ArrayList<>(RPR_PUBLISHED);
+            toPublish.addAll(BGWS_PUBLISHED);
             if (dialect != null) {
                 toPublish.addAll(dialect.published());
             }

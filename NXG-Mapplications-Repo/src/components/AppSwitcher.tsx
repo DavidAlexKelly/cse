@@ -1,7 +1,7 @@
 /**
  * AppSwitcher — floating pill button that opens a small popover menu letting
  * the user jump between the apps, in lifecycle order: Scenario Planner,
- * ORBAT Manager, Execute, HLA Map and Analysis.
+ * ORBAT Manager, Execute, HLA Map, BGWS and Analysis.
  *
  * Designed to sit in the top-right corner of every app's header without
  * disturbing existing layout — each app adds it wherever there is a natural
@@ -46,6 +46,13 @@ const APPS = [
     icon: "⌖",
     sub: "Live map & HLA commands",
     accent: "#d95c5c",
+  },
+  {
+    path: "/bgws",
+    label: "BGWS",
+    icon: "⚔",
+    sub: "Wargame scenario, control & orders",
+    accent: "#f0b429",
   },
   {
     path: "/analysis",

@@ -180,6 +180,33 @@ See `BGWS.md` for running it against a BGWS simulation.
 6. An outcome row goes to the Command Stream Output. Later, any federation
    answer is published as a second row against the same `command_id`.
 
+### Write path (BGWS scenario and control)
+
+A BGWS simulation can join the federation empty (`bgws federate`) and wait.
+Two Commander functions give it a scenario and run it, through the same
+stream and consumer as tasking:
+1. `hla_bgws_load_scenario` (`scenario_json`, optional `federate`, `speed`)
+   checks the text is a JSON object of format `bgws.foundry` or
+   `bgws.scenario` and at most 512 KB, and writes one `SIM` row, operation
+   `BGWS_LOAD_SCENARIO`, TTL 300 s. `hla_bgws_control` (`command`: start,
+   pause, resume, stop or speed; optional `federate`, `speed`) writes
+   `BGWS_CONTROL`, TTL 15 s like the other control operations. Both return
+   the usual queued JSON plus `request_id`, which is the `command_id`.
+2. `commands.py` sends both to `POST /bgws/control`, with `requestId` set to
+   the `command_id`.
+3. The bridge sends one `BGWS_Control` interaction, every parameter an
+   `HLAunicodeString`, scenario and options as JSON text. It publishes the
+   class at connect only where the FOM defines it; otherwise, or in monitor
+   mode, the endpoint returns 409.
+4. BGWS answers with `BGWS_Event` kind `federate.status` carrying the same
+   `requestId` (loading, building_terrain, ready, running, error ...). That
+   arrives on the events stream, not as an acknowledgement row: there is no
+   `SMC_Response` to correlate, so the outcome row stops at `SENT`.
+
+A scenario row is 5-50 KB, and stream-proxy returns the whole stream on
+every poll, so each one is re-read once a second while the stream retains
+it. The size cap is there so one runaway row is not paid for at 1 Hz.
+
 ---
 
 ## 4. Design decisions worth understanding before changing anything
@@ -337,7 +364,7 @@ container stays up so the configuration can be read rather than crash-looping.
 | `WIRE_CONTRACT.md` | Byte-level encoding with golden vectors. The ECEF-vs-lat/lon trap, the empty-array padding ambiguity |
 | `FEDPRO_CONNECTION.md` | RTI addressing — three addresses for one federation, and why `crcAddress` is not the CRC address |
 | `STREAMING.md` | The Foundry publish path, pipeline vs functions mode, credentials, endpoint fallback, record shaping |
-| `BGWS.md` | A BGWS simulation in the federation: its identity and event log, and running the whole chain on one machine |
+| `BGWS.md` | A BGWS simulation in the federation: its identity and event log, loading and running a scenario from Foundry, and running the whole chain on one machine |
 | `DIAGNOSTICS.md` | Triage. Start with "am I in the right federation?", then "the task returned 200 but nothing moved" |
 
 Note that `STREAMING.md` predates the current topology: it describes the gateway
