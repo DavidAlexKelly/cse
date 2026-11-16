@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/FederationAmbassador.java]
 package com.decho.cse.bridge;
 
 import hla.rti1516e.*;
@@ -429,7 +428,201 @@ public class FederationAmbassador extends NullFederateAmbassador {
             return;
         }
 
+        // What happened: fire and detonations from any simulator, and every
+        // event a BGWS simulation logs. Kept for GET /events.
+        if (interName.endsWith(".BGWS_Event")) {
+            recordBgwsEvent(theInteraction, theParameters);
+            return;
+        }
+        if (interName.endsWith(".WeaponFire")) {
+            recordShot("weapon_fire", "FiringLocation", theInteraction, theParameters);
+            return;
+        }
+        if (interName.endsWith(".MunitionDetonation")) {
+            recordShot("munition_detonation", "DetonationLocation", theInteraction, theParameters);
+            return;
+        }
+
         log.info("Received interaction: {}", interName);
+    }
+
+    // -- Events -------------------------------------------------------------------------
+    // Parameter handles by (interaction class, name), resolved once: asking
+    // the RTI on every interaction would cost a round trip per parameter.
+    private final Map<InteractionClassHandle, Map<String, ParameterHandle>> parameterHandles =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    // The named parameters present in this interaction, by name.
+    private Map<String, byte[]> namedParameters(InteractionClassHandle theInteraction,
+                                                ParameterHandleValueMap theParameters,
+                                                String... names) {
+        Map<String, ParameterHandle> known = parameterHandles.computeIfAbsent(theInteraction, k -> {
+            Map<String, ParameterHandle> m = new java.util.concurrent.ConcurrentHashMap<>();
+            for (String n : names) {
+                try {
+                    m.put(n, rtiAmbassador.getParameterHandle(theInteraction, n));
+                } catch (Exception e) {
+                    log.debug("Parameter {} not in this federation's FOM: {}", n, e.getMessage());
+                }
+            }
+            return m;
+        });
+        Map<String, byte[]> out = new HashMap<>();
+        for (var e : known.entrySet()) {
+            byte[] v = theParameters.get(e.getValue());
+            if (v != null) out.put(e.getKey(), v);
+        }
+        return out;
+    }
+
+    static final String[] BGWS_EVENT_PARAMETERS = {
+            "Kind", "Sequence", "SimTime", "Federate", "Side",
+            "Entity", "EntityUniqueId", "EntityCallsign",
+            "Target", "TargetUniqueId", "TargetCallsign",
+            "Latitude", "Longitude", "Altitude", "Text", "Data"};
+
+    // BGWS_Event (BGWS-Events.xml): one event a BGWS simulation logged.
+    private void recordBgwsEvent(InteractionClassHandle theInteraction,
+                                 ParameterHandleValueMap theParameters) {
+        try {
+            Map<String, byte[]> p = namedParameters(theInteraction, theParameters, BGWS_EVENT_PARAMETERS);
+            Map<String, Object> e = new java.util.LinkedHashMap<>();
+            e.put("source", "bgws");
+            e.put("kind", unicodeOf(p, "Kind"));
+            e.put("federate", unicodeOf(p, "Federate"));
+            e.put("sourceSeq", p.containsKey("Sequence") && p.get("Sequence").length >= 8
+                    ? java.nio.ByteBuffer.wrap(p.get("Sequence")).getLong() : null);
+            e.put("simTime", doubleOf(p, "SimTime"));
+            e.put("side", unicodeOf(p, "Side"));
+            party(e, "entity", unicodeOf(p, "Entity"), unicodeOf(p, "EntityUniqueId"), unicodeOf(p, "EntityCallsign"));
+            party(e, "target", unicodeOf(p, "Target"), unicodeOf(p, "TargetUniqueId"), unicodeOf(p, "TargetCallsign"));
+            e.put("latitude", doubleOf(p, "Latitude"));
+            e.put("longitude", doubleOf(p, "Longitude"));
+            e.put("altitudeMeters", doubleOf(p, "Altitude"));
+            e.put("text", unicodeOf(p, "Text"));
+            e.put("data", unicodeOf(p, "Data"));
+            store.events().add(e);
+        } catch (Exception ex) {
+            log.warn("Could not decode a BGWS_Event: {}", ex.getMessage());
+        }
+    }
+
+    static final String[] SHOT_PARAMETERS = {
+            "EventIdentifier", "FiringObjectIdentifier", "TargetObjectIdentifier",
+            "MunitionType", "QuantityFired", "FiringLocation", "DetonationLocation",
+            "DetonationResultCode", "WarheadType", "FuseType"};
+
+    // RPR WeaponFire / MunitionDetonation, from whichever simulator sent it.
+    // Entities are named by object instance name (RTIobjectId), resolved
+    // against what this bridge has discovered for UUID and callsign.
+    private void recordShot(String kind, String locationParameter,
+                            InteractionClassHandle theInteraction,
+                            ParameterHandleValueMap theParameters) {
+        try {
+            Map<String, byte[]> p = namedParameters(theInteraction, theParameters, SHOT_PARAMETERS);
+            Map<String, Object> e = new java.util.LinkedHashMap<>();
+            e.put("source", "rpr");
+            e.put("kind", kind);
+            String firer = unicodeOf(p, "FiringObjectIdentifier");
+            String target = unicodeOf(p, "TargetObjectIdentifier");
+            party(e, "entity", firer, null, null);
+            party(e, "target", target, null, null);
+            byte[] loc = p.get(locationParameter);
+            if (loc != null && loc.length >= 24) {
+                double[] g = ecefToWgs84(decodeDouble(loc, 0), decodeDouble(loc, 8), decodeDouble(loc, 16));
+                e.put("latitude", g[0]);
+                e.put("longitude", g[1]);
+                e.put("altitudeMeters", g[2]);
+            }
+            String munition = p.containsKey("MunitionType") ? decodeEntityType(p.get("MunitionType")) : null;
+            Integer quantity = p.containsKey("QuantityFired") && p.get("QuantityFired").length >= 2
+                    ? decodeUint16(p.get("QuantityFired"), 0) : null;
+            String result = p.containsKey("DetonationResultCode") && p.get("DetonationResultCode").length >= 1
+                    ? detonationResult(p.get("DetonationResultCode")[0] & 0xFF) : null;
+            e.put("munition", munition);
+            e.put("quantity", quantity);
+            e.put("result", result);
+            byte[] ev = p.get("EventIdentifier");
+            if (ev != null && ev.length >= 2) e.put("eventCount", decodeUint16(ev, 0));
+            String who = firstText(e, "entityCallsign", "entityName");
+            String at = firstText(e, "targetCallsign", "targetName");
+            if (who == null) who = "?";
+            e.put("text", "weapon_fire".equals(kind)
+                    ? who + " fired " + (quantity == null ? "" : quantity + " x ") + munition + (at == null ? "" : " at " + at)
+                    : (munition + " detonated" + (result == null ? "" : " (" + result + ")") + (at == null ? "" : " on " + at)));
+            store.events().add(e);
+        } catch (Exception ex) {
+            log.warn("Could not decode a {}: {}", kind, ex.getMessage());
+        }
+    }
+
+    // Fills prefix{Name,Id,UniqueId,Callsign}: as sent, completed from the
+    // discovered entity of that instance name where known.
+    private void party(Map<String, Object> e, String prefix, String instanceName, String uniqueId, String callsign) {
+        if (instanceName == null || instanceName.isEmpty()) {
+            if (callsign != null && !callsign.isEmpty()) e.put(prefix + "Callsign", callsign);
+            return;
+        }
+        e.put(prefix + "Name", instanceName);
+        var known = store.getByInstanceName(instanceName);
+        known.ifPresent(x -> e.put(prefix + "Id", x.id));
+        String u = (uniqueId != null && !uniqueId.isEmpty()) ? uniqueId : known.map(x -> x.uniqueId).orElse(null);
+        String c = (callsign != null && !callsign.isEmpty()) ? callsign
+                : known.map(x -> x.callsign != null ? x.callsign : x.name).orElse(null);
+        e.put(prefix + "UniqueId", u);
+        e.put(prefix + "Callsign", c);
+    }
+
+    private static String firstText(Map<String, Object> e, String... keys) {
+        for (String k : keys) {
+            if (e.get(k) instanceof String v && !v.isEmpty()) return v;
+        }
+        return null;
+    }
+
+    private String unicodeOf(Map<String, byte[]> p, String name) {
+        byte[] v = p.get(name);
+        return v == null ? null : decodeUnicodeString(v);
+    }
+
+    private Double doubleOf(Map<String, byte[]> p, String name) {
+        byte[] v = p.get(name);
+        if (v == null || v.length < 8) return null;
+        double d = decodeDouble(v, 0);
+        return Double.isNaN(d) ? null : d;
+    }
+
+    // RPR DetonationResultCodeEnum8 (SISO-REF-010 Detonation Result).
+    private static String detonationResult(int code) {
+        return switch (code) {
+            case 0 -> "other";
+            case 1 -> "entity_impact";
+            case 2 -> "entity_proximate_detonation";
+            case 3 -> "ground_impact";
+            case 4 -> "ground_proximate_detonation";
+            case 5 -> "detonation";
+            case 6 -> "none_or_dud";
+            case 7 -> "he_hit_small";
+            case 8 -> "he_hit_medium";
+            case 9 -> "he_hit_large";
+            case 10 -> "armor_piercing_hit";
+            case 11 -> "dirt_blast_small";
+            case 12 -> "dirt_blast_medium";
+            case 13 -> "dirt_blast_large";
+            case 14 -> "water_blast_small";
+            case 15 -> "water_blast_medium";
+            case 16 -> "water_blast_large";
+            case 17 -> "air_hit";
+            case 18 -> "building_hit_small";
+            case 19 -> "building_hit_medium";
+            case 20 -> "building_hit_large";
+            case 21 -> "mine_clearing_line_charge";
+            case 22 -> "environment_object_impact";
+            case 23 -> "environment_object_proximate_detonation";
+            case 24 -> "water_impact";
+            case 25 -> "air_burst";
+            default -> "code_" + code;
+        };
     }
 
     // Time-stamp-order variant, see the note on reflectAttributeValues.

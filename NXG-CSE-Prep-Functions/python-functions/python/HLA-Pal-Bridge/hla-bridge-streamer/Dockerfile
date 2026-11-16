@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Every module streamer.py imports must be listed. An earlier image copied only
 # the entry point and died at import with ModuleNotFoundError, taking the whole
 # container down. Add new modules here.
-COPY tracks.py commands.py streamer.py ./
+COPY tracks.py commands.py events.py streamer.py ./
 
 # Run as non-root (required by Foundry)
 RUN adduser --uid 5001 --disabled-password app

@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeFederate.java]
 package com.decho.cse.bridge;
 
 import hla.rti1516e.*;
@@ -92,6 +91,11 @@ public class BridgeFederate {
         public static final String WEAPON_FIRE = "HLAinteractionRoot.WeaponFire";
         public static final String MUNITION_DETONATION = "HLAinteractionRoot.MunitionDetonation";
 
+        // BGWS simulations' event log, one interaction per event, from
+        // BGWS's own FOM module (foms/BGWS-Events.xml). Absent from a
+        // federation without that module, in which case it is skipped.
+        public static final String BGWS_EVENT = "HLAinteractionRoot.BGWS_Event";
+
         // MOM class the RTI itself publishes, one instance per joined
         // federate. Subscribing turns "who else is in this federation, and
         // are they publishing?" into a log line rather than a trip to the
@@ -120,9 +124,12 @@ public class BridgeFederate {
     );
 
     // Dialect-independent RPR-FOM events this federate listens for.
+    // BGWS_Event is not RPR but is listened for the same way: recorded for
+    // GET /events with the fire and detonations.
     private static final List<String> RPR_SUBSCRIBED = List.of(
             Fom.WEAPON_FIRE,
-            Fom.MUNITION_DETONATION
+            Fom.MUNITION_DETONATION,
+            Fom.BGWS_EVENT
     );
 
     // Object classes to subscribe to, with the attributes wanted from each.
@@ -831,7 +838,7 @@ public class BridgeFederate {
     private static String instanceSuffix() {
         String hostname = System.getenv("HOSTNAME");
         if (hostname != null && !hostname.isBlank()) {
-            String cleaned = hostname.replaceAll("[\^A-Za-z0-9]", "");
+            String cleaned = hostname.replaceAll("[^A-Za-z0-9]", "");
             if (!cleaned.isEmpty()) {
                 return cleaned.length() > 6 ? cleaned.substring(cleaned.length() - 6) : cleaned;
             }
@@ -1073,7 +1080,18 @@ public class BridgeFederate {
     private void publishAndSubscribe() throws Exception {
         logger.info("Setting up pub/sub...");
 
-        for (Map.Entry<String, List<String>> entry : SUBSCRIBED_OBJECTS.entrySet()) {
+        // Most specific classes first. An RTI discovers an object at the
+        // nearest class subscribed *when it is discovered*, and that class
+        // is fixed for the object's life: subscribing PhysicalEntity before
+        // Platform.GroundVehicle let every vehicle already in the federation
+        // be discovered as a bare PhysicalEntity, losing the class and
+        // everything declared below it. Deepest-first makes the order of
+        // this map irrelevant.
+        List<Map.Entry<String, List<String>>> ordered = new ArrayList<>(SUBSCRIBED_OBJECTS.entrySet());
+        ordered.sort((a, b) -> Long.compare(
+                b.getKey().chars().filter(ch -> ch == '.').count(),
+                a.getKey().chars().filter(ch -> ch == '.').count()));
+        for (Map.Entry<String, List<String>> entry : ordered) {
             if ("HLAobjectRoot.BaseEntity".equals(entry.getKey())) {
                 if (!subscribeBaseEntity) {
                     logger.info("Not subscribing to the {} catch-all (the default). This RTI "

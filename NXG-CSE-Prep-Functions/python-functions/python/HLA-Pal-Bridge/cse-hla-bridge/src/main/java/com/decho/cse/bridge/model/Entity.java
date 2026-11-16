@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/Entity.java]
 package com.decho.cse.bridge.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;

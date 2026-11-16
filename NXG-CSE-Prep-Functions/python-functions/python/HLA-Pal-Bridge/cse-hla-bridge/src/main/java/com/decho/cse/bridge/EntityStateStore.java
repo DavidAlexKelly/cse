@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/EntityStateStore.java]
 package com.decho.cse.bridge;
 
 import com.decho.cse.bridge.model.Entity;
@@ -14,6 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EntityStateStore {
 
     private final ConcurrentHashMap<String, Entity> entities = new ConcurrentHashMap<>();
+
+    // Object instance name -> instance handle id. RPR interactions name
+    // entities by instance name (RTIobjectId), and a marking can replace an
+    // entity's display name, so the instance name is kept on its own.
+    private final ConcurrentHashMap<String, String> idsByInstanceName = new ConcurrentHashMap<>();
+
+    // Fire, detonations and simulation events, for GET /events.
+    private final EventLog events = new EventLog(
+            Integer.parseInt(System.getenv().getOrDefault("BRIDGE_EVENT_BUFFER", "20000")));
     private volatile double simTime = 0.0;
     private volatile boolean connected = false;
     private volatile String federationName = "";
@@ -28,6 +36,9 @@ public class EntityStateStore {
     // ever reach us, so an entity with no position is explained by its
     // class rather than by its emptiness.
     public void discover(String id, String name, String entityType, String discoveredClass) {
+        if (name != null && !name.isEmpty()) {
+            idsByInstanceName.put(name, id);
+        }
         entities.computeIfAbsent(id, k -> {
             Entity created = new Entity(id, name, entityType, discoveredClass);
             // Inferred from the object instance name, the only
@@ -190,6 +201,7 @@ public class EntityStateStore {
     // be rediscovered.
     public void clear() {
         entities.clear();
+        idsByInstanceName.clear();
         simTime = 0.0;
     }
 
@@ -221,6 +233,17 @@ public class EntityStateStore {
     }
 
     // -- Read (called from the REST API thread) ---------------------------------
+    public EventLog events() {
+        return events;
+    }
+
+    // The entity an RPR interaction names by its object instance name.
+    public Optional<Entity> getByInstanceName(String instanceName) {
+        if (instanceName == null || instanceName.isEmpty()) return Optional.empty();
+        String id = idsByInstanceName.get(instanceName);
+        return id == null ? Optional.empty() : Optional.ofNullable(entities.get(id));
+    }
+
     public List<Entity> getAll() {
         return new ArrayList<>(entities.values());
     }

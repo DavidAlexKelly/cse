@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/ObstacleRequest.java]
 package com.decho.cse.bridge.model.request;
 
 // Body of POST /map/obstacle. CreateObstacle is a task: the FOM requires a

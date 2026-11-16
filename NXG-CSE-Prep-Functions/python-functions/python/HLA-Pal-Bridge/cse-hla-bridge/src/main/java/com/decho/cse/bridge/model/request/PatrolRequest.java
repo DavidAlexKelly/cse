@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/PatrolRequest.java]
 package com.decho.cse.bridge.model.request;
 
 import java.util.List;

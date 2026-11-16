@@ -1,4 +1,3 @@
-[test/java/com/decho/cse/bridge/AttributeRefreshTest.java]
 package com.decho.cse.bridge;
 
 import hla.rti1516e.*;

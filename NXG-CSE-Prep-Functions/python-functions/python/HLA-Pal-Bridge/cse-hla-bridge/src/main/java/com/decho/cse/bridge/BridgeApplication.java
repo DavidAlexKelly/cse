@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeApplication.java]
 package com.decho.cse.bridge;
 
 import org.slf4j.Logger;

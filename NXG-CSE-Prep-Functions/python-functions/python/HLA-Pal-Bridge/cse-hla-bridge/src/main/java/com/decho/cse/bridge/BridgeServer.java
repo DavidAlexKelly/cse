@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeServer.java]
 package com.decho.cse.bridge;
 
 import com.decho.cse.bridge.model.Entity;
@@ -414,6 +413,24 @@ public class BridgeServer {
     }
 
     // -- Entity Queries ------------------------------------------------------------
+    // What happened, oldest first: fire and detonations from any simulator
+    // (RPR) and every event a BGWS simulation logs. Poll with the last
+    // `seq` seen as `after`; `dropped` counts events that left the buffer
+    // before being read past, so a gap is reported rather than silent.
+    @GetMapping("/events")
+    public Map<String, Object> events(@RequestParam(defaultValue = "0") long after,
+                                      @RequestParam(defaultValue = "500") int limit) {
+        EventLog log = store.events();
+        List<Map<String, Object>> page = log.after(after, Math.max(1, Math.min(limit, 5000)));
+        Map<String, Object> out = new java.util.LinkedHashMap<>();
+        out.put("events", page);
+        out.put("last", log.last());
+        out.put("first", log.first());
+        out.put("dropped", log.dropped());
+        out.put("capacity", log.capacity());
+        return out;
+    }
+
     @GetMapping("/entities")
     public ResponseEntity<List<Entity>> getEntities() {
         return ResponseEntity.ok(store.getAll());

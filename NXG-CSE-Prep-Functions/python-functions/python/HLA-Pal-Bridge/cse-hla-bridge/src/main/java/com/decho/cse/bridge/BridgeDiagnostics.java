@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeDiagnostics.java]
 package com.decho.cse.bridge;
 
 import org.springframework.stereotype.Component;

@@ -5,7 +5,7 @@ Entry point for the hla-bridge-streamer image: entity tracks out, commands in.
 There are two compute modules; see ARCHITECTURE.md for the full picture.
 This image, the HLA streamer, pairs cse-hla-bridge - the Java federate that
 joins the federation and serves REST on :8080 - with this file, which runs
-tracks.py and commands.py. It is the only module that speaks HLA. The other
+tracks.py, commands.py and events.py. It is the only module that speaks HLA. The other
 module, the commander, is hla-command-poster alone, backing the Foundry
 functions that validate commands and write them to a stream; it never
 touches HLA and never joins the federation.
@@ -43,6 +43,7 @@ import signal
 import threading
 
 import commands
+import events
 import tracks
 
 logging.basicConfig(level=logging.INFO)
@@ -102,6 +103,11 @@ def main() -> None:
     # Same not-fatal-when-unconfigured contract as tracks.start().
     commands.start()
 
+    # What happened, beside where everything is: fire and detonations from any
+    # simulator, and a BGWS simulation's whole event log. Its own thread and its
+    # own stream; unconfigured, it says so and tracks carry on.
+    events.start()
+
     configured, reason = tracks.is_configured()
     if not configured:
         log.error(
@@ -140,9 +146,18 @@ def main() -> None:
         elif command_state.get("running"):
             log.info("Command consumer: %s", json.dumps(command_state))
 
+        event_state = events.status()
+        if event_state.get("running"):
+            summary = {k: event_state.get(k) for k in ("events_published", "cursor", "gaps", "publish_failures", "poll_failures", "last_published_at", "last_error")}
+            (log.warning if event_state.get("last_error") else log.info)("Event publisher: %s", json.dumps(summary))
+
     commands.stop()
+    events.stop()
     log.info(
-        "Stopping. Final status: tracks=%s commands=%s", json.dumps(tracks.status()), json.dumps(commands.status())
+        "Stopping. Final status: tracks=%s commands=%s events=%s",
+        json.dumps(tracks.status()),
+        json.dumps(commands.status()),
+        json.dumps(events.status()),
     )
 
 

@@ -30,7 +30,7 @@ Three images, one directory each, deployed as **two compute modules**.
 | Directory | Image | Language | What it does |
 |---|---|---|---|
 | `cse-hla-bridge/` | `hla-bridge` | Java | The only component that speaks HLA. Joins the federation, subscribes to entity state, encodes tasks onto the wire, serves REST on `localhost:8080/api/v1/bridge` |
-| `hla-bridge-streamer/` | `hla-bridge-streamer` | Python | Entity tracks out, commands in. Two daemon threads beside the bridge |
+| `hla-bridge-streamer/` | `hla-bridge-streamer` | Python | Entity tracks and events out, commands in. Three daemon threads beside the bridge |
 | `hla-command-poster/` | `hla-bridge-command-poster` | Python | The command gateway. Validates intent, writes it to a stream. Never touches HLA |
 
 ### Compute module A — "HLA Streamer" (`ri.foundry.main.deployed-app.b4c28899-7810-4925-9558-4182cb37fdae`)
@@ -48,6 +48,7 @@ talking over localhost. This is the **only** module that joins the federation.
 | `TRACK_STREAM_ALIAS` | `hla-entity-stream` → HLA Entity Tracks |
 | `COMMAND_STREAM_ALIAS` | `hla-command-input` → Command Stream Input |
 | `COMMAND_LOG_ALIAS` | `hla-command-output` → Command Stream Output |
+| `EVENT_STREAM_ALIAS` | *new, not yet deployed* → an HLA Events stream (§3, events). Unset, the events thread logs why and does nothing |
 | Minimum replicas | **1** — pipeline mode receives no queries, so the autoscaler would otherwise take it to zero and the stream would simply stop |
 | Sources | HLA Pitch (the RTI), Foundry Connection (egress to the Foundry URL) |
 
@@ -129,6 +130,40 @@ seat; its only outbound call is `publishRecords` to a stream.
    the handle only survives one federation execution.
 5. Absent values are published as **null, never zero**: a drone at latitude 0.0
    and a drone with no position are different facts.
+
+### Read path (events)
+
+Tracks say where everything is; events say what happened.
+1. The bridge records, in the order it hears them, RPR `WeaponFire` and
+   `MunitionDetonation` from any simulator, and `BGWS_Event`. That is every
+   event a BGWS simulation logs (detections, shots, hits, kills, orders,
+   decisions and their reasons, messages, smoke, laser designation, the
+   verdict), from BGWS's own FOM module `cse-hla-bridge/foms/BGWS-Events.xml`.
+   - Firers and targets are resolved against discovered entities, so events
+     carry UUID and callsign where those are known.
+   - The buffer holds `BRIDGE_EVENT_BUFFER` events (20,000 by default),
+     numbered from 1.
+2. `GET /events?after=N&limit=M` serves everything after `N`. `dropped`
+   counts events pushed out of the buffer before anyone read past them, so
+   a gap is reported, not silent.
+3. `events.py` keeps that cursor and publishes each page as a batch to
+   `EVENT_STREAM_ALIAS`, through the same publish path as tracks (the
+   `Publisher` class in `tracks.py`). It advances only once a batch is
+   accepted, so a failed publish is retried rather than lost.
+4. `event_id` is deterministic per bridge record, so a re-read after a
+   streamer restart overwrites rather than duplicates. HLA keeps no history
+   of interactions, so events sent while the bridge was down are gone.
+5. Columns:
+   - identity and timing: `event_id`, `bridge_seq`, `received_at`, `source`
+     (`bgws` or `rpr`), `kind`, `federation`, `federate`, `source_seq`,
+     `sim_time_s`, `side`;
+   - the two entities: `entity_*` and `target_*`, each with `_name`, `_id`,
+     `_unique_id` and `_callsign`;
+   - place: `latitude`, `longitude`, `altitude_m`;
+   - fire: `munition`, `quantity`, `result`;
+   - description: `text` (a line for people) and `data` (JSON).
+
+See `BGWS.md` for running it against a BGWS simulation.
 
 ### Write path (tasking)
 
@@ -302,6 +337,7 @@ container stays up so the configuration can be read rather than crash-looping.
 | `WIRE_CONTRACT.md` | Byte-level encoding with golden vectors. The ECEF-vs-lat/lon trap, the empty-array padding ambiguity |
 | `FEDPRO_CONNECTION.md` | RTI addressing — three addresses for one federation, and why `crcAddress` is not the CRC address |
 | `STREAMING.md` | The Foundry publish path, pipeline vs functions mode, credentials, endpoint fallback, record shaping |
+| `BGWS.md` | A BGWS simulation in the federation: its identity and event log, and running the whole chain on one machine |
 | `DIAGNOSTICS.md` | Triage. Start with "am I in the right federation?", then "the task returned 200 but nothing moved" |
 
 Note that `STREAMING.md` predates the current topology: it describes the gateway

@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/DisruptCommsRequest.java]
 package com.decho.cse.bridge.model.request;
 
 // Body of POST /map/disrupt-comms. Like CreateObstacle this is a task, so

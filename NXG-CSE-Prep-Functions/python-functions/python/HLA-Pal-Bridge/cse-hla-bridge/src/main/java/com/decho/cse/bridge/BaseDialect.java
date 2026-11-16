@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BaseDialect.java]
 package com.decho.cse.bridge;
 
 import hla.rti1516e.InteractionClassHandle;

@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/TaskDialect.java]
 package com.decho.cse.bridge;
 
 import java.util.List;

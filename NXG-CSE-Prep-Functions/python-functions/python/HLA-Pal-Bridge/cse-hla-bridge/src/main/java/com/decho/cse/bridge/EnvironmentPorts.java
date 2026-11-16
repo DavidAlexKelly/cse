@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/EnvironmentPorts.java]
 package com.decho.cse.bridge;
 
 // Resolves the FedPro/CRC addresses for a given environment number from a
