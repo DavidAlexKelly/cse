@@ -1,5 +1,8 @@
 # BGWS in the federation, and into Foundry
 
+> Setting the whole chain up in Foundry (streams, compute modules, the BGWS host, the `/bgws`
+> frontend, Workshop): see [`BGWS_FOUNDRY_SETUP.md`](../../../../../BGWS_FOUNDRY_SETUP.md) at the repository root.
+
 BGWS is a constructive simulation in Rust (`DavidAlexKelly/bgws-jev`). It
 joins HLA 4 federations through the Federate Protocol, with the RPR FOM, and
 this bridge reads it like any other simulator. This page covers:

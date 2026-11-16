@@ -1,5 +1,8 @@
 # BGWS — scenario, control and orders from Foundry
 
+> Setting the whole chain up in Foundry: see [`BGWS_FOUNDRY_SETUP.md`](../../BGWS_FOUNDRY_SETUP.md)
+> at the repository root.
+
 Route `/bgws` (`src/apps/bgws/`). BGWS is a constructive wargame simulation (Rust, its own repository)
 that joins the HLA federation as a **standing federate**: it starts, joins, and waits for a scenario.
 This screen is Foundry's side of it. You use it to:
