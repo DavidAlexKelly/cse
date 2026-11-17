@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeDiagnostics.java]
 package com.decho.cse.bridge;
 
 import org.springframework.stereotype.Component;
@@ -528,6 +527,9 @@ public class BridgeDiagnostics {
         }
         if (className.endsWith("SMC_EntityControl.SetSuppliesStatus")) {
             return "NETN-LOG";
+        }
+        if (className.contains("BGWS_")) {
+            return "BGWS-Events";
         }
         if (className.endsWith("SMC_Response")) {
             return "NETN-SMC";

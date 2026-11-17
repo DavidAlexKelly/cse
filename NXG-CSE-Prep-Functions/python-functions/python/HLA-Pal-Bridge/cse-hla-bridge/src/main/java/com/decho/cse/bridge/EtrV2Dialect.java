@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/EtrV2Dialect.java]
 package com.decho.cse.bridge;
 
 import com.decho.cse.bridge.BridgeFederate.Fom;

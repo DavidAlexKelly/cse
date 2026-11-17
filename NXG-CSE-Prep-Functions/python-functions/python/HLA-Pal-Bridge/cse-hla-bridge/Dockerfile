@@ -44,6 +44,14 @@ COPY --from=build /build/target/hla-bridge-1.0.0.jar app.jar
 # files, and SWORD_FOM.xml, stay in foms/ in the repo for reference only.
 COPY foms/NETN-Merged-With-RPR.xml /foms/NETN-Merged-With-RPR.xml
 
+# BGWS's event module: one interaction class, BGWS_Event, using only HLA basic
+# types from the standard MIM, so it merges with the NETN FOM without touching
+# any of its definitions. Joining with it lets the bridge subscribe to the
+# event log of a BGWS simulation (GET /events) whether the bridge or BGWS joins
+# first; a federation that never sees a BGWS simulation simply has an unused
+# class. It is the one exception to "exactly one module in FOM_PATH" above.
+COPY foms/BGWS-Events.xml /foms/BGWS-Events.xml
+
 # The MIM is deliberately NOT in FOM_PATH: BridgeFederate.resolveFomUrls() globs
 # that directory for *.xml and would pass the MIM as an ordinary FOM module.
 # A MIM is not a module — in IEEE 1516-2010 it can only be supplied to

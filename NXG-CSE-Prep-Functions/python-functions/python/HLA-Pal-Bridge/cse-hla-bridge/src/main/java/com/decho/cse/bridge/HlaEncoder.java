@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/HlaEncoder.java]
 package com.decho.cse.bridge;
 
 import hla.rti1516e.RtiFactoryFactory;

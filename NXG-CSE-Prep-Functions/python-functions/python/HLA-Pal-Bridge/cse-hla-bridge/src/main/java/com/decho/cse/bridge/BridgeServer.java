@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/BridgeServer.java]
 package com.decho.cse.bridge;
 
 import com.decho.cse.bridge.model.Entity;
@@ -414,6 +413,24 @@ public class BridgeServer {
     }
 
     // -- Entity Queries ------------------------------------------------------------
+    // What happened, oldest first: fire and detonations from any simulator
+    // (RPR) and every event a BGWS simulation logs. Poll with the last
+    // `seq` seen as `after`; `dropped` counts events that left the buffer
+    // before being read past, so a gap is reported rather than silent.
+    @GetMapping("/events")
+    public Map<String, Object> events(@RequestParam(defaultValue = "0") long after,
+                                      @RequestParam(defaultValue = "500") int limit) {
+        EventLog log = store.events();
+        List<Map<String, Object>> page = log.after(after, Math.max(1, Math.min(limit, 5000)));
+        Map<String, Object> out = new java.util.LinkedHashMap<>();
+        out.put("events", page);
+        out.put("last", log.last());
+        out.put("first", log.first());
+        out.put("dropped", log.dropped());
+        out.put("capacity", log.capacity());
+        return out;
+    }
+
     @GetMapping("/entities")
     public ResponseEntity<List<Entity>> getEntities() {
         return ResponseEntity.ok(store.getAll());
@@ -482,6 +499,34 @@ public class BridgeServer {
                     "requestId", requestId));
         } catch (Exception e) {
             return failure("stop scenario", e);
+        }
+    }
+
+    // BGWS simulation control: one BGWS_Control interaction. Load a scenario
+    // into a BGWS simulation joined and waiting in the federation, then
+    // start, pause, resume, stop or change its speed. A 200 means the
+    // interaction was sent; BGWS's answer - loading, building_terrain, ready,
+    // running, or error with a reason - arrives as a federate.status event on
+    // GET /events with the same requestId. 400 for an unknown command, a load
+    // with no scenario, or scenario/options that are not JSON objects; 409
+    // when this federation has no BGWS_Control (BGWS's FOM module not loaded)
+    // or this bridge only monitors.
+    @PostMapping("/bgws/control")
+    public ResponseEntity<?> bgwsControl(@RequestBody(required = false) BgwsControlRequest req) {
+        try {
+            BgwsControl.Message message = BgwsControl.from(req);
+            tasks.bgwsControl(message);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("status", "sent");
+            body.put("requestId", message.requestId());
+            body.put("command", message.command());
+            body.put("federate", message.federate());
+            // Named "task" so the command consumer's outcome row records the
+            // class that went on the wire, as it does for tasking.
+            body.put("task", "BGWS_Control");
+            return ResponseEntity.ok(body);
+        } catch (Exception e) {
+            return failure("send BGWS control", e);
         }
     }
 

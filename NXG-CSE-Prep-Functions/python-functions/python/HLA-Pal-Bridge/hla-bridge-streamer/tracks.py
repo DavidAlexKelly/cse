@@ -367,59 +367,137 @@ def _bearer_token(client: httpx.Client) -> str:
 # real error and is not retried elsewhere, which would only mask it.
 
 PUBLISH_URL_OVERRIDE = os.environ.get("TRACK_PUBLISH_URL", "").strip()
-_publish_index = 0
-_publish_urls_tried: list[str] = []
 # The record envelope. stream-proxy and the public API differ, so the working
 # shape is discovered once on a 400/415/422 and then kept.
 _BODY_SHAPES = ("records", "array")
-_body_index = 0
 
 
-def _publish_url_candidates() -> list[str]:
+class Publisher:
     """
-    Publish endpoints, best first, ordered by what the credential actually is.
+    Publishes batches of records to one stream, finding the endpoint and the
+    record envelope that work for this credential once and then keeping them.
 
-    A job token publishes to stream-proxy rather than the API gateway, even
-    though the reserved-variable documentation describes the job token as
-    being for calling the API gateway. Observed behaviour takes precedence
-    over that description, so stream-proxy is tried first for a job token
-    and the gateway is kept as a fallback.
-
-    An OAuth token (functions mode) keeps the gateway first, since it is
-    scoped by OAuth scopes rather than to specific resources, which is what
-    the public API expects.
+    One per stream: entity tracks here, simulation events in events.py. The
+    discovery state is per stream because a job token is scoped to declared
+    resources, so what works for one stream says nothing certain about another.
     """
-    if PUBLISH_URL_OVERRIDE:
-        return [PUBLISH_URL_OVERRIDE]
-    if not (FOUNDRY_BASE_URL and STREAM_DATASET_RID):
-        return []
-    stream_proxy = f"{FOUNDRY_BASE_URL}/stream-proxy/api/streams/{STREAM_DATASET_RID}/branches/{STREAM_BRANCH}/records"
-    gateway_high_scale = (
-        f"{FOUNDRY_BASE_URL}/api/v2/highScale/streams/datasets/{STREAM_DATASET_RID}"
-        f"/streams/{STREAM_BRANCH}/publishRecords"
-    )
-    gateway = f"{FOUNDRY_BASE_URL}/api/v2/streams/datasets/{STREAM_DATASET_RID}/streams/{STREAM_BRANCH}/publishRecords"
-    if CREDENTIAL_MODE == "pipeline job token":
-        return [stream_proxy, gateway_high_scale, gateway]
-    return [gateway_high_scale, gateway, stream_proxy]
+
+    def __init__(self, rid: str, branch: str, url_override: str = "", view_env: str = "TRACK_STREAM_VIEW_RID"):
+        self.rid = rid
+        self.branch = branch
+        self.url_override = url_override
+        self.view_env = view_env
+        self.index = 0
+        self.body_index = 0
+        self.urls_tried: list[str] = []
+
+    def candidates(self) -> list[str]:
+        """
+        Publish endpoints, best first, ordered by what the credential actually is.
+
+        A job token publishes to stream-proxy rather than the API gateway, even
+        though the reserved-variable documentation describes the job token as
+        being for calling the API gateway. Observed behaviour takes precedence
+        over that description, so stream-proxy is tried first for a job token
+        and the gateway is kept as a fallback.
+
+        An OAuth token (functions mode) keeps the gateway first, since it is
+        scoped by OAuth scopes rather than to specific resources, which is what
+        the public API expects.
+        """
+        if self.url_override:
+            return [self.url_override]
+        if not (FOUNDRY_BASE_URL and self.rid):
+            return []
+        stream_proxy = f"{FOUNDRY_BASE_URL}/stream-proxy/api/streams/{self.rid}/branches/{self.branch}/records"
+        gateway_high_scale = (
+            f"{FOUNDRY_BASE_URL}/api/v2/highScale/streams/datasets/{self.rid}/streams/{self.branch}/publishRecords"
+        )
+        gateway = f"{FOUNDRY_BASE_URL}/api/v2/streams/datasets/{self.rid}/streams/{self.branch}/publishRecords"
+        if CREDENTIAL_MODE == "pipeline job token":
+            return [stream_proxy, gateway_high_scale, gateway]
+        return [gateway_high_scale, gateway, stream_proxy]
+
+    def url(self) -> str:
+        candidates = self.candidates()
+        if not candidates:
+            return ""
+        return candidates[min(self.index, len(candidates) - 1)]
+
+    def body_shape(self) -> str:
+        return _BODY_SHAPES[min(self.body_index, len(_BODY_SHAPES) - 1)]
+
+    def body(self, records: list[dict]) -> str:
+        if self.body_shape() == "array":
+            return json.dumps(records, allow_nan=False)
+        envelope: dict = {"records": records}
+        view = os.environ.get(self.view_env, "").strip()
+        if view:
+            envelope["viewRid"] = view
+        return json.dumps(envelope, allow_nan=False)
+
+    def publish(self, client: httpx.Client, records: list[dict]) -> None:
+        """
+        Send one batch, moving on if this endpoint or envelope is not the right one.
+
+        Raises on failure: the caller counts it, records it and carries on.
+        """
+        token = _bearer_token(client)
+        if not token:
+            raise RuntimeError(_token_error or "no Foundry credential available yet")
+
+        candidates = self.candidates()
+        if not candidates:
+            raise RuntimeError("no publish URL: missing Foundry URL or stream RID")
+
+        while True:
+            url = self.url()
+            redacted = _redact(url)
+            if redacted not in self.urls_tried:
+                self.urls_tried.append(redacted)
+            response = client.post(
+                url,
+                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                content=self.body(records),
+                timeout=10,
+            )
+            # Wrong endpoint for this stack or this token: move to the next and stay.
+            #
+            # 401/403 count as "wrong endpoint for this credential", not just as
+            # "unauthorised". A job token is scoped to declared resources and a
+            # gateway that will not accept it rejects with one of those rather than a
+            # 404 — so without them here, a single auth-shaped refusal would raise and
+            # the candidate that actually works would never be tried.
+            if response.status_code in (401, 403, 404, 405) and self.index < len(candidates) - 1:
+                log.warning("Publish endpoint %s returned %d, trying the next candidate", redacted, response.status_code)
+                self.index += 1
+                continue
+            # Right endpoint, wrong envelope: try the other record shape once.
+            if response.status_code in (400, 415, 422) and self.body_index < len(_BODY_SHAPES) - 1:
+                log.warning(
+                    "Publish to %s rejected the '%s' record envelope (%d: %s), trying '%s'",
+                    redacted,
+                    _BODY_SHAPES[self.body_index],
+                    response.status_code,
+                    (response.text or "")[:200],
+                    _BODY_SHAPES[self.body_index + 1],
+                )
+                self.body_index += 1
+                continue
+            if response.status_code >= 400:
+                # The body names the offending column or record, which is the only way
+                # to debug a schema mismatch from outside the platform.
+                raise RuntimeError(
+                    f"HTTP {response.status_code} from {redacted}{' — ' + response.text[:300] if response.text else ''}"
+                )
+            return
+
+
+_TRACKS = Publisher(STREAM_DATASET_RID, STREAM_BRANCH, PUBLISH_URL_OVERRIDE)
 
 
 def _publish_url() -> str:
-    candidates = _publish_url_candidates()
-    if not candidates:
-        return ""
-    return candidates[min(_publish_index, len(candidates) - 1)]
-
-
-def _body(records: list[dict]) -> str:
-    shape = _BODY_SHAPES[min(_body_index, len(_BODY_SHAPES) - 1)]
-    if shape == "array":
-        return json.dumps(records, allow_nan=False)
-    envelope: dict = {"records": records}
-    view = os.environ.get("TRACK_STREAM_VIEW_RID", "").strip()
-    if view:
-        envelope["viewRid"] = view
-    return json.dumps(envelope, allow_nan=False)
+    return _TRACKS.url()
 
 
 def is_configured() -> tuple[bool, str]:
@@ -474,8 +552,8 @@ def status() -> dict:
     snapshot["stream_source"] = STREAM_SOURCE
     snapshot["poll_seconds"] = POLL_SECONDS
     snapshot["publish_url"] = _redact(_publish_url()) or None
-    snapshot["publish_urls_tried"] = list(_publish_urls_tried)
-    snapshot["body_shape"] = _BODY_SHAPES[min(_body_index, len(_BODY_SHAPES) - 1)]
+    snapshot["publish_urls_tried"] = list(_TRACKS.urls_tried)
+    snapshot["body_shape"] = _TRACKS.body_shape()
     snapshot["foundry_base_url"] = _redact(FOUNDRY_BASE_URL) or None
     snapshot["foundry_base_url_source"] = BASE_URL_SOURCE
     snapshot["ca_bundle"] = CA_BUNDLE or None
@@ -618,62 +696,7 @@ def _poll_entities(client: httpx.Client) -> list[dict] | None:
 
 
 def _publish(client: httpx.Client, records: list[dict]) -> None:
-    """
-    Send one batch, moving on if this endpoint or envelope is not the right one.
-
-    Raises on failure: the caller counts it, records it and carries on.
-    """
-    global _publish_index, _body_index
-
-    token = _bearer_token(client)
-    if not token:
-        raise RuntimeError(_token_error or "no Foundry credential available yet")
-
-    candidates = _publish_url_candidates()
-    if not candidates:
-        raise RuntimeError("no publish URL: missing Foundry URL or stream RID")
-
-    while True:
-        url = _publish_url()
-        redacted = _redact(url)
-        if redacted not in _publish_urls_tried:
-            _publish_urls_tried.append(redacted)
-        response = client.post(
-            url,
-            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-            content=_body(records),
-            timeout=10,
-        )
-        # Wrong endpoint for this stack or this token: move to the next and stay.
-        #
-        # 401/403 count as "wrong endpoint for this credential", not just as
-        # "unauthorised". A job token is scoped to declared resources and a
-        # gateway that will not accept it rejects with one of those rather than a
-        # 404 — so without them here, a single auth-shaped refusal would raise and
-        # the candidate that actually works would never be tried.
-        if response.status_code in (401, 403, 404, 405) and _publish_index < len(candidates) - 1:
-            log.warning("Publish endpoint %s returned %d, trying the next candidate", redacted, response.status_code)
-            _publish_index += 1
-            continue
-        # Right endpoint, wrong envelope: try the other record shape once.
-        if response.status_code in (400, 415, 422) and _body_index < len(_BODY_SHAPES) - 1:
-            log.warning(
-                "Publish to %s rejected the '%s' record envelope (%d: %s), trying '%s'",
-                redacted,
-                _BODY_SHAPES[_body_index],
-                response.status_code,
-                (response.text or "")[:200],
-                _BODY_SHAPES[_body_index + 1],
-            )
-            _body_index += 1
-            continue
-        if response.status_code >= 400:
-            # The body names the offending column or record, which is the only way
-            # to debug a schema mismatch from outside the platform.
-            raise RuntimeError(
-                f"HTTP {response.status_code} from {redacted}{' — ' + response.text[:300] if response.text else ''}"
-            )
-        return
+    _TRACKS.publish(client, records)
 
 
 def _ssl_context() -> "ssl.SSLContext | bool":

@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/RoeRequest.java]
 package com.decho.cse.bridge.model.request;
 
 public record RoeRequest(

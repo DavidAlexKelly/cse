@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/SpeedRequest.java]
 package com.decho.cse.bridge.model.request;
 
 // Body of POST /entities/{id}/speed.

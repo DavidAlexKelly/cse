@@ -1,4 +1,3 @@
-[test/java/com/decho/cse/bridge/HlaEncoderTest.java]
 package com.decho.cse.bridge;
 
 import org.junit.jupiter.api.Test;

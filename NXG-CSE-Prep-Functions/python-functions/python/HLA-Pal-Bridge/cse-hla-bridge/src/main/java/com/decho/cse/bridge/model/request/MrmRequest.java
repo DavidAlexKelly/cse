@@ -1,4 +1,3 @@
-[main/java/com/decho/cse/bridge/model/request/MrmRequest.java]
 package com.decho.cse.bridge.model.request;
 
 // Optional body of POST /entities/{id}/aggregate and /disaggregate.
